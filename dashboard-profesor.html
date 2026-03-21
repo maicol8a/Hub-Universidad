@@ -195,6 +195,29 @@ tbody tr:hover{background:var(--r8)}
 
 </div>
 
+<script>
+// ── PASSWORD (outside module so onclick works in all browsers) ───────────────
+const _PWD = btoa('profe8824')
+
+function checkPwd() {
+  const entered = document.getElementById('pwd-input').value
+  if (btoa(entered) === _PWD) {
+    document.getElementById('pwd-overlay').style.display = 'none'
+    // Signal the module that password was accepted
+    window._pwdOk = true
+    window.dispatchEvent(new Event('pwd-accepted'))
+  } else {
+    document.getElementById('pwd-error').style.display = 'block'
+    document.getElementById('pwd-input').value = ''
+    document.getElementById('pwd-input').focus()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pwd-input').focus()
+})
+</script>
+
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -212,26 +235,6 @@ let chartInstance = null
 let currentExamenId = null
 let currentActivo = false
 let allData = []
-
-// ── PASSWORD ─────────────────────────────────────────────────────────────────
-const _PWD = btoa('profe8824')
-
-window.checkPwd = function() {
-  const entered = document.getElementById('pwd-input').value
-  if (btoa(entered) === _PWD) {
-    document.getElementById('pwd-overlay').style.display = 'none'
-    init()
-  } else {
-    document.getElementById('pwd-error').style.display = 'block'
-    document.getElementById('pwd-input').value = ''
-    document.getElementById('pwd-input').focus()
-  }
-}
-
-// Focus password input on load
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('pwd-input').focus()
-})
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
 async function init() {
@@ -562,7 +565,8 @@ window.logout = function() {
 }
 
 // ── START ─────────────────────────────────────────────────────────────────────
-// Init is called after password check
+// Wait for password acceptance before initializing
+window.addEventListener('pwd-accepted', () => init())
 </script>
 </body>
 </html>
