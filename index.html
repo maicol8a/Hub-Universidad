@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hub Educativo</title>
+
+  <!-- KaTeX para LaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      color: #1e293b;
+      margin-bottom: 0.4rem;
+    }
+
+    p.sub {
+      color: #64748b;
+      font-size: 0.95rem;
+      margin-bottom: 1.8rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #6366f1;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #4f46e5; }
+    button:disabled { background: #a5b4fc; cursor: not-allowed; }
+
+    .mensaje {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .mensaje.error   { background: #fee2e2; color: #dc2626; display: block; }
+    .mensaje.success { background: #dcfce7; color: #16a34a; display: block; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>📚 Hub Educativo</h1>
+  <p class="sub">Introduce tus datos para continuar</p>
+
+  <input type="text"  id="nombre" placeholder="Full name">
+  <input type="email" id="email"  placeholder="Institutional email">
+
+  <select id="asignatura">
+    <option value="">Loading subjects...</option>
+  </select>
+
+  <input type="text" id="grupo" placeholder="Group (e.g. A1)">
+
+  <button id="btn" onclick="entrar()">Enter</button>
+
+  <div class="mensaje" id="mensaje"></div>
+</div>
+
+<script type="module">
+  import { supabase } from './js/config.js'
+
+  // Cargar asignaturas activas desde Supabase
+  async function cargarAsignaturas() {
+    const { data, error } = await supabase
+      .from('asignaturas')
+      .select('id, nombre')
+      .eq('activa', true)
+
+    const select = document.getElementById('asignatura')
+
+    if (error || !data.length) {
+      select.innerHTML = '<option value="">No subjects available</option>'
+      return
+    }
+
+    select.innerHTML = '<option value="">Select subject...</option>' +
+      data.map(a => `<option value="${a.id}">${a.nombre}</option>`).join('')
+  }
+
+  window.entrar = async function () {
+    const nombre      = document.getElementById('nombre').value.trim()
+    const email       = document.getElementById('email').value.trim()
+    const asignatura  = document.getElementById('asignatura').value
+    const grupo       = document.getElementById('grupo').value.trim()
+    const btn         = document.getElementById('btn')
+    const msg         = document.getElementById('mensaje')
+
+    msg.className = 'mensaje'
+
+    if (!nombre || !email || !asignatura || !grupo) {
+      msg.textContent = 'Please fill in all fields.'
+      msg.className = 'mensaje error'
+      return
+    }
+
+    btn.disabled = true
+    btn.textContent = 'Loading...'
+
+    // Registrar o recuperar estudiante
+    const { data: est, error: err1 } = await supabase
+      .from('estudiantes')
+      .upsert({ nombre, email }, { onConflict: 'email' })
+      .select()
+      .single()
+
+    if (err1) {
+      msg.textContent = 'Error registering. Please try again.'
+      msg.className = 'mensaje error'
+      btn.disabled = false
+      btn.textContent = 'Enter'
+      return
+    }
+
+    // Registrar matrícula si no existe
+    await supabase
+      .from('matriculas')
+      .upsert(
+        { estudiante_id: est.id, asignatura_id: asignatura, grupo },
+        { onConflict: 'estudiante_id,asignatura_id' }
+      )
+
+    // Guardar sesión y redirigir
+    sessionStorage.setItem('estudiante', JSON.stringify({
+      ...est, asignatura_id: asignatura, grupo
+    }))
+
+    msg.textContent = '✓ Access granted. Redirecting...'
+    msg.className = 'mensaje success'
+
+    setTimeout(() => window.location.href = 'dashboard-estudiante.html', 1200)
+  }
+
+  cargarAsignaturas()
+</script>
+
+</body>
+</html>
