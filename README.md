@@ -1,2 +1,2 @@
-# Hub-Universidad
+# Hub Universidad Europea
 Hub educativo
