@@ -653,6 +653,15 @@ function renderQ() {
       b2.innerHTML += html;
     }
   });
+// Re-renderizar LaTeX tras insertar preguntas dinámicamente
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$',  right: '$',  display: false}
+      ]
+    })
+  }
 }
 
 function onAnswered(qIdx, total) {
