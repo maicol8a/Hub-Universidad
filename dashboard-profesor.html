@@ -196,16 +196,16 @@ tbody tr:hover{background:var(--r8)}
 </div>
 
 <script>
-// ── PASSWORD (outside module so onclick works in all browsers) ───────────────
-const _PWD = btoa('profe8824')
+// ── PASSWORD ─────────────────────────────────────────────────────────────────
+const _PWD = btoa('profe2024') // Change 'profe2024' to your password
 
 function checkPwd() {
   const entered = document.getElementById('pwd-input').value
   if (btoa(entered) === _PWD) {
     document.getElementById('pwd-overlay').style.display = 'none'
-    // Signal the module that password was accepted
     window._pwdOk = true
-    window.dispatchEvent(new Event('pwd-accepted'))
+    // Call init directly if module already loaded, otherwise it will check on load
+    if (typeof window._initDashboard === 'function') window._initDashboard()
   } else {
     document.getElementById('pwd-error').style.display = 'block'
     document.getElementById('pwd-input').value = ''
@@ -265,7 +265,7 @@ window.cargarGrupos = async function() {
   const { data } = await sb
     .from('matriculas')
     .select('grupo')
-    .eq('asignatura_id', asigId)
+    .eq('asignatura_id', asigIdMat)
     .order('grupo')
 
   if (data) {
@@ -310,7 +310,7 @@ window.cargarDatos = async function() {
     .order('nota', { ascending: false })
 
   // Query 2: matriculas para esta asignatura (para obtener el grupo)
-  const asigId = document.getElementById('sel-asignatura').value
+  const asigIdMat = document.getElementById('sel-asignatura').value
   const { data: matriculaData } = await sb
     .from('matriculas')
     .select('estudiante_id, grupo')
@@ -565,8 +565,10 @@ window.logout = function() {
 }
 
 // ── START ─────────────────────────────────────────────────────────────────────
-// Wait for password acceptance before initializing
-window.addEventListener('pwd-accepted', () => init())
+// Expose init so the password script can call it directly
+window._initDashboard = init
+// If password was already accepted before module loaded, init now
+if (window._pwdOk) init()
 </script>
 </body>
 </html>
