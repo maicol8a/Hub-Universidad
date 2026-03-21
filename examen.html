@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistics Exam · Universidad Europea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+/* Estilos base (sin cambios) */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E31E24; --rdk:#b8191f; --r8:rgba(227,30,36,0.08); --r15:rgba(227,30,36,0.15);
+  --light:#f4f5f7; --border:#e0e0e0; --text:#1a1a1a; --muted:#777;
+  --r:6px; --sw:220px; --rw:260px;
+}
+body{font-family:'Carlito',Arial,sans-serif;background:var(--light);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* LOGIN */
+#login-overlay{position:fixed;inset:0;background:var(--red);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:white;padding:2.5rem;border-radius:12px;color:var(--text);box-shadow:0 10px 30px rgba(0,0,0,0.25);width:420px;text-align:left}
+.login-box h3{font-size:1.2rem;margin-bottom:4px;text-align:center}
+.login-box p{font-size:12px;color:var(--muted);margin:8px 0 16px;text-align:center}
+.instrucciones{background:#f9f9f9;border-left:4px solid var(--red);padding:12px;margin:15px 0;font-size:12px;border-radius:4px}
+.instrucciones ul{margin-left:20px;color:#444}
+.instrucciones li{margin:6px 0}
+.checkbox{display:flex;align-items:center;gap:8px;margin:15px 0;font-size:13px}
+.checkbox input{width:18px;height:18px;accent-color:var(--red)}
+#pass-in{margin-top:10px}
+.lang-toggle{display:flex;gap:4px;background:#eee;padding:4px;border-radius:20px; margin-bottom:15px; justify-content:center}
+.lang-btn{border:none;background:none;padding:4px 10px;border-radius:15px;cursor:pointer;font-size:11px;font-weight:700;color:#999;transition:.2s}
+.lang-btn.active{background:white;color:var(--red);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+
+/* BLOQUEO DE SEGURIDAD */
+#security-block{position:fixed;inset:0;background:rgba(10,10,10,0.97);color:white;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:10000;text-align:center;padding:20px;gap:16px}
+#security-block h1{font-size:2.5rem}
+#security-block p{max-width:420px;color:#ccc;line-height:1.6}
+.sec-counter{display:flex;gap:30px;margin:10px 0}
+.sec-counter span{font-size:2rem;font-weight:700;color:var(--red)}
+.sec-counter label{font-size:10px;color:#aaa;text-transform:uppercase;display:block}
+
+/* APP */
+#app{display:none;flex-direction:column;min-height:100vh}
+.topbar{background:white;border-bottom:3px solid var(--red);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+.main-layout{display:flex;flex:1}
+
+/* SIDEBAR */
+.sidebar-l{width:var(--sw);background:white;border-right:1px solid var(--border);padding:1.25rem 0;position:sticky;top:64px;height:calc(100vh - 64px);flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-r{width:var(--rw);background:white;border-left:1px solid var(--border);padding:1.25rem;position:sticky;top:64px;height:calc(100vh - 64px);flex-shrink:0;overflow-y:auto}
+.step{display:flex;align-items:center;gap:9px;padding:12px 1.25rem;cursor:pointer;border-left:3px solid transparent;transition:.2s;font-size:13px}
+.step.done{color:#27ae60}
+.step.active{background:var(--r8);border-left-color:var(--red);font-weight:700;color:var(--red)}
+
+.timer-box{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.timer-val{font-size:1.4rem;font-weight:700;color:var(--text);font-family:monospace}
+.timer-val.warn{color:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.4}}
+
+/* CONTENIDO */
+.fa{flex:1;padding:2rem;max-width:870px;margin:0 auto;width:100%}
+.fsec{display:none;animation:fi .2s ease}.fsec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.sec-hdr{margin-bottom:1.5rem;padding-bottom:.8rem;border-bottom:2px solid var(--border);display:flex;align-items:baseline;justify-content:space-between}
+.sec-hdr h2{color:var(--red);font-size:1.1rem;text-transform:uppercase}
+.sec-hdr small{color:var(--muted);font-size:11px}
+
+/* FORMS */
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1rem}
+label.fl{display:block;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+input[type="text"],input[type="password"]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;transition:.2s}
+input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px var(--r8)}
+
+/* PREGUNTAS Y CONTEXTOS */
+.question-block{background:white;padding:1.5rem;border-radius:var(--r);border:1px solid var(--border);margin-bottom:1.25rem;transition:.2s}
+.question-block:hover{box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+.q-num{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.q-text{font-weight:700;font-size:14px;margin-bottom:12px;line-height:1.5}
+.opt-label{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #eee;border-radius:var(--r);margin-bottom:7px;cursor:pointer;font-size:13px;transition:.15s}
+.opt-label:hover{background:var(--r8);border-color:var(--r15)}
+.opt-label input{accent-color:var(--red);width:15px;height:15px;flex-shrink:0}
+.answered .opt-label{opacity:.85}
+
+/* TABLAS INTERACTIVAS */
+.context-block{background:#eef;padding:1rem;border-radius:var(--r);border-left:4px solid var(--red);margin-bottom:1.5rem;font-size:13px}
+.context-block table{width:100%;border-collapse:collapse;margin-top:8px}
+.context-block th, .context-block td{border:1px solid #ccc;padding:8px;text-align:center;vertical-align:middle}
+.context-block th{background:var(--r8);font-weight:700}
+.context-block input.table-input{width:70px;padding:4px;border:1px solid #aaa;border-radius:4px;text-align:center;font-size:12px}
+.context-block input.table-input:focus{outline:2px solid var(--red)}
+
+/* PROGRESO */
+.progress-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .4s ease}
+
+/* CALCULADORA */
+.calc-wrap{margin-top:1.5rem}
+.calc{background:#1a1a1a;padding:12px;border-radius:10px}
+#calc-display{width:100%;height:45px;background:#000;color:#00ff41;text-align:right;padding:8px 10px;font-family:monospace;font-size:16px;border:1px solid #333;margin-bottom:9px;border-radius:4px}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.calc button{padding:10px 4px;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:11px;background:#333;color:white;transition:.1s}
+.calc button:active{transform:scale(.95)}
+.calc .op-fn{background:#4a4a4a;color:#ff9f0a}
+.calc .op-math{background:var(--rdk);color:white}
+.calc .eq{background:#27ae60;grid-column:span 2}
+.calc .clear{background:#c0392b}
+
+/* BOTONES */
+.btn{padding:10px 22px;border-radius:var(--r);cursor:pointer;font-weight:700;border:none;font-family:inherit;font-size:13px;transition:.2s}
+.btn:active{transform:scale(.97)}
+.btn-red{background:var(--red);color:white}
+.btn-red:hover{background:var(--rdk)}
+.btn-out{background:white;border:1px solid var(--border);color:var(--text)}
+.btn-out:hover{background:var(--light)}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+
+/* REPORTE */
+#preview{display:none;background:#bbb;min-height:100vh;padding:20px}
+.pvbar{background:white;padding:12px 2rem;border-bottom:2px solid var(--red);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.docpage{width:210mm;background:white;padding:20mm;margin:2rem auto;box-shadow:0 10px 40px rgba(0,0,0,0.3);border-radius:4px}
+
+.dtbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:11px}
+.dtbl th,.dtbl td{border:1px solid #ddd;padding:8px 10px;text-align:left}
+.dtbl th{background:var(--red);color:white;font-weight:700}
+.dtbl tr:nth-child(even) td{background:#fafafa}
+
+.grade-box{background:var(--r8);border:2px solid var(--r15);padding:24px;text-align:center;border-radius:8px;margin:20px 0}
+.grade-num{font-size:3rem;font-weight:700;color:var(--red);line-height:1}
+.sec-audit{border:1px solid var(--border);padding:16px;margin-top:18px;border-radius:8px;font-size:11px}
+.sec-audit .sec-title{color:var(--red);font-weight:700;font-size:12px;margin-bottom:10px;text-transform:uppercase}
+.sec-audit table{width:100%;border-collapse:collapse}
+.sec-audit td{padding:5px 8px;border:1px solid #eee;font-size:11px}
+.sec-audit td:first-child{color:var(--muted);width:60%}
+.badge-ok{color:#27ae60;font-weight:700}
+.badge-warn{color:#e67e22;font-weight:700}
+.badge-alert{color:var(--red);font-weight:700}
+
+@media print{
+  #app,.pvbar,body>*:not(#preview){display:none!important}
+  #preview{display:block!important;background:white!important;padding:0!important}
+  .docpage{margin:0!important;padding:15mm!important;box-shadow:none!important;width:100%!important}
+}
+</style>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  const SUPABASE_URL = 'https://jivjhtqfqktmufmyeyzj.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_FGMSjudy2IdTe2igi5JRJQ_Paw90L8J'
+  window._sb  = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  // Verificar sesión del hub — si no hay sesión, volver al login
+  const est = JSON.parse(sessionStorage.getItem('estudiante') || 'null')
+  if (!est) {
+    window.location.href = 'index.html'
+  } else {
+    window._estudiante = est
+    // Auto-rellenar campos de identificación cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = id => document.getElementById(id)
+      if (s('fn-name'))    s('fn-name').value    = est.nombre     || ''
+      if (s('fn-id'))      s('fn-id').value      = est.student_id || ''
+      if (s('fn-degree'))  s('fn-degree').value  = est.grupo      || ''
+      if (s('fn-subject')) s('fn-subject').value = 'Statistics I'
+    })
+  }
+</script>
+</head>
+<body>
+
+<!-- ═══ LOGIN (igual) ═══ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="48" style="margin-bottom:16px; display:block; margin-left:auto; margin-right:auto;">
+    
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('es')" id="btn-login-es">ES</button>
+      <button class="lang-btn" onclick="setLang('en')" id="btn-login-en">EN</button>
+    </div>
+
+    <h3 id="txt-loginT">Exam Access</h3>
+    <p id="txt-loginM">Enter the key provided by your instructor</p>
+    
+    <div class="instrucciones">
+      <strong id="txt-normas">📋 Exam rules:</strong>
+      <ul>
+        <li id="txt-norma1">Communication is prohibited during the test.</li>
+        <li id="txt-norma2">Use only official paper and blue or black pen.</li>
+        <li id="txt-norma3">Do not exit full-screen mode or switch tabs.</li>
+        <li id="txt-norma4">Any security incident (full-screen exit, tab switch) will be recorded and may invalidate the exam.</li>
+        <li id="txt-norma5">By accessing, you accept these conditions.</li>
+      </ul>
+    </div>
+    
+    <div class="checkbox">
+      <input type="checkbox" id="accept-terms">
+      <label for="accept-terms" id="txt-accept">I have read and accept the exam rules</label>
+    </div>
+    
+    <input type="password" id="pass-in" placeholder="Access key" style="display:none">
+    <button class="btn btn-red" style="width:100%;margin-top:14px" onclick="initExam()" id="txt-btnStart" disabled>Start Exam</button>
+  </div>
+</div>
+
+<!-- ═══ SECURITY BLOCK ═══ -->
+<div id="security-block">
+  <h1>⚠️ EXAM BLOCKED</h1>
+  <p id="txt-secMsg">You exited full screen or switched tabs. The system has logged this incident.</p>
+  <div class="sec-counter">
+    <div><span id="sb-fs">0</span><label id="txt-sbFs">Screen exits</label></div>
+    <div><span id="sb-tab">0</span><label id="txt-sbTab">Tab switches</label></div>
+  </div>
+  <button class="btn btn-red" onclick="dismissBlock()" id="txt-btnReload">Return to Exam</button>
+</div>
+
+<!-- ═══ APP (5 tabs) ═══ -->
+<div id="app">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:14px">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="40">
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('es')" id="btn-es">ES</button>
+        <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+      </div>
+    </div>
+    <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinish">Submit Exam</button>
+  </header>
+
+  <div class="main-layout">
+
+    <!-- Left sidebar: 5 pasos -->
+    <aside class="sidebar-l">
+      <div class="step active" id="s0" onclick="gotoTab(0)">
+        <span style="font-size:16px">①</span> <span id="txt-step1">Identification</span>
+      </div>
+      <div class="step" id="s1" onclick="gotoTab(1)">
+        <span style="font-size:16px">②</span> <span id="txt-step2">Block I: Measures</span>
+      </div>
+      <div class="step" id="s2" onclick="gotoTab(2)">
+        <span style="font-size:16px">③</span> <span id="txt-step3">Block II: Outliers & Rules</span>
+      </div>
+      <div class="step" id="s3" onclick="gotoTab(3)">
+        <span style="font-size:16px">④</span> <span id="txt-step4">Block III: Transforms & Graphs</span>
+      </div>
+      <div class="step" id="s4" onclick="gotoTab(4)">
+        <span style="font-size:16px">⑤</span> <span id="txt-step5">Block IV: Bivariate</span>
+      </div>
+
+      <div class="timer-box">
+        <div style="margin-bottom:4px" id="txt-timerLabel">Elapsed time</div>
+        <div class="timer-val" id="timer-display">00:00:00</div>
+        <div style="margin-top:10px;font-size:11px" id="txt-incLabel">Incidents:</div>
+        <div style="color:var(--muted);font-size:11px;margin-top:3px">
+          🖥 <span id="sb-fs-mini">0</span> · 🔁 <span id="sb-tab-mini">0</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="fa">
+      <!-- Tab 0: Identificación -->
+      <div class="fsec active" id="t0">
+        <div class="sec-hdr"><h2 id="txt-hIdent">Student Details</h2></div>
+        <div class="fg-grid">
+          <div><label class="fl" id="lbl-name">Full Name</label><input type="text" id="fn-name"></div>
+          <div><label class="fl" id="lbl-id">Student ID</label><input type="text" id="fn-id"></div>
+        </div>
+        <div class="fg-grid">
+          <div><label class="fl" id="lbl-degree">Degree / Programme</label><input type="text" id="fn-degree"></div>
+          <div><label class="fl" id="lbl-subject">Subject</label><input type="text" id="fn-subject"></div>
+        </div>
+        <div style="margin-top:2rem;text-align:right">
+          <button class="btn btn-red" onclick="gotoTab(1)" id="txt-btnNext1">Next →</button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Block I (1-16) -->
+      <div class="fsec" id="t1">
+        <div class="sec-hdr">
+          <h2 id="txt-hP1">Block I: Measures</h2>
+          <small id="txt-hP1sub">Questions 1–16</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog1" style="width:0%"></div></div>
+        <div id="q-box-1"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(0)" id="txt-btnBack1">← Back</button>
+          <button class="btn btn-red" onclick="gotoTab(2)" id="txt-btnNext2">Next →</button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Block II (17-24) -->
+      <div class="fsec" id="t2">
+        <div class="sec-hdr">
+          <h2 id="txt-hP2">Block II: Outliers & Rules</h2>
+          <small id="txt-hP2sub">Questions 17–24</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog2" style="width:0%"></div></div>
+        <div id="q-box-2"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(1)" id="txt-btnBack2">← Back</button>
+          <button class="btn btn-red" onclick="gotoTab(3)" id="txt-btnNext3">Next →</button>
+        </div>
+      </div>
+
+      <!-- Tab 3: Block III (25-31) -->
+      <div class="fsec" id="t3">
+        <div class="sec-hdr">
+          <h2 id="txt-hP3">Block III: Transforms & Graphs</h2>
+          <small id="txt-hP3sub">Questions 25–31</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog3" style="width:0%"></div></div>
+        <div id="q-box-3"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(2)" id="txt-btnBack3">← Back</button>
+          <button class="btn btn-red" onclick="gotoTab(4)" id="txt-btnNext4">Next →</button>
+        </div>
+      </div>
+
+      <!-- Tab 4: Block IV (32-38) -->
+      <div class="fsec" id="t4">
+        <div class="sec-hdr">
+          <h2 id="txt-hP4">Block IV: Bivariate Analysis</h2>
+          <small id="txt-hP4sub">Questions 32–38</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog4" style="width:0%"></div></div>
+        <div id="q-box-4"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(3)" id="txt-btnBack4">← Back</button>
+          <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinal">Finish & Submit</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right sidebar: calculator -->
+    <aside class="sidebar-r">
+      <label class="fl" id="txt-calcTitle">Statistical Calculator</label>
+      <div class="calc-wrap">
+        <div class="calc">
+          <input type="text" id="calc-display" readonly value="0">
+          <div class="calc-grid">
+            <button class="clear" onclick="cClear()">C</button>
+            <button class="op-fn" onclick="cIn('(')">(</button>
+            <button class="op-fn" onclick="cIn(')')">)</button>
+            <button class="op-math" onclick="cIn('/')">÷</button>
+            <button class="op-fn" onclick="cFn('Math.sqrt(')">√x</button>
+            <button class="op-fn" onclick="cIn('**')">xʸ</button>
+            <button class="op-fn" onclick="cIn('Math.PI')">π</button>
+            <button class="op-math" onclick="cIn('*')">×</button>
+            <button onclick="cIn('7')">7</button>
+            <button onclick="cIn('8')">8</button>
+            <button onclick="cIn('9')">9</button>
+            <button class="op-math" onclick="cIn('-')">−</button>
+            <button onclick="cIn('4')">4</button>
+            <button onclick="cIn('5')">5</button>
+            <button onclick="cIn('6')">6</button>
+            <button class="op-math" onclick="cIn('+')">+</button>
+            <button onclick="cIn('1')">1</button>
+            <button onclick="cIn('2')">2</button>
+            <button onclick="cIn('3')">3</button>
+            <button onclick="cIn('.')">.</button>
+            <button onclick="cIn('0')" style="grid-column:span 1">0</button>
+            <button class="eq" onclick="cRes()">=</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ═══ REPORT ═══ -->
+<div id="preview">
+  <div class="pvbar">
+    <span style="font-weight:700;font-size:14px" id="txt-resHeader">EXAM RESULTS</span>
+    <button class="btn btn-red" onclick="window.print()" id="txt-btnPdf">Save PDF</button>
+  </div>
+  <div class="docpage" id="res-doc"></div>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const _v  = "dW5pdmVyc2lkYWQ="; // "universidad" in base64
+const _TL = 90; // time limit in minutes
+
+// Bloques: [inicio, fin)
+const BLOCKS = [
+  { start: 0, end: 16 },   // Bloque I: preguntas 1-16
+  { start: 16, end: 24 },   // Bloque II: preguntas 17-24
+  { start: 24, end: 31 },   // Bloque III: preguntas 25-31
+  { start: 31, end: 38 }    // Bloque IV: preguntas 32-38
+];
+
+// Función para convertir tablas con asteriscos en inputs VACÍOS (sin placeholder)
+function buildInteractiveTable(tableHtml) {
+  // Reemplaza cada "*" seguido de cualquier contenido por un input vacío (sin placeholder)
+  return tableHtml.replace(/\*[^<]+/g, '<input type="text" class="table-input" value="">');
+}
+
+// Contextos con tablas interactivas (sin respuestas visibles)
+const contextos = {
+  en: [
+    { indice: 0, titulo: "Context for Q1: Frequency table",
+      html: `
+        <p>The monthly income (in thousands of €) of 20 self‑employed workers is:</p>
+        <p><code>1.2 1.8 2.1 1.5 2.8 3.2 2.5 1.9 3.7 2.3 2.6 1.4 4.1 2.9 3.5 1.7 2.2 3.1 2.4 4.8</code></p>
+        <p>Complete the frequency distribution table (cells marked with * are the ones you must calculate):</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Interval</th><th>nᵢ (abs. freq.)</th><th>fᵢ (rel. freq.)</th><th>Nᵢ (cum. abs.)</th><th>Fᵢ (cum. rel.)</th></tr></thead>
+           <tbody>
+             <tr><td>[1; 2)</td><td>6</td><td>*0.30</td><td>6</td><td>0.30</td></tr>
+             <tr><td>[2; 3)</td><td>8</td><td>0.40</td><td>*14</td><td>0.70</td></tr>
+             <tr><td>[3; 4)</td><td>*4</td><td>0.20</td><td>18</td><td>0.90</td></tr>
+             <tr><td>[4; 5)</td><td>2</td><td>0.10</td><td>20</td><td>*1.00</td></tr>
+             <tr><td>TOTAL</td><td>20</td><td>*1.00</td><td>—</td><td>—</td></tr>
+           </tbody>
+         </table>
+      ` },
+    { indice: 31, titulo: "Context for Q32: Contingency table",
+      html: `
+        <p>A company surveys 200 customers about their satisfaction level by purchase channel. Partial results:</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Purchase channel</th><th>Unsatisfied</th><th>Satisfied</th><th>Very Satisfied</th><th>TOTAL</th></tr></thead>
+           <tbody>
+             <tr><td>Online</td><td>10</td><td>50</td><td>20</td><td>*80</td></tr>
+             <tr><td>Physical Store</td><td>*20</td><td>60</td><td>40</td><td>120</td></tr>
+             <tr><td>TOTAL</td><td>30</td><td>*110</td><td>*60</td><td>200</td></tr>
+           </tbody>
+         </table>
+      ` }
+  ],
+  es: [
+    { indice: 0, titulo: "Contexto para P1: Tabla de frecuencias",
+      html: `
+        <p>Los ingresos mensuales (en miles de €) de 20 trabajadores autónomos son:</p>
+        <p><code>1,2 1,8 2,1 1,5 2,8 3,2 2,5 1,9 3,7 2,3 2,6 1,4 4,1 2,9 3,5 1,7 2,2 3,1 2,4 4,8</code></p>
+        <p>Completa la tabla de distribución de frecuencias (las celdas marcadas con * son las que debes calcular):</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Intervalo</th><th>nᵢ (frec. abs.)</th><th>fᵢ (frec. rel.)</th><th>Nᵢ (frec. acum. abs.)</th><th>Fᵢ (frec. acum. rel.)</th></tr></thead>
+           <tbody>
+             <tr><td>[1; 2)</td><td>6</td><td>*0,30</td><td>6</td><td>0,30</td></tr>
+             <tr><td>[2; 3)</td><td>8</td><td>0,40</td><td>*14</td><td>0,70</td></tr>
+             <tr><td>[3; 4)</td><td>*4</td><td>0,20</td><td>18</td><td>0,90</td></tr>
+             <tr><td>[4; 5)</td><td>2</td><td>0,10</td><td>20</td><td>*1,00</td></tr>
+             <tr><td>TOTAL</td><td>20</td><td>*1,00</td><td>—</td><td>—</td></tr>
+           </tbody>
+         </table>
+      ` },
+    { indice: 31, titulo: "Contexto para P32: Tabla de contingencia",
+      html: `
+        <p>Una empresa encuesta a 200 clientes sobre su nivel de satisfacción según el canal de compra. Resultados parciales:</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Canal de compra</th><th>Insatisfecho</th><th>Satisfecho</th><th>Muy Satisfecho</th><th>TOTAL</th></tr></thead>
+           <tbody>
+             <tr><td>Online</td><td>10</td><td>50</td><td>20</td><td>*80</td></tr>
+             <tr><td>Tienda Física</td><td>*20</td><td>60</td><td>40</td><td>120</td></tr>
+             <tr><td>TOTAL</td><td>30</td><td>*110</td><td>*60</td><td>200</td></tr>
+           </tbody>
+         </table>
+      ` }
+  ]
+};
+
+// Aplicamos la transformación a cada contexto (en ambos idiomas)
+['en', 'es'].forEach(langKey => {
+  if (contextos[langKey]) {
+    contextos[langKey] = contextos[langKey].map(ctx => ({
+      ...ctx,
+      html: buildInteractiveTable(ctx.html)
+    }));
+  }
+});
+
+// Preguntas (38) – con respuestas en base64 (las mismas de antes)
+const _Q = {
+  en: [
+    // SECTION 1: FREQUENCY TABLES (Q1‑Q3)
+    { q: "Based on the completed table, what percentage of self‑employed workers earns less than €3,000 per month?",
+      o: ["30%", "40%", "50%", "70%"], a: "Mw==" }, // d (3)
+    { q: "In the table from the previous question, the cumulative relative frequency for the interval [2; 3) is Fᵢ = 0.70. Which interpretation is CORRECT?",
+      o: ["70% of workers earn exactly between €2,000 and €3,000 per month.",
+          "70% of workers have monthly income below €3,000.",
+          "30% of workers have monthly income below €2,000.",
+          "The relative frequency of the interval [2; 3) is 0.70."], a: "MQ==" }, // b (1)
+    { q: "A company analyses delivery times of 80 orders. The histogram shows moderate positive skewness. An intern claims: 'We cannot calculate the median from a grouped frequency table because we don't have the exact values.' Is this claim correct?",
+      o: ["Yes; the median can only be calculated from individual, disaggregated data.",
+          "Yes; with grouped data only measures of dispersion can be calculated, not measures of position.",
+          "No, but only if all intervals have the same width.",
+          "No; the median can be estimated by linear interpolation from the cumulative frequency table, identifying the interval that contains the central observation."], a: "Mw==" }, // d (3)
+
+    // SECTION 2: MEASURES OF POSITION (Q4‑Q6)
+    { q: "A shop's daily sales (thousands of €) over 7 days: 8, 9, 10, 11, 12, 13, 35. Which statement best describes the relationship between mean and median?",
+      o: ["The mean (≈14.0) exceeds the median (11) because the outlier 35 pulls the mean upward, making the median more representative.",
+          "The median (14.0) exceeds the mean (11) because the distribution shows negative skewness.",
+          "Mean and median coincide; the data are symmetrically distributed.",
+          "With only 7 observations it is not possible to meaningfully compare mean and median."], a: "MA==" }, // a (0)
+    { q: "Waiting times (minutes) of 9 customers: 2,3,4,4,5,6,7,8,52. When the outlier (52) is removed, what happens?",
+      o: ["Only the median changes; the mean is robust to extreme values.",
+          "Both measures decrease in the same proportion.",
+          "The mean does not change significantly because only one of nine observations is removed.",
+          "The mean drops from ≈10.1 to ≈4.9, while the median shifts from 5 to 4.5, demonstrating its greater robustness."], a: "Mw==" }, // d (3)
+    { q: "Salary distribution: Q₁=€1,800, median=€2,500, Q₃=€3,600, 90th percentile=€5,200. What % earn between €1,800 and €5,200?",
+      o: ["25%", "65%", "50%", "90%"], a: "MQ==" }, // b (1)
+
+    // SECTION 3: MEASURES OF DISPERSION (Q7‑Q10)
+    { q: "Line A: mean=45s, σ=9s; Line B: mean=120s, σ=18s. Which line has greater RELATIVE variability?",
+      o: ["Line B, because its absolute σ (18s) is greater.",
+          "Both have the same relative variability because B's deviation is exactly twice that of A.",
+          "Line A, with CV=20% vs. Line B's CV=15%; greater relative dispersion implies more inconsistency.",
+          "It is not possible to compare relative variabilities when the means are different."], a: "Mg==" }, // c (2)
+    { q: "A dataset has variance σ² = 25. If all values are multiplied by 4 and then 10 is added, what is the new standard deviation?",
+      o: ["20", "90", "100", "25 (unchanged)"], a: "MA==" }, // a (0)
+    { q: "Asset X: mean=1.0%, σ=2.0%; Asset Y: mean=2.0%, σ=4.0%. A manager claims 'Y is twice as volatile as X in relative terms.' Is this correct?",
+      o: ["Yes; Y's σ (4%) is exactly double X's (2%).",
+          "Yes; the range of Y is greater than X's.",
+          "No; in relative terms X has greater relative volatility because its mean is lower.",
+          "No; in relative terms (CV) both have exactly the same volatility (200%). The claim confuses absolute with relative."], a: "Mw==" }, // d (3)
+    { q: "A researcher calculates MAD and SD for sale prices of 50 flats. One record (€8,500,000) is a data entry error. Upon removing it, which statement is most accurate?",
+      o: ["Only the SD will change; MAD is insensitive to extremes.",
+          "Both measures will decrease, but the SD will drop proportionally more than the MAD, because it squares the deviations.",
+          "Both measures will increase because the sample size is reduced.",
+          "The MAD will decrease more than the SD because it does not square deviations."], a: "MQ==" }, // b (1)
+
+    // SECTION 4: SHAPE (Q11‑Q13)
+    { q: "Claims amount has Pearson skewness g₁ = +2.1. Which statement is correct?",
+      o: ["The distribution is platykurtic with a left tail.",
+          "The mean is lower than the median because the distribution is left‑skewed.",
+          "The distribution has a long right tail; a few very high claims pull the mean above the median.",
+          "A skewness of +2.1 indicates a perfectly symmetric distribution."], a: "Mg==" }, // c (2)
+    { q: "Which statement about kurtosis is FALSE?",
+      o: ["A leptokurtic distribution (excess kurtosis K>0) has lighter tails than the normal and data are more concentrated near the mean.",
+          "A mesokurtic distribution has K=0 and tails similar to the normal.",
+          "In finance, high kurtosis indicates extreme events occur more frequently than the normal predicts.",
+          "A platykurtic distribution (K<0) is flatter than the normal and its tails are less pronounced."], a: "MA==" }, // a (0)
+    { q: "Exam scores: mean=5.4; median=6.2; mode=6.8; excess kurtosis K=−0.7. Most precise description?",
+      o: ["Positively skewed and leptokurtic: long right tail and sharp peak.",
+          "Symmetric and mesokurtic: differences negligible.",
+          "Positively skewed and platykurtic: right tail and flat shape.",
+          "Negatively skewed (left tail) and platykurtic: mean < median < mode; K=−0.7 → flatter than normal."], a: "Mw==" }, // d (3)
+
+    // SECTION 5: CONCENTRATION – LORENZ CURVE AND GINI (Q14‑Q16)
+    { q: "Bottom 20% of employees earn 7% of total wage bill; bottom 50% earn 21%. What does this indicate?",
+      o: ["Perfect equality: Lorenz curve coincides with diagonal.",
+          "There is salary concentration: lower‑paid workers receive a share well below their population share, so Lorenz curve lies below equality line.",
+          "Lorenz curve above diagonal → progressive distribution.",
+          "Gini index = 0."], a: "MQ==" }, // b (1)
+    { q: "A country's Gini rose from 0.27 to 0.44 over 15 years, while GDP per capita doubled. Most appropriate interpretation?",
+      o: ["Rise in GDP per capita automatically reduced poverty and inequality.",
+          "A Gini of 0.44 is low and indicates near‑perfect equality.",
+          "Economic growth was not inclusive: although GDP per capita grew, income inequality increased notably, disproportionately benefiting higher‑income groups.",
+          "The Gini can only increase if the country's total population decreases."], a: "Mg==" }, // c (2)
+    { q: "Two regions have Lorenz curves that CROSS. What does this imply for comparison of their Gini indices?",
+      o: ["It is possible for both regions to have similar Gini indices, yet have substantially different distributions; Gini cannot capture this complexity.",
+          "The region with higher Gini is necessarily more unequal at every point.",
+          "Crossing curves imply errors in data; Lorenz curves cannot cross.",
+          "Gini can only be used when Lorenz curves do not cross."], a: "MA==" }, // a (0)
+
+    // SECTION 6: OUTLIER DETECTION (Q17‑Q20)
+    { q: "Manufacturing times: 14,16,17,18,19,20,21,22,24,61. Q₁=17, Q₃=22, IQR=5. Is 61 an outlier by Tukey's IQR criterion?",
+      o: ["No, because only one extreme value.",
+          "No, because 61 < 3×Q₃=66.",
+          "Yes, but only if distribution is normal.",
+          "Yes; upper fence = Q₃+1.5×IQR = 29.5, and 61 > 29.5 → severe outlier."], a: "Mw==" }, // d (3)
+    { q: "Electricity consumption: normal, μ=320 kWh, σ=40 kWh. Empirical rule: between which values will 95% of households fall?",
+      o: ["[280; 360]", "[240; 400]", "[200; 440]", "[300; 340]"], a: "MQ==" }, // b (1)
+    { q: "A billing record of €387,500 in a dataset with mean €4,200 and σ=820 yields z≈466. First methodological step?",
+      o: ["Remove it immediately, as it distorts statistics.",
+          "Replace it with the dataset median.",
+          "Investigate the origin: it could be data entry error, legitimate wholesale, or fraud; each requires different treatment.",
+          "Apply a logarithmic transformation to neutralise its effect."], a: "Mg==" }, // c (2)
+    { q: "After confirming and removing a single upper outlier from 40 observations, which effect will NECESSARILY occur?",
+      o: ["The mean will decrease and the standard deviation will fall; the effect on CV depends on relative magnitudes.",
+          "The median will increase because the centre shifts toward higher values.",
+          "The standard deviation will increase because the sample is now smaller (n=39).",
+          "Kurtosis will remain unchanged because it does not depend on extremes."], a: "MA==" }, // a (0)
+
+    // SECTION 7: EMPIRICAL RULE AND CHEBYSHEV (Q21‑Q24)
+    { q: "Call duration: normal, μ=6 min, σ=1.5 min. Empirical rule: % of calls between 3 and 9 minutes?",
+      o: ["68%", "50%", "99.7%", "95%"], a: "Mw==" }, // d (3)
+    { q: "Unknown distribution, μ=500, σ=50. Chebyshev: minimum % of observations in [350; 650]?",
+      o: ["68%", "At least 88.9%", "At least 95%", "Exactly 99.7%"], a: "MQ==" }, // b (1)
+    { q: "Fundamental difference between empirical rule and Chebyshev?",
+      o: ["Empirical rule is more conservative; Chebyshev provides broader guarantees.",
+          "Chebyshev only works for symmetric distributions; empirical rule is universal.",
+          "Empirical rule applies exclusively to normal distributions and gives exact percentages (68‑95‑99.7); Chebyshev is valid for any distribution with finite mean and variance but offers only minimum bounds.",
+          "Both are equivalent for normal distributions and produce exactly the same results."], a: "Mg==" }, // c (2)
+    { q: "Using μ=500, σ=50, what k guarantees at least 75% of observations within [μ−kσ; μ+kσ] by Chebyshev?",
+      o: ["k=2; interval [400;600] guarantee 1−1/4=75%",
+          "k=1; interval [450;550] guarantee 0%",
+          "k=3; interval [350;650] guarantee ≈88.9%",
+          "k=1.5; interval [425;575] guarantee ≈55.6%"], a: "MA==" }, // a (0)
+
+    // SECTION 8: STANDARDISATION AND LOG TRANSFORM (Q25‑Q27)
+    { q: "Candidate A scored 82 (group mean=68, σ=10); B scored 91 (mean=83, σ=12). Who has better relative standing?",
+      o: ["Candidate B, because absolute score higher.",
+          "Both have same relative standing (gap from mean: 14 vs 8 raw points).",
+          "Cannot compare because tests are different.",
+          "Candidate A, with z=+1.4 vs B's z=+0.67; A is more standard deviations above group mean."], a: "Mw==" }, // d (3)
+    { q: "Annual revenues of 500 companies strongly right‑skewed (g₁=3.8). Analyst applies log transformation. Which effect is expected?",
+      o: ["Log‑transformed distribution will have greater positive skewness.",
+          "Transformation will reduce skewness, bringing distribution closer to symmetric, because it compresses large values relatively more.",
+          "Mean and variance of logs equal original mean and variance divided by ln(10).",
+          "Log transformation is only applicable when data follow a normal distribution."], a: "MQ==" }, // b (1)
+    { q: "What happens to skewness (g₁) and excess kurtosis (K) when standardisation (z=(x−μ)/σ) is applied?",
+      o: ["Both become zero because distribution becomes standard normal.",
+          "Skewness becomes zero but kurtosis remains unchanged.",
+          "Both skewness and kurtosis remain invariant; standardisation is a linear transformation that only rescales data, preserving shape.",
+          "Kurtosis becomes 3 (mesokurtic) and skewness is preserved."], a: "Mg==" }, // c (2)
+
+    // SECTION 9: DATA VISUALISATION (Q28‑Q31)
+    { q: "Bar chart comparing satisfaction scores: 96%,97%,98%,99% with Y‑axis starting at 95% (not 0%). Main statistical problem?",
+      o: ["Truncated Y‑axis visually amplifies 1‑point differences to look proportional to 4×, misleading even though data are correct.",
+          "Bar charts should never be used for percentages; correct chart is pie chart.",
+          "Y‑axis must always start at the minimum value in dataset, so should start at 96%.",
+          "Error is purely aesthetic; truncated axis does not alter statistical interpretation."], a: "MA==" }, // a (0)
+    { q: "Best chart to visualise distribution of salaries (300 employees), identify outliers, and compare spread across three departments?",
+      o: ["Histogram applying Sturges' rule separately for each department.",
+          "Proportional pie chart for each department.",
+          "Line chart with overlapping moving averages.",
+          "Comparative box plot (boxplot), showing median, quartiles, whiskers and outliers for each group."], a: "Mw==" }, // d (3)
+    { q: "Box plot: min=4, Q₁=9, median=13, Q₃=19, upper whisker at 27, isolated point at 42. Which statement is INCORRECT?",
+      o: ["Central 50% lies between 9 and 19 (IQR=10).",
+          "Since lower whisker (Q₁−min=5) is shorter than upper whisker (max−Q₃=8), distribution shows negative skewness (left tail).",
+          "Tukey's upper fence = Q₃+1.5×IQR = 19+15=34; point 42 exceeds it, correctly flagged as outlier.",
+          "Cannot determine exact value of mean from box plot; it could be above or below median."], a: "MQ==" }, // b (1)
+    { q: "3D pie chart showing 4 equal categories (25% each). Main statistical flaw?",
+      o: ["Pie charts cannot accommodate more than 3 categories.",
+          "Pie chart only valid when percentages are different; with equal parts bar chart is correct.",
+          "3D effect distorts visual perception: slices at front appear larger than those at back, even though all represent 25%, misleading the reader.",
+          "No problem; 3D pie chart is best for compositional data with equal parts."], a: "Mg==" }, // c (2)
+
+    // SECTION 10: BIVARIATE DISTRIBUTIONS (Q32‑Q38)
+    { q: "What percentage of Physical Store customers are 'Very Satisfied'? (Use completed table)",
+      o: ["33.3% (=40/120)",
+          "20.0% (=40/200)",
+          "66.7% (=40/60)",
+          "31.3% (=25/80)"], a: "MA==" }, // a (0)
+    { q: "In a 400‑observation contingency table, cell (University, Employed) = 96. Total graduates = 120. Difference between '96/400=24%' and '96/120=80%'?",
+      o: ["No difference; both describe the same proportion.",
+          "96/400 is marginal distribution of graduates; 96/120 is marginal of employed.",
+          "96/400 is conditional P(Employed|Graduate); 96/120 is joint relative frequency.",
+          "96/400 is JOINT relative frequency (probability of being graduate AND employed); 96/120 is CONDITIONAL P(Employed|Graduate)."], a: "Mw==" }, // d (3)
+    { q: "Conditional satisfaction distributions: Online: 12.5% Unsat, 62.5% Sat, 25% VerySat; Physical: 16.7% Unsat, 50% Sat, 33.3% VerySat. Most correct interpretation?",
+      o: ["Differences are so small that channel and satisfaction are independent.",
+          "There is an association: Online shows lower dissatisfaction and higher 'Satisfied' rate, suggesting variables are not independent.",
+          "Since distributions are similar but not identical, variables are perfectly independent.",
+          "Cannot interpret association from conditional frequencies; Pearson's correlation required."], a: "MQ==" }, // b (1)
+    { q: "Conditional means: Juniors €1,750; Seniors €3,650; overall mean €2,450. Which statement is INCORRECT?",
+      o: ["Overall mean is weighted average of conditional means, with weights depending on group sizes.",
+          "Difference of €1,900 suggests positive association between experience and salary.",
+          "Overall mean is necessarily the simple arithmetic average: (1,750+3,650)/2 = €2,700.",
+          "To compute overall mean from conditional means we need the proportion of Juniors and Seniors."], a: "Mg==" }, // c (2)
+    { q: "Conditional distribution of physical activity differs between age groups. Correct interpretation?",
+      o: ["Age group and activity level show a statistical association; this does not necessarily imply causation, but justifies further analysis.",
+          "Age group DIRECTLY CAUSES activity level because conditional frequencies differ.",
+          "If conditional distributions differ, Gini index must exceed 0.5 to be significant.",
+          "Difference implies sample is biased and data unreliable."], a: "MA==" }, // a (0)
+    { q: "Conditional variances: Low σ²=100, Medium σ²=400, High σ²=2500. What does larger σ² for High imply?",
+      o: ["High‑risk clients always receive larger loan amounts.",
+          "Conditional mean for High is necessarily highest.",
+          "Conditional standard deviation for Low is 100 thousand €.",
+          "Greater heterogeneity WITHIN the High‑risk group: loan amounts vary far more (σ=50) than in Low (σ=10) or Medium (σ=20)."], a: "Mw==" }, // d (3)
+    { q: "Summary table: Sales (n=45, mean=2600, median=2200, CV=32%, g₁=+1.6, K=+2.1); IT (n=30, mean=4100, median=4250, CV=14%, g₁=−0.4, K=−0.2); Operations (n=25, mean=1900, median=1850, CV=22%, g₁=+0.3, K=+0.5). Which statement is CORRECT?",
+      o: ["IT has greatest internal salary heterogeneity because its salaries are highest.",
+          "IT is the department with greatest relative homogeneity (CV=14%) and its distribution is approximately symmetric with slight negative skew. Sales shows greatest relative heterogeneity (CV=32%), right‑skewed and leptokurtic (frequent extreme events).",
+          "In Sales, median (2,200) exceeds mean (2,600), confirming positive skewness.",
+          "Excess kurtosis of Operations (K=+0.5) indicates a platykurtic distribution, flatter than normal."], a: "MQ==" } // b (1)
+  ],
+  es: [
+    // SECCIÓN 1: TABLAS DE FRECUENCIAS (P1‑P3)
+    { q: "Según la tabla completada, ¿qué porcentaje de trabajadores autónomos gana menos de 3.000 € al mes?",
+      o: ["30%", "40%", "50%", "70%"], a: "Mw==" },
+    { q: "En la tabla de la pregunta anterior, la frecuencia relativa acumulada para el intervalo [2; 3) es Fᵢ = 0,70. ¿Qué interpretación es CORRECTA?",
+      o: ["El 70% de los trabajadores gana exactamente entre 2.000 y 3.000 € al mes.",
+          "El 70% de los trabajadores tiene ingresos mensuales inferiores a 3.000 €.",
+          "El 30% de los trabajadores tiene ingresos mensuales inferiores a 2.000 €.",
+          "La frecuencia relativa del intervalo [2; 3) es 0,70."], a: "MQ==" },
+    { q: "Una empresa analiza los tiempos de entrega de 80 pedidos. El histograma muestra asimetría positiva moderada. Un becario afirma: 'No podemos calcular la mediana a partir de una tabla de frecuencias agrupadas porque no tenemos los valores exactos.' ¿Es correcta esta afirmación?",
+      o: ["Sí; la mediana solo puede calcularse con datos individuales desagregados.",
+          "Sí; con datos agrupados solo se pueden calcular medidas de dispersión, no de posición.",
+          "No, pero solo si todos los intervalos tienen la misma amplitud.",
+          "No; la mediana puede estimarse por interpolación lineal a partir de la tabla de frecuencias acumuladas, identificando el intervalo que contiene la observación central."], a: "Mw==" },
+
+    // SECCIÓN 2: MEDIDAS DE POSICIÓN (P4‑P6)
+    { q: "Las ventas diarias de una tienda (en miles de €) durante 7 días son: 8, 9, 10, 11, 12, 13, 35. ¿Qué afirmación describe mejor la relación entre la media y la mediana?",
+      o: ["La media (≈14,0) supera a la mediana (11) porque el valor atípico 35 eleva la media, haciendo que la mediana sea más representativa.",
+          "La mediana (14,0) supera a la media (11) porque la distribución presenta asimetría negativa.",
+          "Media y mediana coinciden; los datos están distribuidos simétricamente.",
+          "Con solo 7 observaciones no es posible comparar media y mediana de forma significativa."], a: "MA==" },
+    { q: "Tiempos de espera (minutos) de 9 clientes: 2, 3, 4, 4, 5, 6, 7, 8, 52. Al eliminar el valor atípico (52), ¿qué ocurre?",
+      o: ["Solo cambia la mediana; la media es robusta frente a valores extremos.",
+          "Ambas medidas disminuyen en la misma proporción.",
+          "La media no cambia significativamente porque solo se elimina una de las nueve observaciones.",
+          "La media cae de ≈10,1 a ≈4,9, mientras que la mediana pasa de 5 a 4,5, lo que demuestra su mayor robustez."], a: "Mw==" },
+    { q: "Distribución salarial: Q₁=1.800 €, mediana=2.500 €, Q₃=3.600 €, percentil 90=5.200 €. ¿Qué porcentaje gana entre 1.800 € y 5.200 €?",
+      o: ["25%", "65%", "50%", "90%"], a: "MQ==" },
+
+    // SECCIÓN 3: MEDIDAS DE DISPERSIÓN (P7‑P10)
+    { q: "Línea A: media=45 s, σ=9 s; Línea B: media=120 s, σ=18 s. ¿Qué línea tiene mayor variabilidad RELATIVA?",
+      o: ["La línea B, porque su σ absoluta (18 s) es mayor.",
+          "Ambas tienen la misma variabilidad relativa porque la desviación de B es exactamente el doble que la de A.",
+          "La línea A, con CV=20% frente al CV=15% de la línea B; mayor dispersión relativa implica mayor inconsistencia.",
+          "No es posible comparar variabilidades relativas cuando las medias son distintas."], a: "Mg==" },
+    { q: "Un conjunto de datos tiene varianza σ² = 25. Si todos los valores se multiplican por 4 y luego se suma 10, ¿cuál es la nueva desviación típica?",
+      o: ["20", "90", "100", "25 (sin cambios)"], a: "MA==" },
+    { q: "Activo X: media=1,0%, σ=2,0%; Activo Y: media=2,0%, σ=4,0%. Un gestor afirma 'Y es el doble de volátil que X en términos relativos.' ¿Es correcto?",
+      o: ["Sí; la σ de Y (4%) es exactamente el doble que la de X (2%).",
+          "Sí; el recorrido de Y es mayor que el de X.",
+          "No; en términos relativos X tiene mayor volatilidad relativa porque su media es menor.",
+          "No; en términos relativos (CV) ambos tienen exactamente la misma volatilidad (200%). La afirmación confunde lo absoluto con lo relativo."], a: "Mw==" },
+    { q: "Un investigador calcula la DMA y la DT para los precios de venta de 50 pisos. Un registro (8.500.000 €) es un error de entrada de datos. Al eliminarlo, ¿qué afirmación es más precisa?",
+      o: ["Solo cambiará la DT; la DMA es insensible a los extremos.",
+          "Ambas medidas disminuirán, pero la DT caerá proporcionalmente más que la DMA, porque eleva al cuadrado las desviaciones.",
+          "Ambas medidas aumentarán porque se reduce el tamaño muestral.",
+          "La DMA disminuirá más que la DT porque no eleva al cuadrado las desviaciones."], a: "MQ==" },
+
+    // SECCIÓN 4: FORMA (P11‑P13)
+    { q: "El importe de los siniestros tiene asimetría de Pearson g₁ = +2,1. ¿Qué afirmación es correcta?",
+      o: ["La distribución es platicúrtica con cola izquierda.",
+          "La media es inferior a la mediana porque la distribución es asimétrica hacia la izquierda.",
+          "La distribución tiene una cola derecha larga; unos pocos siniestros muy elevados elevan la media por encima de la mediana.",
+          "Una asimetría de +2,1 indica una distribución perfectamente simétrica."], a: "Mg==" },
+    { q: "¿Qué afirmación sobre la curtosis es FALSA?",
+      o: ["Una distribución leptocúrtica (curtosis en exceso K>0) tiene colas más ligeras que la normal y los datos están más concentrados cerca de la media.",
+          "Una distribución mesocúrtica tiene K=0 y colas similares a la normal.",
+          "En finanzas, una curtosis elevada indica que los eventos extremos ocurren con más frecuencia de lo que predice la normal.",
+          "Una distribución platicúrtica (K<0) es más plana que la normal y sus colas son menos pronunciadas."], a: "MA==" },
+    { q: "Notas de un examen: media=5,4; mediana=6,2; moda=6,8; curtosis en exceso K=−0,7. Descripción más precisa:",
+      o: ["Asimétrica positiva y leptocúrtica: cola derecha larga y pico pronunciado.",
+          "Simétrica y mesocúrtica: diferencias despreciables.",
+          "Asimétrica positiva y platicúrtica: cola derecha y forma aplanada.",
+          "Asimétrica negativa (cola izquierda) y platicúrtica: media < mediana < moda; K=−0,7 → más plana que la normal."], a: "Mw==" },
+
+    // SECCIÓN 5: CONCENTRACIÓN – CURVA DE LORENZ Y GINI (P14‑P16)
+    { q: "El 20% inferior de los empleados recibe el 7% de la masa salarial total; el 50% inferior recibe el 21%. ¿Qué indica esto?",
+      o: ["Igualdad perfecta: la curva de Lorenz coincide con la diagonal.",
+          "Existe concentración salarial: los trabajadores menos remunerados reciben una parte muy inferior a su proporción poblacional, por lo que la curva de Lorenz se sitúa por debajo de la línea de igualdad.",
+          "Curva de Lorenz por encima de la diagonal → distribución progresiva.",
+          "Índice de Gini = 0."], a: "MQ==" },
+    { q: "El Gini de un país pasó de 0,27 a 0,44 en 15 años, mientras que el PIB per cápita se duplicó. Interpretación más adecuada:",
+      o: ["El aumento del PIB per cápita redujo automáticamente la pobreza y la desigualdad.",
+          "Un Gini de 0,44 es bajo e indica una igualdad casi perfecta.",
+          "El crecimiento económico no fue inclusivo: aunque el PIB per cápita creció, la desigualdad de ingresos aumentó notablemente, beneficiando desproporcionadamente a los grupos de renta más alta.",
+          "El Gini solo puede aumentar si la población total del país disminuye."], a: "Mg==" },
+    { q: "Dos regiones tienen curvas de Lorenz que SE CRUZAN. ¿Qué implica esto para la comparación de sus índices de Gini?",
+      o: ["Es posible que ambas regiones tengan índices de Gini similares y, sin embargo, distribuciones sustancialmente diferentes; el Gini no puede capturar esta complejidad.",
+          "La región con mayor Gini es necesariamente más desigual en todos los puntos.",
+          "El cruce de curvas implica errores en los datos; las curvas de Lorenz no pueden cruzarse.",
+          "El Gini solo puede usarse cuando las curvas de Lorenz no se cruzan."], a: "MA==" },
+
+    // SECCIÓN 6: DETECCIÓN DE VALORES ATÍPICOS (P17‑P20)
+    { q: "Tiempos de fabricación: 14, 16, 17, 18, 19, 20, 21, 22, 24, 61. Q₁=17, Q₃=22, RIC=5. ¿Es 61 un valor atípico según el criterio RIC de Tukey?",
+      o: ["No, porque solo hay un valor extremo.",
+          "No, porque 61 < 3×Q₃=66.",
+          "Sí, pero solo si la distribución es normal.",
+          "Sí; valla superior = Q₃+1,5×RIC = 29,5, y 61 > 29,5 → valor atípico severo."], a: "Mw==" },
+    { q: "Consumo eléctrico: normal, μ=320 kWh, σ=40 kWh. Regla empírica: ¿entre qué valores se situará el 95% de los hogares?",
+      o: ["[280; 360]", "[240; 400]", "[200; 440]", "[300; 340]"], a: "MQ==" },
+    { q: "Un registro de facturación de 387.500 € en un conjunto de datos con media 4.200 € y σ=820 produce z≈466. ¿Cuál es el primer paso metodológico?",
+      o: ["Eliminarlo inmediatamente, ya que distorsiona las estadísticas.",
+          "Sustituirlo por la mediana del conjunto de datos.",
+          "Investigar el origen: podría ser un error de entrada de datos, una venta mayorista legítima o fraude; cada caso requiere un tratamiento diferente.",
+          "Aplicar una transformación logarítmica para neutralizar su efecto."], a: "Mg==" },
+    { q: "Tras confirmar y eliminar un único valor atípico superior de 40 observaciones, ¿qué efecto se producirá NECESARIAMENTE?",
+      o: ["La media disminuirá y la desviación típica descenderá; el efecto sobre el CV depende de las magnitudes relativas.",
+          "La mediana aumentará porque el centro se desplaza hacia valores más altos.",
+          "La desviación típica aumentará porque la muestra es ahora más pequeña (n=39).",
+          "La curtosis no cambiará porque no depende de los extremos."], a: "MA==" },
+
+    // SECCIÓN 7: REGLA EMPÍRICA Y CHEBYSHEV (P21‑P24)
+    { q: "Duración de llamadas: normal, μ=6 min, σ=1,5 min. Regla empírica: ¿qué % de llamadas se sitúa entre 3 y 9 minutos?",
+      o: ["68%", "50%", "99,7%", "95%"], a: "Mw==" },
+    { q: "Distribución desconocida, μ=500, σ=50. Chebyshev: ¿porcentaje mínimo de observaciones en [350; 650]?",
+      o: ["68%", "Al menos 88,9%", "Al menos 95%", "Exactamente 99,7%"], a: "MQ==" },
+    { q: "Diferencia fundamental entre la regla empírica y Chebyshev:",
+      o: ["La regla empírica es más conservadora; Chebyshev ofrece garantías más amplias.",
+          "Chebyshev solo funciona con distribuciones simétricas; la regla empírica es universal.",
+          "La regla empírica se aplica exclusivamente a distribuciones normales y ofrece porcentajes exactos (68‑95‑99,7); Chebyshev es válido para cualquier distribución con media y varianza finitas, pero solo ofrece cotas mínimas.",
+          "Ambos son equivalentes para distribuciones normales y producen exactamente los mismos resultados."], a: "Mg==" },
+    { q: "Con μ=500, σ=50, ¿qué k garantiza al menos el 75% de las observaciones en [μ−kσ; μ+kσ] según Chebyshev?",
+      o: ["k=2; intervalo [400;600] garantía 1−1/4=75%",
+          "k=1; intervalo [450;550] garantía 0%",
+          "k=3; intervalo [350;650] garantía ≈88,9%",
+          "k=1,5; intervalo [425;575] garantía ≈55,6%"], a: "MA==" },
+
+    // SECCIÓN 8: TIPIFICACIÓN Y TRANSFORMACIÓN LOGARÍTMICA (P25‑P27)
+    { q: "El candidato A obtuvo 82 puntos (media del grupo=68, σ=10); B obtuvo 91 (media=83, σ=12). ¿Quién tiene mejor posición relativa?",
+      o: ["El candidato B, porque su puntuación absoluta es mayor.",
+          "Ambos tienen la misma posición relativa (diferencia respecto a la media: 14 vs 8 puntos brutos).",
+          "No es posible comparar porque las pruebas son diferentes.",
+          "El candidato A, con z=+1,4 frente a z=+0,67 de B; A está más desviaciones típicas por encima de la media del grupo."], a: "Mw==" },
+    { q: "Los ingresos anuales de 500 empresas presentan fuerte asimetría positiva (g₁=3,8). Un analista aplica la transformación logarítmica. ¿Qué efecto se espera?",
+      o: ["La distribución transformada logarítmicamente tendrá mayor asimetría positiva.",
+          "La transformación reducirá la asimetría, acercando la distribución a la simetría, porque comprime los valores grandes en mayor medida.",
+          "La media y la varianza de los logaritmos son iguales a la media y varianza originales divididas por ln(10).",
+          "La transformación logarítmica solo es aplicable cuando los datos siguen una distribución normal."], a: "MQ==" },
+    { q: "¿Qué ocurre con la asimetría (g₁) y la curtosis en exceso (K) al aplicar la tipificación (z=(x−μ)/σ)?",
+      o: ["Ambas se anulan porque la distribución se convierte en una normal estándar.",
+          "La asimetría se anula pero la curtosis no cambia.",
+          "Tanto la asimetría como la curtosis permanecen invariantes; la tipificación es una transformación lineal que solo reescala los datos, preservando la forma.",
+          "La curtosis pasa a ser 3 (mesocúrtica) y la asimetría se conserva."], a: "Mg==" },
+
+    // SECCIÓN 9: VISUALIZACIÓN DE DATOS (P28‑P31)
+    { q: "Un gráfico de barras compara puntuaciones de satisfacción: 96%, 97%, 98%, 99%, con el eje Y comenzando en 95% (no en 0%). ¿Cuál es el principal problema estadístico?",
+      o: ["El eje Y truncado amplifica visualmente las diferencias de 1 punto para que parezcan proporcionales a 4×, lo que induce a error aunque los datos sean correctos.",
+          "Los gráficos de barras nunca deben usarse para porcentajes; el gráfico correcto es el circular.",
+          "El eje Y debe comenzar siempre en el valor mínimo del conjunto de datos, por lo que debería empezar en 96%.",
+          "El error es puramente estético; el eje truncado no altera la interpretación estadística."], a: "MA==" },
+    { q: "¿Cuál es el mejor gráfico para visualizar la distribución de salarios (300 empleados), identificar valores atípicos y comparar la dispersión entre tres departamentos?",
+      o: ["Histograma aplicando la regla de Sturges por separado para cada departamento.",
+          "Diagrama de sectores proporcional para cada departamento.",
+          "Gráfico de líneas con medias móviles superpuestas.",
+          "Diagrama de caja comparativo (boxplot), que muestra la mediana, los cuartiles, los bigotes y los valores atípicos de cada grupo."], a: "Mw==" },
+    { q: "Diagrama de caja: mín=4, Q₁=9, mediana=13, Q₃=19, bigote superior en 27, punto aislado en 42. ¿Qué afirmación es INCORRECTA?",
+      o: ["El 50% central se sitúa entre 9 y 19 (RIC=10).",
+          "Como el bigote inferior (Q₁−mín=5) es más corto que el superior (máx−Q₃=8), la distribución presenta asimetría negativa (cola izquierda).",
+          "La valla superior de Tukey = Q₃+1,5×RIC = 19+15=34; el punto 42 la supera, identificado correctamente como valor atípico.",
+          "No se puede determinar el valor exacto de la media a partir del diagrama de caja; podría estar por encima o por debajo de la mediana."], a: "MQ==" },
+    { q: "Gráfico circular 3D que muestra 4 categorías iguales (25% cada una). ¿Cuál es el principal defecto estadístico?",
+      o: ["Los gráficos circulares no pueden incluir más de 3 categorías.",
+          "El gráfico circular solo es válido cuando los porcentajes son diferentes; con partes iguales el correcto es el de barras.",
+          "El efecto 3D distorsiona la percepción visual: los sectores frontales parecen más grandes que los traseros, aunque todos representen el 25%, lo que induce a error al lector.",
+          "Sin problema; el gráfico circular 3D es el mejor para datos composicionales con partes iguales."], a: "Mg==" },
+
+    // SECCIÓN 10: DISTRIBUCIONES BIVARIADAS (P32‑P38)
+    { q: "¿Qué porcentaje de clientes de Tienda Física están 'Muy Satisfechos'? (Usa la tabla completada)",
+      o: ["33,3% (=40/120)",
+          "20,0% (=40/200)",
+          "66,7% (=40/60)",
+          "31,3% (=25/80)"], a: "MA==" },
+    { q: "En una tabla de contingencia de 400 observaciones, la celda (Universidad, Empleado) = 96. Total graduados = 120. Diferencia entre '96/400=24%' y '96/120=80%':",
+      o: ["Ninguna diferencia; ambos describen la misma proporción.",
+          "96/400 es la distribución marginal de graduados; 96/120 es la marginal de empleados.",
+          "96/400 es P(Empleado|Graduado) condicional; 96/120 es la frecuencia relativa conjunta.",
+          "96/400 es la frecuencia relativa CONJUNTA (probabilidad de ser graduado Y empleado); 96/120 es la P(Empleado|Graduado) CONDICIONAL."], a: "Mw==" },
+    { q: "Distribuciones condicionales de satisfacción: Online: 12,5% Insatisfechos, 62,5% Satisfechos, 25% Muy Satisfechos; Física: 16,7% Insatisfechos, 50% Satisfechos, 33,3% Muy Satisfechos. Interpretación más correcta:",
+      o: ["Las diferencias son tan pequeñas que el canal y la satisfacción son independientes.",
+          "Existe una asociación: Online muestra menor insatisfacción y mayor tasa de 'Satisfechos', lo que sugiere que las variables no son independientes.",
+          "Como las distribuciones son similares pero no idénticas, las variables son perfectamente independientes.",
+          "No se puede interpretar la asociación a partir de frecuencias condicionales; se requiere la correlación de Pearson."], a: "MQ==" },
+    { q: "Medias condicionales: Juniors 1.750 €; Seniors 3.650 €; media global 2.450 €. ¿Qué afirmación es INCORRECTA?",
+      o: ["La media global es la media ponderada de las medias condicionales, con pesos que dependen de los tamaños de grupo.",
+          "Una diferencia de 1.900 € sugiere una asociación positiva entre experiencia y salario.",
+          "La media global es necesariamente la media aritmética simple: (1.750+3.650)/2 = 2.700 €.",
+          "Para calcular la media global a partir de las medias condicionales necesitamos la proporción de Juniors y Seniors."], a: "Mg==" },
+    { q: "La distribución condicional de actividad física difiere entre grupos de edad. Interpretación correcta:",
+      o: ["El grupo de edad y el nivel de actividad muestran una asociación estadística; esto no implica necesariamente causalidad, pero justifica un análisis más profundo.",
+          "El grupo de edad CAUSA DIRECTAMENTE el nivel de actividad porque las frecuencias condicionales difieren.",
+          "Si las distribuciones condicionales difieren, el índice de Gini debe superar 0,5 para ser significativo.",
+          "La diferencia implica que la muestra está sesgada y los datos no son fiables."], a: "MA==" },
+    { q: "Varianzas condicionales: Bajo σ²=100, Medio σ²=400, Alto σ²=2500. ¿Qué implica una σ² mayor para el grupo Alto?",
+      o: ["Los clientes de alto riesgo siempre reciben préstamos de mayor importe.",
+          "La media condicional del grupo Alto es necesariamente la más alta.",
+          "La desviación típica condicional del grupo Bajo es de 100 miles de €.",
+          "Mayor heterogeneidad DENTRO del grupo de alto riesgo: los importes de los préstamos varían mucho más (σ=50) que en el grupo Bajo (σ=10) o Medio (σ=20)."], a: "Mw==" },
+    { q: "Tabla resumen: Ventas (n=45, media=2600, mediana=2200, CV=32%, g₁=+1,6, K=+2,1); TI (n=30, media=4100, mediana=4250, CV=14%, g₁=−0,4, K=−0,2); Operaciones (n=25, media=1900, mediana=1850, CV=22%, g₁=+0,3, K=+0,5). ¿Qué afirmación es CORRECTA?",
+      o: ["TI tiene mayor heterogeneidad salarial interna porque sus salarios son los más altos.",
+          "TI es el departamento con mayor homogeneidad relativa (CV=14%) y su distribución es aproximadamente simétrica con ligera asimetría negativa. Ventas muestra la mayor heterogeneidad relativa (CV=32%), asimétrica a la derecha y leptocúrtica (eventos extremos frecuentes).",
+          "En Ventas, la mediana (2.200) supera a la media (2.600), confirmando la asimetría positiva.",
+          "La curtosis en exceso de Operaciones (K=+0,5) indica una distribución platicúrtica, más plana que la normal."], a: "MQ==" }
+  ]
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+let lang = 'en', startTime = null, timerInterval = null, isFinishing = false;
+let sec = { fs: 0, tabs: 0 };
+let _rk = 0;
+
+function _xa(e){ return parseInt(atob(e)); }
+
+// Habilitar botón de inicio solo si se aceptan términos
+document.getElementById('accept-terms').addEventListener('change', function(e) {
+  document.getElementById('txt-btnStart').disabled = !e.target.checked;
+});
+
+function initExam() {
+  if (!document.getElementById('accept-terms').checked) {
+    alert(lang === 'es' ? 'Debes aceptar las normas del examen.' : 'You must accept the exam rules.');
+    return;
+  }
+  // Autenticación ya realizada en index.html (sessionStorage)
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  startTime = new Date();
+  startTimer();
+  renderQ();
+  initSecurity();
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}
+
+function initSecurity() {
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && !isFinishing) {
+      sec.fs++;
+      updateSecCounters();
+      showBlock();
+    }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !isFinishing) {
+      sec.tabs++;
+      updateSecCounters();
+    }
+  });
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('copy', e => { if (!isFinishing) e.preventDefault(); });
+}
+
+function updateSecCounters() {
+  ['fs','tab'].forEach(k => {
+    const v = k === 'fs' ? sec.fs : sec.tabs;
+    const el = document.getElementById('sb-'+k);
+    const mini = document.getElementById('sb-'+k+'-mini');
+    if (el) el.textContent = v;
+    if (mini) mini.textContent = v;
+  });
+}
+
+function showBlock() {
+  const el = document.getElementById('security-block');
+  el.style.display = 'flex';
+}
+
+function dismissBlock() {
+  document.getElementById('security-block').style.display = 'none';
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((new Date() - startTime) / 1000);
+    const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    const disp = document.getElementById('timer-display');
+    if (disp) {
+      disp.textContent = `${h}:${m}:${s}`;
+      if (_TL > 0) {
+        const limitSec = _TL * 60;
+        if (elapsed >= limitSec - 300) disp.classList.add('warn');
+        if (elapsed >= limitSec) { clearInterval(timerInterval); finishExam(true); }
+      }
+    }
+  }, 1000);
+}
+
+function getElapsedStr() {
+  if (!startTime) return '—';
+  const elapsed = Math.floor((new Date() - startTime) / 1000);
+  const h = Math.floor(elapsed / 3600);
+  const m = Math.floor((elapsed % 3600) / 60);
+  const s = elapsed % 60;
+  return `${h > 0 ? h + 'h ' : ''}${m}m ${s}s`;
+}
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`#btn-${l}, #btn-login-${l}`).forEach(b => b.classList.add('active'));
+  applyTexts();
+  renderQ();
+}
+
+function applyTexts() {
+  const t = _T[lang];
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+  set('txt-loginT', t.loginT); set('txt-loginM', t.loginM); set('txt-btnStart', t.btnStart);
+  set('txt-secMsg', t.secMsg); set('txt-sbFs', t.sbFs); set('txt-sbTab', t.sbTab);
+  set('txt-btnReload', t.btnReload);
+  set('txt-btnFinish', t.btnFinish); set('txt-step1', t.step1); set('txt-step2', t.step2);
+  set('txt-step3', t.step3); set('txt-step4', t.step4); set('txt-step5', t.step5);
+  set('txt-hIdent', t.hIdent); set('lbl-name', t.lblName); set('lbl-id', t.lblId);
+  set('lbl-degree', t.lblDegree); set('lbl-subject', t.lblSubject);
+  set('txt-btnNext1', t.btnNext); set('txt-btnNext2', t.btnNext); set('txt-btnNext3', t.btnNext); set('txt-btnNext4', t.btnNext);
+  set('txt-btnBack1', t.btnBack); set('txt-btnBack2', t.btnBack); set('txt-btnBack3', t.btnBack); set('txt-btnBack4', t.btnBack);
+  set('txt-btnFinal', t.btnFinal); set('txt-calcTitle', t.calcTitle);
+  set('txt-hP1', t.hP1); set('txt-hP1sub', t.hP1sub);
+  set('txt-hP2', t.hP2); set('txt-hP2sub', t.hP2sub);
+  set('txt-hP3', t.hP3); set('txt-hP3sub', t.hP3sub);
+  set('txt-hP4', t.hP4); set('txt-hP4sub', t.hP4sub);
+  set('txt-timerLabel', t.timerLabel); set('txt-incLabel', t.incLabel);
+  set('txt-resHeader', t.resHeader); set('txt-btnPdf', t.btnPdf);
+  set('txt-accept', t.accept);
+  set('txt-normas', t.normas);
+  set('txt-norma1', t.norma1);
+  set('txt-norma2', t.norma2);
+  set('txt-norma3', t.norma3);
+  set('txt-norma4', t.norma4);
+  set('txt-norma5', t.norma5);
+}
+
+function renderQ() {
+  // Vaciar contenedores
+  for (let i = 1; i <= 4; i++) {
+    const box = document.getElementById(`q-box-${i}`);
+    if (box) box.innerHTML = '';
+  }
+
+  const qs = _Q[lang];
+  const ctxs = contextos[lang];
+
+  qs.forEach((item, i) => {
+    let blockIndex = -1;
+    for (let b = 0; b < BLOCKS.length; b++) {
+      if (i >= BLOCKS[b].start && i < BLOCKS[b].end) {
+        blockIndex = b + 1;
+        break;
+      }
+    }
+    if (blockIndex === -1) return;
+
+    const container = document.getElementById(`q-box-${blockIndex}`);
+    if (!container) return;
+
+    // Insertar contexto si existe
+    ctxs.forEach(ctx => {
+      if (ctx.indice === i) {
+        const temp = document.createElement('div');
+        temp.innerHTML = ctx.html;
+        while (temp.firstChild) {
+          container.appendChild(temp.firstChild);
+        }
+      }
+    });
+
+    // Crear bloque de pregunta
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question-block';
+    qDiv.id = `qblock-${i}`;
+    qDiv.innerHTML = `
+      <div class="q-num">${_T[lang].colQ} ${i + 1}</div>
+      <div class="q-text">${item.q}</div>
+      ${item.o.map((opt, oi) => `
+        <label class="opt-label">
+          <input type="radio" name="q${i}" value="${oi}" onchange="onAnswered(${i}, ${qs.length})">
+          ${opt}
+        </label>`).join('')}
+    `;
+    container.appendChild(qDiv);
+  });
+}
+
+function onAnswered(qIdx, total) {
+  document.getElementById('qblock-' + qIdx)?.classList.add('answered');
+  BLOCKS.forEach((block, bIndex) => {
+    const answered = countAnswered(block.start, block.end);
+    const totalInBlock = block.end - block.start;
+    const prog = document.getElementById(`prog${bIndex+1}`);
+    if (prog) prog.style.width = (answered / totalInBlock * 100) + '%';
+  });
+}
+
+function countAnswered(from, to) {
+  let c = 0;
+  for (let i = from; i < to; i++) {
+    if (document.querySelector(`input[name="q${i}"]:checked`)) c++;
+  }
+  return c;
+}
+
+function gotoTab(idx) {
+  document.querySelectorAll('.fsec, .step').forEach(el => el.classList.remove('active'));
+  document.getElementById('t' + idx).classList.add('active');
+  document.getElementById('s' + idx).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Calculadora
+let cExp = "";
+function cIn(v) { if (cExp === "0" || cExp === "Error") cExp = ""; cExp += v; updateC(); }
+function cFn(f) { cExp += f; updateC(); }
+function cClear() { cExp = ""; updateC(); }
+function updateC() {
+  let d = cExp.replace(/Math\.sqrt\(/g, '√(').replace(/\*\*/g, '^').replace(/Math\.PI/g, 'π');
+  document.getElementById('calc-display').value = d || "0";
+}
+function cRes() {
+  try {
+    let result = eval(cExp);
+    result = parseFloat(result.toFixed(10));
+    cExp = result.toString();
+    updateC();
+  } catch (e) {
+    document.getElementById('calc-display').value = "Error";
+    cExp = "";
+  }
+}
+
+async function finishExam(auto = false) {
+  if (!auto && !confirm(_T[lang].confirmMsg)) return;
+
+  isFinishing = true;
+  clearInterval(timerInterval);
+  const elapsed = getElapsedStr();
+  const tiempoSegundos = startTime ? Math.floor((new Date() - startTime) / 1000) : 0;
+
+  if (document.fullscreenElement) {
+    await document.exitFullscreen().catch(() => {});
+  }
+
+  let score = 0;
+  let detailsRows = '';
+  const qs = _Q[lang];
+
+  // Recoger respuestas para enviar a Supabase
+  const letras = ['A','B','C','D'];
+  const respuestasEnvio = {};
+  qs.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    respuestasEnvio[`p${i+1}`] = sel ? letras[parseInt(sel.value)] : null;
+  });
+
+  // Enviar a Supabase en segundo plano (sin bloquear el reporte)
+  const EXAMEN_ID = '2df7125e-e2a8-48f2-aeb8-0e8617adeac8';
+  const estudiante = window._estudiante;
+  let guardadoOk = false;
+  if (estudiante && window._sb) {
+    try {
+      const { error } = await window._sb.rpc('corregir_examen', {
+        p_examen_id:     EXAMEN_ID,
+        p_estudiante_id: estudiante.id,
+        p_respuestas:    respuestasEnvio,
+        p_tiempo_usado:  tiempoSegundos,
+        p_incidencias:   { fullscreen: sec.fs, tabs: sec.tabs }
+      });
+      if (!error) guardadoOk = true;
+    } catch(e) { console.error('Supabase:', e); }
+  }
+
+  qs.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const ansIdx = sel ? parseInt(sel.value) : -1;
+    const correctIdx = _xa(item.a);
+    const answered = ansIdx !== -1;
+    const isCorrect = answered && (ansIdx === correctIdx);
+    if (isCorrect) score++;
+
+    const answerText  = answered ? item.o[ansIdx]     : '—';
+    const correctText = item.o[correctIdx];
+    const statusIcon  = !answered ? '○' : isCorrect ? '✓' : '✗';
+    const statusColor = !answered ? '#aaa' : isCorrect ? '#27ae60' : '#e31e24';
+
+    detailsRows += `
+      <tr>
+        <td>${item.q.substring(0, 60)}...</td>
+        <td>${answerText}</td>
+        <td><b>${correctText}</b></td>
+        <td style="color:${statusColor};font-weight:700;text-align:center">${statusIcon}</td>
+      </tr>`;
+  });
+
+  const nota     = ((score / qs.length) * 10).toFixed(2);
+  const t        = _T[lang];
+
+  const totalInc = sec.fs + sec.tabs;
+  let riskLabel, riskColor;
+  if      (totalInc === 0)  { riskLabel = lang === 'es' ? 'Sin incidencias ✓' : 'No incidents ✓';  riskColor = '#27ae60'; }
+  else if (totalInc <= 2)   { riskLabel = lang === 'es' ? 'Bajo'   : 'Low';    riskColor = '#e67e22'; }
+  else if (totalInc <= 5)   { riskLabel = lang === 'es' ? 'Medio'  : 'Medium'; riskColor = '#e67e22'; }
+  else                      { riskLabel = lang === 'es' ? 'Alto ⚠' : 'High ⚠'; riskColor = '#e31e24'; }
+
+  const student = {
+    name:    document.getElementById('fn-name')?.value    || '—',
+    id:      document.getElementById('fn-id')?.value      || '—',
+    degree:  document.getElementById('fn-degree')?.value  || '—',
+    subject: document.getElementById('fn-subject')?.value || '—',
+  };
+
+  document.getElementById('res-doc').innerHTML = `
+    <div style="text-align:center;margin-bottom:28px">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="48" style="margin-bottom:12px">
+      <h1 style="color:#E31E24;font-size:1.4rem;text-transform:uppercase;letter-spacing:1px">${t.resH}</h1>
+      <p style="color:#777;font-size:11px;margin-top:4px">${new Date().toLocaleString()}</p>
+    </div>
+
+    <table class="dtbl">
+       <tr><td><b>${t.lblName}:</b></td><td>${student.name}</td><td><b>${t.lblId}:</b></td><td>${student.id}</td></tr>
+       <tr><td><b>${t.lblDegree}:</b></td><td>${student.degree}</td><td><b>${t.lblSubject}:</b></td><td>${student.subject}</td></tr>
+    </table>
+
+    <div class="grade-box">
+      <div class="grade-num">${nota}<span style="font-size:1.5rem;color:#999"> / 10</span></div>
+      <div style="margin-top:10px;font-size:13px;color:#555">${t.resCorrect}: <b>${score} / ${qs.length}</b></div>
+      <div style="margin-top:6px;font-size:12px;color:#aaa">${t.resTime}: ${elapsed}</div>
+      <div style="margin-top:8px;font-size:12px;font-weight:700;color:${guardadoOk?'#27ae60':'#e67e22'}">
+        ${guardadoOk
+          ? (lang==='es'?'✅ Resultado guardado en el servidor.':'✅ Result saved to server.')
+          : (lang==='es'?'⚠️ Guarda este PDF como respaldo.':'⚠️ Save this PDF as backup.')}
+      </div>
+    </div>
+
+    <table class="dtbl">
+      <thead><tr><th style="width:42%">${t.colQ}</th><th style="width:22%">${t.colR}</th><th style="width:22%">${t.colC}</th><th style="width:14%;text-align:center">${t.colS}</th></tr></thead>
+      <tbody>${detailsRows}</tbody>
+    </table>
+
+    <div class="sec-audit">
+      <div class="sec-title">🔒 ${t.resSec}</div>
+      <table>
+        <tr><td>${t.resFs}:</td><td class="${sec.fs === 0 ? 'badge-ok' : sec.fs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.fs}</td></tr>
+        <tr><td>${t.resTabs}:</td><td class="${sec.tabs === 0 ? 'badge-ok' : sec.tabs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.tabs}</td></tr>
+        <tr><td>${t.resRisk}:</td><td style="color:${riskColor};font-weight:700">${riskLabel}</td></tr>
+      </table>
+    </div>
+
+    <p style="font-size:9px;color:#ccc;text-align:center;margin-top:20px">
+      Automatically generated document · Universidad Europea · ${new Date().toLocaleDateString()}
+    </p>
+  `;
+
+  document.getElementById('txt-resHeader').innerText = t.resHeader;
+  document.getElementById('txt-btnPdf').innerText     = t.btnPdf;
+  document.getElementById('app').style.display        = 'none';
+  document.getElementById('preview').style.display    = 'block';
+}
+
+// i18n texts
+const _T = {
+  en: {
+    loginT:"Exam Access", loginM:"Enter the key provided by your instructor", btnStart:"Start Exam",
+    secMsg:"You exited full screen or switched tabs. The system has logged this incident.", sbFs:"Screen exits", sbTab:"Tab switches",
+    btnReload:"Return to Exam",
+    btnFinish:"Submit Exam", step1:"Identification", step2:"Block I (1-16)", step3:"Block II (17-24)", step4:"Block III (25-31)", step5:"Block IV (32-38)",
+    hIdent:"Student Details", lblName:"Full Name", lblId:"Student ID", lblDegree:"Degree / Programme", lblSubject:"Subject",
+    btnNext:"Next →", btnBack:"← Back", btnFinal:"Finish & Submit", calcTitle:"Statistical Calculator",
+    hP1:"Block I: Measures", hP1sub:"Questions 1–16",
+    hP2:"Block II: Outliers & Rules", hP2sub:"Questions 17–24",
+    hP3:"Block III: Transforms & Graphs", hP3sub:"Questions 25–31",
+    hP4:"Block IV: Bivariate", hP4sub:"Questions 32–38",
+    timerLabel:"Elapsed time", incLabel:"Incidents:",
+    resH:"EVALUATION REPORT", resNote:"FINAL GRADE", resCorrect:"Correct answers",
+    resTime:"Time elapsed", resSec:"SECURITY AUDIT",
+    resFs:"Full screen exits", resTabs:"Tab switches",
+    resRisk:"Risk level", colQ:"Question", colR:"Your answer", colC:"Correct", colS:"Status",
+    btnPdf:"Save PDF", resHeader:"EXAM RESULTS",
+    confirmMsg:"Are you sure you want to submit the exam?",
+    accept:"I have read and accept the exam rules",
+    normas:"📋 Exam rules:",
+    norma1:"Communication is prohibited during the test.",
+    norma2:"Use only official paper and blue or black pen.",
+    norma3:"Do not exit full-screen mode or switch tabs.",
+    norma4:"Any security incident (full-screen exit, tab switch) will be recorded and may invalidate the exam.",
+    norma5:"By accessing, you accept these conditions."
+  },
+  es: {
+    loginT:"Acceso al Examen", loginM:"Introduzca la clave proporcionada por el docente", btnStart:"Comenzar Examen",
+    secMsg:"Has salido de pantalla completa o cambiado de pestaña. El sistema ha registrado este incidente.", sbFs:"Salidas pantalla", sbTab:"Cambios pestaña",
+    btnReload:"Volver al Examen",
+    btnFinish:"Entregar Examen", step1:"Identificación", step2:"Bloque I (1-16)", step3:"Bloque II (17-24)", step4:"Bloque III (25-31)", step5:"Bloque IV (32-38)",
+    hIdent:"Datos del Estudiante", lblName:"Nombre y Apellidos", lblId:"ID / Expediente", lblDegree:"Grado / Titulación", lblSubject:"Asignatura",
+    btnNext:"Siguiente →", btnBack:"← Volver", btnFinal:"Finalizar y Entregar", calcTitle:"Calculadora Estadística",
+    hP1:"Bloque I: Medidas", hP1sub:"Preguntas 1–16",
+    hP2:"Bloque II: Outliers y Reglas", hP2sub:"Preguntas 17–24",
+    hP3:"Bloque III: Transformaciones y Gráficos", hP3sub:"Preguntas 25–31",
+    hP4:"Bloque IV: Análisis Bivariado", hP4sub:"Preguntas 32–38",
+    timerLabel:"Tiempo transcurrido", incLabel:"Incidencias:",
+    resH:"REPORTE DE EVALUACIÓN", resNote:"NOTA FINAL", resCorrect:"Respuestas correctas",
+    resTime:"Tiempo empleado", resSec:"AUDITORÍA DE SEGURIDAD",
+    resFs:"Salidas de pantalla completa", resTabs:"Cambios de pestaña",
+    resRisk:"Nivel de riesgo", colQ:"Pregunta", colR:"Tu respuesta", colC:"Correcta", colS:"Estado",
+    btnPdf:"Guardar PDF", resHeader:"RESULTADOS DEL EXAMEN",
+    confirmMsg:"¿Estás seguro de que deseas entregar el examen?",
+    accept:"He leído y acepto las normas del examen",
+    normas:"📋 Normas del examen:",
+    norma1:"Comunicación prohibida durante la prueba.",
+    norma2:"Utilice únicamente papel oficial y bolígrafo azul o negro.",
+    norma3:"No salga del modo pantalla completa ni cambie de pestaña.",
+    norma4:"Cualquier incidencia de seguridad (salida de pantalla completa, cambio de pestaña) quedará registrada y puede invalidar el examen.",
+    norma5:"Al acceder, acepta estas condiciones."
+  }
+};
+
+applyTexts();
+</script>
+</body>
+</html>
