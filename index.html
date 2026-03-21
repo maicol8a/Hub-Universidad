@@ -129,7 +129,7 @@
 
   window.entrar = async function () {
     const nombre      = document.getElementById('nombre').value.trim()
-    const email       = document.getElementById('email').value.trim()
+    const student_id = document.getElementById('student_id').value.trim()
     const asignatura  = document.getElementById('asignatura').value
     const grupo       = document.getElementById('grupo').value.trim()
     const btn         = document.getElementById('btn')
@@ -137,7 +137,7 @@
 
     msg.className = 'mensaje'
 
-    if (!nombre || !email || !asignatura || !grupo) {
+    if (!nombre || !student_id || !asignatura || !grupo) {
       msg.textContent = 'Please fill in all fields.'
       msg.className = 'mensaje error'
       return
@@ -149,7 +149,7 @@
     // Registrar o recuperar estudiante
     const { data: est, error: err1 } = await supabase
       .from('estudiantes')
-      .upsert({ nombre, email }, { onConflict: 'email' })
+      .upsert({ nombre, student_id }, { onConflict: 'student_id' })
       .select()
       .single()
 
@@ -171,7 +171,7 @@
 
     // Guardar sesión y redirigir
     sessionStorage.setItem('estudiante', JSON.stringify({
-      ...est, asignatura_id: asignatura, grupo
+      ...est, asignatura_id: asignatura, grupo, student_id
     }))
 
     msg.textContent = '✓ Access granted. Redirecting...'
