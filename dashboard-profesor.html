@@ -263,6 +263,7 @@ window.cargarGrupos = async function() {
     .from('matriculas')
     .select('grupo')
     .eq('asignatura_id', asigId)
+    .order('grupo')
 
   if (data) {
     const grupos = [...new Set(data.map(m => m.grupo).filter(Boolean))].sort()
@@ -302,8 +303,7 @@ window.cargarDatos = async function() {
     .from('respuestas')
     .select(`
       id, nota, respuestas, tiempo_usado, enviado_en,
-      estudiantes ( nombre, student_id ),
-      matriculas ( grupo )
+      estudiantes ( nombre, student_id, matriculas ( grupo, asignatura_id ) )
     `)
     .eq('examen_id', currentExamenId)
     .order('nota', { ascending: false })
@@ -315,7 +315,7 @@ window.cargarDatos = async function() {
   // Filter by group if selected
   const grupoFiltro = document.getElementById('sel-grupo').value
   allData = (data || []).filter(r =>
-    !grupoFiltro || r.matriculas?.grupo === grupoFiltro
+    !grupoFiltro || r.estudiantes?.matriculas?.[0]?.grupo === grupoFiltro
   )
   renderStats(allData)
   renderTabla(allData)
@@ -391,7 +391,7 @@ function renderTabla(data) {
     const pillCls  = nota >= 7 ? 'nota-ap' : nota >= 5 ? 'nota-me' : 'nota-su'
     const tiempo   = r.tiempo_usado ? `${Math.floor(r.tiempo_usado/60)}m ${r.tiempo_usado%60}s` : '—'
     const fecha    = r.enviado_en ? new Date(r.enviado_en).toLocaleString('es-ES') : '—'
-    const grupo    = r.matriculas?.grupo || '—'
+    const grupo    = r.estudiantes?.matriculas?.[0]?.grupo || '—'
     const nombre   = r.estudiantes?.nombre || '—'
     const sid      = r.estudiantes?.student_id || '—'
     const inc      = r.respuestas?.incidencias || {}
@@ -527,7 +527,7 @@ window.exportarCSV = function() {
     return [
       r.estudiantes?.student_id || '',
       r.estudiantes?.nombre || '',
-      r.matriculas?.grupo || '',
+      r.estudiantes?.matriculas?.[0]?.grupo || '',
       r.nota || '',
       r.tiempo_usado || '',
       inc.fullscreen ?? '',
