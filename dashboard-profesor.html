@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professor Dashboard · Hub Educativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E31E24;--rdk:#b8191f;--r8:rgba(227,30,36,0.08);
+  --light:#f0f4f8;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+  --r:8px;--green:#16a34a;--amber:#d97706;
+}
+body{font-family:'Carlito',Arial,sans-serif;background:var(--light);color:var(--text);min-height:100vh}
+
+/* HEADER */
+header{background:white;border-bottom:3px solid var(--red);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-left h1{font-size:1.1rem;color:var(--text)}
+.badge-prof{background:var(--r8);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--red)}
+.btn-logout{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:var(--r);cursor:pointer;font-size:13px;font-family:inherit}
+.btn-logout:hover{background:var(--light)}
+
+/* LAYOUT */
+.container{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+
+/* CONTROLS */
+.controls{background:white;border-radius:var(--r);padding:1.2rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.controls label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase}
+select{padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;color:var(--text);background:white;cursor:pointer;min-width:220px}
+select:focus{outline:none;border-color:var(--red)}
+.btn{padding:8px 18px;border-radius:var(--r);cursor:pointer;font-weight:700;border:none;font-family:inherit;font-size:13px;transition:.2s}
+.btn-red{background:var(--red);color:white}
+.btn-red:hover{background:var(--rdk)}
+.btn-green{background:#16a34a;color:white}
+.btn-green:hover{background:#15803d}
+.btn-outline{background:white;border:1.5px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--light)}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:white;border-radius:var(--r);padding:1.2rem 1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);border-left:4px solid var(--border)}
+.stat-card.red{border-left-color:var(--red)}
+.stat-card.green{border-left-color:var(--green)}
+.stat-card.amber{border-left-color:var(--amber)}
+.stat-card.blue{border-left-color:#3b82f6}
+.stat-label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.stat-value{font-size:2rem;font-weight:700;color:var(--text);line-height:1}
+.stat-sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* GRID 2 cols */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+
+/* PANELS */
+.panel{background:white;border-radius:var(--r);padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.panel-title{font-size:13px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:1.2rem;display:flex;align-items:center;gap:8px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--red);color:white;padding:10px 12px;text-align:left;font-weight:700;font-size:12px;text-transform:uppercase}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--border)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--r8)}
+.nota-pill{display:inline-block;padding:3px 10px;border-radius:999px;font-weight:700;font-size:12px}
+.nota-ap{background:#dcfce7;color:#16a34a}
+.nota-su{background:#fee2e2;color:#dc2626}
+.nota-me{background:#fef9c3;color:#b45309}
+
+/* MOST FAILED */
+.failed-list{list-style:none}
+.failed-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.failed-item:last-child{border-bottom:none}
+.failed-num{background:var(--r8);color:var(--red);font-weight:700;font-size:11px;padding:2px 8px;border-radius:999px;min-width:32px;text-align:center}
+.failed-bar{flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.failed-bar-fill{height:100%;background:var(--red);border-radius:3px;transition:width .4s}
+.failed-pct{font-size:12px;color:var(--muted);min-width:36px;text-align:right}
+
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:3rem;color:var(--muted);font-size:14px}
+.loading{text-align:center;padding:2rem;color:var(--muted)}
+
+/* ACTIVATION PANEL */
+.activation{background:white;border-radius:var(--r);padding:1.2rem 1.5rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.exam-status{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.on{background:#16a34a}
+.dot.off{background:#94a3b8}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD OVERLAY -->
+<div id="pwd-overlay" style="position:fixed;inset:0;background:var(--red);display:flex;align-items:center;justify-content:center;z-index:9999">
+  <div style="background:white;padding:2.5rem;border-radius:12px;width:360px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.25)">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="40" style="margin-bottom:1.2rem">
+    <h3 style="margin-bottom:6px;color:var(--text)">Professor Access</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:1.2rem">Enter your password to continue</p>
+    <input type="password" id="pwd-input" placeholder="Password"
+      style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;margin-bottom:10px"
+      onkeydown="if(event.key==='Enter')checkPwd()">
+    <button onclick="checkPwd()" style="width:100%;padding:10px;background:var(--red);color:white;border:none;border-radius:var(--r);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">
+      Enter
+    </button>
+    <p id="pwd-error" style="color:var(--red);font-size:12px;margin-top:8px;display:none">Incorrect password</p>
+  </div>
+</div>
+
+<header>
+  <div class="header-left">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="36">
+    <h1>Professor Dashboard</h1>
+    <span class="badge-prof">PROFESOR</span>
+  </div>
+  <button class="btn-logout" onclick="logout()">← Back to Hub</button>
+</header>
+
+<div class="container">
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <label>Subject</label>
+    <select id="sel-asignatura" onchange="cargarGrupos()">
+      <option value="">Loading...</option>
+    </select>
+    <label>Group</label>
+    <select id="sel-grupo" onchange="cargarDatos()">
+      <option value="">All groups</option>
+    </select>
+    <div id="exam-status-wrap" class="exam-status">
+      <span class="dot off" id="dot-status"></span>
+      <span id="txt-status">—</span>
+    </div>
+    <button class="btn btn-red" id="btn-toggle" onclick="toggleExamen()" style="display:none">—</button>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="cargarDatos()">🔄 Refresh</button>
+      <button class="btn btn-green" onclick="exportarCSV()">⬇ Export CSV</button>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-grid" id="stat-cards">
+    <div class="stat-card red"><div class="stat-label">Students</div><div class="stat-value" id="s-total">—</div><div class="stat-sub">submitted</div></div>
+    <div class="stat-card green"><div class="stat-label">Average</div><div class="stat-value" id="s-media">—</div><div class="stat-sub">out of 10</div></div>
+    <div class="stat-card amber"><div class="stat-label">Pass rate</div><div class="stat-value" id="s-aprobados">—</div><div class="stat-sub" id="s-aprobados-sub">≥ 5.0</div></div>
+    <div class="stat-card blue"><div class="stat-label">Max / Min</div><div class="stat-value" id="s-maxmin">—</div><div class="stat-sub">highest / lowest</div></div>
+  </div>
+
+  <!-- CHART + MOST FAILED -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">📊 Grade distribution</div>
+      <canvas id="histograma" height="200"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title">❌ Most failed questions (Top 5)</div>
+      <ul class="failed-list" id="failed-list">
+        <li class="empty">Select a subject to load data</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- GRADES TABLE -->
+  <div class="panel">
+    <div class="panel-title" style="justify-content:space-between">
+      <span>📋 Student results</span>
+      <span id="tbl-count" style="font-weight:400;color:var(--muted)"></span>
+    </div>
+    <div class="tbl-wrap">
+      <table id="tabla-resultados">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Group</th>
+            <th>Grade</th>
+            <th>Correct</th>
+            <th>Time</th>
+            <th>FS exits</th>
+            <th>Tab switches</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body">
+          <tr><td colspan="10" class="empty">Select a subject to load data</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+const SUPABASE_URL = 'https://jivjhtqfqktmufmyeyzj.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_FGMSjudy2IdTe2igi5JRJQ_Paw90L8J'
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+// Mapa de preguntas por examen (para "más falladas")
+const EXAM_QUESTIONS = {
+  'STAT-I': 38,
+  'TTD-I':  38
+}
+
+let chartInstance = null
+let currentExamenId = null
+let currentActivo = false
+let allData = []
+
+// ── PASSWORD ─────────────────────────────────────────────────────────────────
+const _PWD = btoa('profe8824') 
+
+window.checkPwd = function() {
+  const entered = document.getElementById('pwd-input').value
+  if (btoa(entered) === _PWD) {
+    document.getElementById('pwd-overlay').style.display = 'none'
+    init()
+  } else {
+    document.getElementById('pwd-error').style.display = 'block'
+    document.getElementById('pwd-input').value = ''
+    document.getElementById('pwd-input').focus()
+  }
+}
+
+// Focus password input on load
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pwd-input').focus()
+})
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  const { data, error } = await sb
+    .from('asignaturas')
+    .select('id, nombre, codigo')
+    .eq('activa', true)
+    .order('nombre')
+
+  if (error || !data?.length) {
+    document.getElementById('sel-asignatura').innerHTML =
+      '<option value="">No subjects found</option>'
+    return
+  }
+
+  document.getElementById('sel-asignatura').innerHTML =
+    '<option value="">— Select subject —</option>' +
+    data.map(a => `<option value="${a.id}" data-codigo="${a.codigo}">${a.nombre}</option>`).join('')
+}
+
+// ── LOAD GROUPS ──────────────────────────────────────────────────────────────
+window.cargarGrupos = async function() {
+  const asigId = document.getElementById('sel-asignatura').value
+  const selGrupo = document.getElementById('sel-grupo')
+  selGrupo.innerHTML = '<option value="">All groups</option>'
+  if (!asigId) return
+
+  const { data } = await sb
+    .from('matriculas')
+    .select('grupo')
+    .eq('asignatura_id', asigId)
+
+  if (data) {
+    const grupos = [...new Set(data.map(m => m.grupo).filter(Boolean))].sort()
+    grupos.forEach(g => {
+      selGrupo.innerHTML += `<option value="${g}">${g}</option>`
+    })
+  }
+  cargarDatos()
+}
+
+// ── LOAD DATA ─────────────────────────────────────────────────────────────────
+window.cargarDatos = async function() {
+  const sel   = document.getElementById('sel-asignatura')
+  const asigId = sel.value
+  if (!asigId) return
+
+  const codigo = sel.options[sel.selectedIndex]?.dataset?.codigo || ''
+
+  // Get active exam for this subject
+  const { data: examenes } = await sb
+    .from('examenes')
+    .select('id, titulo, activo')
+    .eq('asignatura_id', asigId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+
+  if (examenes?.length) {
+    currentExamenId = examenes[0].id
+    currentActivo   = examenes[0].activo
+    updateExamStatus()
+  }
+
+  // Get results with student info
+  const grupo = document.getElementById('sel-grupo').value
+
+  let query = sb
+    .from('respuestas')
+    .select(`
+      id, nota, respuestas, tiempo_usado, enviado_en,
+      estudiantes ( nombre, student_id ),
+      matriculas ( grupo )
+    `)
+    .eq('examen_id', currentExamenId)
+    .order('nota', { ascending: false })
+
+  const { data, error } = await query
+
+  if (error) { console.error(error); return }
+
+  // Filter by group if selected
+  const grupoFiltro = document.getElementById('sel-grupo').value
+  allData = (data || []).filter(r =>
+    !grupoFiltro || r.matriculas?.grupo === grupoFiltro
+  )
+  renderStats(allData)
+  renderTabla(allData)
+  renderHistograma(allData)
+  renderMasFalladas(allData, EXAM_QUESTIONS[codigo] || 38)
+}
+
+// ── EXAM STATUS & TOGGLE ──────────────────────────────────────────────────────
+function updateExamStatus() {
+  const dot = document.getElementById('dot-status')
+  const txt = document.getElementById('txt-status')
+  const btn = document.getElementById('btn-toggle')
+
+  dot.className = `dot ${currentActivo ? 'on' : 'off'}`
+  txt.textContent = currentActivo ? 'Exam OPEN' : 'Exam CLOSED'
+  btn.textContent = currentActivo ? '🔴 Close exam' : '🟢 Open exam'
+  btn.style.display = 'inline-block'
+}
+
+window.toggleExamen = async function() {
+  if (!currentExamenId) return
+  const newState = !currentActivo
+  const confirm_msg = newState
+    ? 'Open the exam? Students will be able to access it.'
+    : 'Close the exam? No more submissions will be accepted.'
+  if (!confirm(confirm_msg)) return
+
+  const { error } = await sb
+    .from('examenes')
+    .update({ activo: newState })
+    .eq('id', currentExamenId)
+
+  if (!error) {
+    currentActivo = newState
+    updateExamStatus()
+  }
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+function renderStats(data) {
+  if (!data.length) {
+    ['s-total','s-media','s-aprobados','s-maxmin'].forEach(id => {
+      document.getElementById(id).textContent = '—'
+    })
+    return
+  }
+
+  const notas     = data.map(r => parseFloat(r.nota) || 0)
+  const media     = notas.reduce((a,b) => a+b, 0) / notas.length
+  const aprobados = notas.filter(n => n >= 5).length
+  const max       = Math.max(...notas)
+  const min       = Math.min(...notas)
+
+  document.getElementById('s-total').textContent      = data.length
+  document.getElementById('s-media').textContent      = media.toFixed(2)
+  document.getElementById('s-aprobados').textContent  = `${aprobados}/${data.length}`
+  document.getElementById('s-aprobados-sub').textContent = `${((aprobados/data.length)*100).toFixed(0)}% pass rate`
+  document.getElementById('s-maxmin').textContent     = `${max.toFixed(1)} / ${min.toFixed(1)}`
+}
+
+// ── TABLE ─────────────────────────────────────────────────────────────────────
+function renderTabla(data) {
+  const tbody = document.getElementById('tabla-body')
+  document.getElementById('tbl-count').textContent = `${data.length} student${data.length !== 1 ? 's' : ''}`
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="10" class="empty">No submissions yet</td></tr>'
+    return
+  }
+
+  tbody.innerHTML = data.map((r, i) => {
+    const nota     = parseFloat(r.nota) || 0
+    const pillCls  = nota >= 7 ? 'nota-ap' : nota >= 5 ? 'nota-me' : 'nota-su'
+    const tiempo   = r.tiempo_usado ? `${Math.floor(r.tiempo_usado/60)}m ${r.tiempo_usado%60}s` : '—'
+    const fecha    = r.enviado_en ? new Date(r.enviado_en).toLocaleString('es-ES') : '—'
+    const grupo    = r.matriculas?.grupo || '—'
+    const nombre   = r.estudiantes?.nombre || '—'
+    const sid      = r.estudiantes?.student_id || '—'
+    const inc      = r.respuestas?.incidencias || {}
+    const fs       = inc.fullscreen ?? '—'
+    const tabs     = inc.tabs ?? '—'
+
+    // Count correct answers from stored responses
+    const totalQ   = Object.keys(r.respuestas || {}).filter(k => k.startsWith('p')).length
+    const correctas = Math.round((nota / 10) * totalQ)
+
+    return `<tr>
+      <td>${i+1}</td>
+      <td><strong>${sid}</strong></td>
+      <td>${nombre}</td>
+      <td>${grupo}</td>
+      <td><span class="nota-pill ${pillCls}">${nota.toFixed(2)}</span></td>
+      <td>${correctas}/${totalQ}</td>
+      <td>${tiempo}</td>
+      <td style="text-align:center;color:${fs > 2 ? '#dc2626' : fs > 0 ? '#d97706' : '#16a34a'}">${fs}</td>
+      <td style="text-align:center;color:${tabs > 2 ? '#dc2626' : tabs > 0 ? '#d97706' : '#16a34a'}">${tabs}</td>
+      <td style="font-size:12px;color:var(--muted)">${fecha}</td>
+    </tr>`
+  }).join('')
+}
+
+// ── HISTOGRAM ─────────────────────────────────────────────────────────────────
+function renderHistograma(data) {
+  const ctx = document.getElementById('histograma').getContext('2d')
+  if (chartInstance) chartInstance.destroy()
+
+  const bins   = ['0-1','1-2','2-3','3-4','4-5','5-6','6-7','7-8','8-9','9-10']
+  const counts = Array(10).fill(0)
+  data.forEach(r => {
+    const n = parseFloat(r.nota) || 0
+    const i = Math.min(Math.floor(n), 9)
+    counts[i]++
+  })
+
+  const colors = counts.map((_, i) => i >= 5 ? '#16a34a' : '#E31E24')
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: bins,
+      datasets: [{
+        label: 'Students',
+        data: counts,
+        backgroundColor: colors,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: ([item]) => `Grade ${item.label}`,
+            label: (item) => ` ${item.raw} student${item.raw !== 1 ? 's' : ''}`
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+        x: { grid: { display: false } }
+      }
+    }
+  })
+}
+
+// ── MOST FAILED ───────────────────────────────────────────────────────────────
+function renderMasFalladas(data, totalQ) {
+  const ul = document.getElementById('failed-list')
+
+  if (!data.length) {
+    ul.innerHTML = '<li class="empty">No data yet</li>'
+    return
+  }
+
+  // Count errors per question
+  // We need correct answers — fetch them from Supabase
+  if (!currentExamenId) return
+
+  sb.from('preguntas')
+    .select('orden, respuestas_correctas(correcta)')
+    .eq('examen_id', currentExamenId)
+    .order('orden')
+    .then(({ data: preguntas }) => {
+      if (!preguntas) return
+
+      const errores = {}
+      preguntas.forEach(p => {
+        const clave = p.respuestas_correctas?.[0]?.correcta
+        let fails = 0
+        data.forEach(r => {
+          const resp = r.respuestas?.[`p${p.orden}`]
+          if (!resp || resp !== clave) fails++
+        })
+        errores[p.orden] = fails
+      })
+
+      // Sort by most failed
+      const sorted = Object.entries(errores)
+        .sort((a,b) => b[1]-a[1])
+        .slice(0, 5)
+
+      const maxFails = sorted[0]?.[1] || 1
+
+      ul.innerHTML = sorted.map(([orden, fails]) => {
+        const pct = ((fails / data.length) * 100).toFixed(0)
+        return `<li class="failed-item">
+          <span class="failed-num">Q${orden}</span>
+          <div class="failed-bar">
+            <div class="failed-bar-fill" style="width:${(fails/maxFails)*100}%"></div>
+          </div>
+          <span class="failed-pct">${pct}%</span>
+          <span style="font-size:12px;color:var(--muted)">${fails}/${data.length} failed</span>
+        </li>`
+      }).join('')
+    })
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────────────────────────
+window.exportarCSV = function() {
+  if (!allData.length) { alert('No data to export.'); return }
+
+  const sel   = document.getElementById('sel-asignatura')
+  const nombre = sel.options[sel.selectedIndex]?.text || 'export'
+
+  const headers = ['Student ID','Name','Group','Grade','Time (s)','FS exits','Tab switches','Submitted']
+  const rows = allData.map(r => {
+    const inc = r.respuestas?.incidencias || {}
+    return [
+      r.estudiantes?.student_id || '',
+      r.estudiantes?.nombre || '',
+      r.matriculas?.grupo || '',
+      r.nota || '',
+      r.tiempo_usado || '',
+      inc.fullscreen ?? '',
+      inc.tabs ?? '',
+      r.enviado_en ? new Date(r.enviado_en).toLocaleString('es-ES') : ''
+    ].join(',')
+  })
+
+  const csv  = [headers.join(','), ...rows].join('\n')
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
+  const a    = document.createElement('a')
+  a.href     = URL.createObjectURL(blob)
+  a.download = `results_${nombre.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`
+  a.click()
+}
+
+// ── LOGOUT ────────────────────────────────────────────────────────────────────
+window.logout = function() {
+  window.location.href = 'index.html'
+}
+
+// ── START ─────────────────────────────────────────────────────────────────────
+// Init is called after password check
+</script>
+</body>
+</html>
