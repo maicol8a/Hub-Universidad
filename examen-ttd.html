@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen Oficial · Universidad Europea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+/* (Estilos sin cambios, se mantienen igual que en la versión anterior) */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E31E24; --rdk:#b8191f; --r8:rgba(227,30,36,0.08); --r15:rgba(227,30,36,0.15);
+  --light:#f4f5f7; --border:#e0e0e0; --text:#1a1a1a; --muted:#777;
+  --r:6px; --sw:220px; --rw:260px;
+}
+body{font-family:'Carlito',Arial,sans-serif;background:var(--light);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* LOGIN */
+#login-overlay{position:fixed;inset:0;background:var(--red);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:white;padding:2.5rem;border-radius:12px;color:var(--text);box-shadow:0 10px 30px rgba(0,0,0,0.25);width:420px;text-align:left}
+.login-box h3{font-size:1.2rem;margin-bottom:4px;text-align:center}
+.login-box p{font-size:12px;color:var(--muted);margin:8px 0 16px;text-align:center}
+.instrucciones{background:#f9f9f9;border-left:4px solid var(--red);padding:12px;margin:15px 0;font-size:12px;border-radius:4px}
+.instrucciones ul{margin-left:20px;color:#444}
+.instrucciones li{margin:6px 0}
+.checkbox{display:flex;align-items:center;gap:8px;margin:15px 0;font-size:13px}
+.checkbox input{width:18px;height:18px;accent-color:var(--red)}
+#pass-in{margin-top:10px}
+.lang-toggle{display:flex;gap:4px;background:#eee;padding:4px;border-radius:20px; margin-bottom:15px; justify-content:center}
+.lang-btn{border:none;background:none;padding:4px 10px;border-radius:15px;cursor:pointer;font-size:11px;font-weight:700;color:#999;transition:.2s}
+.lang-btn.active{background:white;color:var(--red);box-shadow:0 2px 5px rgba(0,0,0,0.1)}
+
+/* BLOQUEO DE SEGURIDAD */
+#security-block{position:fixed;inset:0;background:rgba(10,10,10,0.97);color:white;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:10000;text-align:center;padding:20px;gap:16px}
+#security-block h1{font-size:2.5rem}
+#security-block p{max-width:420px;color:#ccc;line-height:1.6}
+.sec-counter{display:flex;gap:30px;margin:10px 0}
+.sec-counter span{font-size:2rem;font-weight:700;color:var(--red)}
+.sec-counter label{font-size:10px;color:#aaa;text-transform:uppercase;display:block}
+
+/* APP */
+#app{display:none;flex-direction:column;min-height:100vh}
+.topbar{background:white;border-bottom:3px solid var(--red);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.07)}
+.main-layout{display:flex;flex:1}
+
+/* SIDEBAR */
+.sidebar-l{width:var(--sw);background:white;border-right:1px solid var(--border);padding:1.25rem 0;position:sticky;top:64px;height:calc(100vh - 64px);flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-r{width:var(--rw);background:white;border-left:1px solid var(--border);padding:1.25rem;position:sticky;top:64px;height:calc(100vh - 64px);flex-shrink:0;overflow-y:auto}
+.step{display:flex;align-items:center;gap:9px;padding:12px 1.25rem;cursor:pointer;border-left:3px solid transparent;transition:.2s;font-size:13px}
+.step.done{color:#27ae60}
+.step.active{background:var(--r8);border-left-color:var(--red);font-weight:700;color:var(--red)}
+
+.timer-box{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.timer-val{font-size:1.4rem;font-weight:700;color:var(--text);font-family:monospace}
+.timer-val.warn{color:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.4}}
+
+/* CONTENIDO */
+.fa{flex:1;padding:2rem;max-width:870px;margin:0 auto;width:100%}
+.fsec{display:none;animation:fi .2s ease}.fsec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.sec-hdr{margin-bottom:1.5rem;padding-bottom:.8rem;border-bottom:2px solid var(--border);display:flex;align-items:baseline;justify-content:space-between}
+.sec-hdr h2{color:var(--red);font-size:1.1rem;text-transform:uppercase}
+.sec-hdr small{color:var(--muted);font-size:11px}
+
+/* FORMS */
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1rem}
+label.fl{display:block;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+input[type="text"],input[type="password"]{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;transition:.2s}
+input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px var(--r8)}
+
+/* PREGUNTAS Y CONTEXTOS */
+.question-block{background:white;padding:1.5rem;border-radius:var(--r);border:1px solid var(--border);margin-bottom:1.25rem;transition:.2s}
+.question-block:hover{box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+.q-num{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.q-text{font-weight:700;font-size:14px;margin-bottom:12px;line-height:1.5}
+.opt-label{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #eee;border-radius:var(--r);margin-bottom:7px;cursor:pointer;font-size:13px;transition:.15s}
+.opt-label:hover{background:var(--r8);border-color:var(--r15)}
+.opt-label input{accent-color:var(--red);width:15px;height:15px;flex-shrink:0}
+.answered .opt-label{opacity:.85}
+.context-block{background:#eef;padding:1rem;border-radius:var(--r);border-left:4px solid var(--red);margin-bottom:1.5rem;font-size:13px}
+.context-block table{width:100%;border-collapse:collapse;margin-top:8px}
+.context-block th, .context-block td{border:1px solid #ccc;padding:6px;text-align:center}
+.context-block th{background:var(--r8);font-weight:700}
+
+/* PROGRESO */
+.progress-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .4s ease}
+
+/* CALCULADORA */
+.calc-wrap{margin-top:1.5rem}
+.calc{background:#1a1a1a;padding:12px;border-radius:10px}
+#calc-display{width:100%;height:45px;background:#000;color:#00ff41;text-align:right;padding:8px 10px;font-family:monospace;font-size:16px;border:1px solid #333;margin-bottom:9px;border-radius:4px}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.calc button{padding:10px 4px;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:11px;background:#333;color:white;transition:.1s}
+.calc button:active{transform:scale(.95)}
+.calc .op-fn{background:#4a4a4a;color:#ff9f0a}
+.calc .op-math{background:var(--rdk);color:white}
+.calc .eq{background:#27ae60;grid-column:span 2}
+.calc .clear{background:#c0392b}
+
+/* BOTONES */
+.btn{padding:10px 22px;border-radius:var(--r);cursor:pointer;font-weight:700;border:none;font-family:inherit;font-size:13px;transition:.2s}
+.btn:active{transform:scale(.97)}
+.btn-red{background:var(--red);color:white}
+.btn-red:hover{background:var(--rdk)}
+.btn-out{background:white;border:1px solid var(--border);color:var(--text)}
+.btn-out:hover{background:var(--light)}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+
+/* REPORTE */
+#preview{display:none;background:#bbb;min-height:100vh;padding:20px}
+.pvbar{background:white;padding:12px 2rem;border-bottom:2px solid var(--red);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.docpage{width:210mm;background:white;padding:20mm;margin:2rem auto;box-shadow:0 10px 40px rgba(0,0,0,0.3);border-radius:4px}
+
+.dtbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:11px}
+.dtbl th,.dtbl td{border:1px solid #ddd;padding:8px 10px;text-align:left}
+.dtbl th{background:var(--red);color:white;font-weight:700}
+.dtbl tr:nth-child(even) td{background:#fafafa}
+
+.grade-box{background:var(--r8);border:2px solid var(--r15);padding:24px;text-align:center;border-radius:8px;margin:20px 0}
+.grade-num{font-size:3rem;font-weight:700;color:var(--red);line-height:1}
+.sec-audit{border:1px solid var(--border);padding:16px;margin-top:18px;border-radius:8px;font-size:11px}
+.sec-audit .sec-title{color:var(--red);font-weight:700;font-size:12px;margin-bottom:10px;text-transform:uppercase}
+.sec-audit table{width:100%;border-collapse:collapse}
+.sec-audit td{padding:5px 8px;border:1px solid #eee;font-size:11px}
+.sec-audit td:first-child{color:var(--muted);width:60%}
+.badge-ok{color:#27ae60;font-weight:700}
+.badge-warn{color:#e67e22;font-weight:700}
+.badge-alert{color:var(--red);font-weight:700}
+
+@media print{
+  #app,.pvbar,body>*:not(#preview){display:none!important}
+  #preview{display:block!important;background:white!important;padding:0!important}
+  .docpage{margin:0!important;padding:15mm!important;box-shadow:none!important;width:100%!important}
+}
+</style>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  const SUPABASE_URL = 'https://jivjhtqfqktmufmyeyzj.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_FGMSjudy2IdTe2igi5JRJQ_Paw90L8J'
+  window._sb  = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  const est = JSON.parse(sessionStorage.getItem('estudiante') || 'null')
+  if (!est) {
+    window.location.href = 'index.html'
+  } else {
+    window._estudiante = est
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = id => document.getElementById(id)
+      if (s('fn-name'))    s('fn-name').value    = est.nombre     || ''
+      if (s('fn-id'))      s('fn-id').value      = est.student_id || ''
+      if (s('fn-degree'))  s('fn-degree').value  = est.grupo      || ''
+      if (s('fn-subject')) s('fn-subject').value = 'Decision Making'
+    })
+  }
+</script>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="48" style="margin-bottom:16px; display:block; margin-left:auto; margin-right:auto;">
+    
+    <!-- Selector de idioma en login -->
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('es')" id="btn-login-es">ES</button>
+      <button class="lang-btn" onclick="setLang('en')" id="btn-login-en">EN</button>
+    </div>
+
+    <h3 id="txt-loginT">Acceso al Examen</h3>
+    <p id="txt-loginM">Introduzca la clave proporcionada por el docente</p>
+    
+    <!-- INSTRUCCIONES DE SEGURIDAD -->
+    <div class="instrucciones">
+      <strong id="txt-normas">📋 Normas del examen:</strong>
+      <ul>
+        <li id="txt-norma1">Comunicación prohibida durante la prueba.</li>
+        <li id="txt-norma2">Utilice únicamente papel oficial y bolígrafo azul o negro.</li>
+        <li id="txt-norma3">No salga del modo pantalla completa ni cambie de pestaña.</li>
+        <li id="txt-norma4">Cualquier incidencia de seguridad (salida de pantalla completa, cambio de pestaña) quedará registrada y puede invalidar el examen.</li>
+        <li id="txt-norma5">Al acceder, acepta estas condiciones.</li>
+      </ul>
+    </div>
+    
+    <div class="checkbox">
+      <input type="checkbox" id="accept-terms">
+      <label for="accept-terms" id="txt-accept">He leído y acepto las normas del examen</label>
+    </div>
+    
+    <input type="password" id="pass-in" placeholder="Clave de acceso" style="display:none">
+    <button class="btn btn-red" style="width:100%;margin-top:14px" onclick="initExam()" id="txt-btnStart" disabled>Comenzar Examen</button>
+  </div>
+</div>
+
+<!-- ═══ BLOQUEO ═══ -->
+<div id="security-block">
+  <h1>⚠️ EXAMEN BLOQUEADO</h1>
+  <p id="txt-secMsg">Has salido del modo de pantalla completa o cambiado de pestaña. El sistema ha registrado este incidente.</p>
+  <div class="sec-counter">
+    <div><span id="sb-fs">0</span><label id="txt-sbFs">Salidas pantalla</label></div>
+    <div><span id="sb-tab">0</span><label id="txt-sbTab">Cambios de pestaña</label></div>
+  </div>
+  <button class="btn btn-red" onclick="dismissBlock()" id="txt-btnReload">Volver al Examen</button>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:14px">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="40">
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('es')" id="btn-es">ES</button>
+        <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+      </div>
+    </div>
+    <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinish">Entregar Examen</button>
+  </header>
+
+  <div class="main-layout">
+
+    <!-- Sidebar izquierdo: pasos + timer -->
+    <aside class="sidebar-l">
+      <div class="step active" id="s0" onclick="gotoTab(0)">
+        <span style="font-size:16px">①</span> <span id="txt-step1">Identificación</span>
+      </div>
+      <div class="step" id="s1" onclick="gotoTab(1)">
+        <span style="font-size:16px">②</span> <span id="txt-step2">Bloque I (Preguntas 1–19)</span>
+      </div>
+      <div class="step" id="s2" onclick="gotoTab(2)">
+        <span style="font-size:16px">③</span> <span id="txt-step3">Bloque II (Preguntas 20–38)</span>
+      </div>
+
+      <div class="timer-box">
+        <div style="margin-bottom:4px" id="txt-timerLabel">Tiempo transcurrido</div>
+        <div class="timer-val" id="timer-display">00:00:00</div>
+        <div style="margin-top:10px;font-size:11px" id="txt-incLabel">Incidencias:</div>
+        <div style="color:var(--muted);font-size:11px;margin-top:3px">
+          🖥 <span id="sb-fs-mini">0</span> · 🔁 <span id="sb-tab-mini">0</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="fa">
+
+      <!-- Tab 0: Identificación -->
+      <div class="fsec active" id="t0">
+        <div class="sec-hdr"><h2 id="txt-hIdent">Datos del Estudiante</h2></div>
+        <div class="fg-grid">
+          <div><label class="fl" id="lbl-name">Nombre y Apellidos</label><input type="text" id="fn-name"></div>
+          <div><label class="fl" id="lbl-id">ID / Expediente</label><input type="text" id="fn-id"></div>
+        </div>
+        <div class="fg-grid">
+          <div><label class="fl" id="lbl-degree">Grado / Titulación</label><input type="text" id="fn-degree"></div>
+          <div><label class="fl" id="lbl-subject">Asignatura</label><input type="text" id="fn-subject"></div>
+        </div>
+        <div style="margin-top:2rem;text-align:right">
+          <button class="btn btn-red" onclick="gotoTab(1)" id="txt-btnNext1">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Bloque I (19 preguntas) -->
+      <div class="fsec" id="t1">
+        <div class="sec-hdr">
+          <h2 id="txt-hP1">Bloque I</h2>
+          <small id="txt-hP1sub">Preguntas 1–19</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog1" style="width:0%"></div></div>
+        <div id="q-box-1"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(0)" id="txt-btnBack1">← Volver</button>
+          <button class="btn btn-red" onclick="gotoTab(2)" id="txt-btnNext2">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Bloque II (19 preguntas) -->
+      <div class="fsec" id="t2">
+        <div class="sec-hdr">
+          <h2 id="txt-hP2">Bloque II</h2>
+          <small id="txt-hP2sub">Preguntas 20–38</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog2" style="width:0%"></div></div>
+        <div id="q-box-2"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(1)" id="txt-btnBack2">← Volver</button>
+          <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinal">Finalizar y Entregar</button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Sidebar derecho: calculadora -->
+    <aside class="sidebar-r">
+      <label class="fl" id="txt-calcTitle">Calculadora Estadística</label>
+      <div class="calc-wrap">
+        <div class="calc">
+          <input type="text" id="calc-display" readonly value="0">
+          <div class="calc-grid">
+            <button class="clear" onclick="cClear()">C</button>
+            <button class="op-fn" onclick="cIn('(')">(</button>
+            <button class="op-fn" onclick="cIn(')')">)</button>
+            <button class="op-math" onclick="cIn('/')">÷</button>
+            <button class="op-fn" onclick="cFn('Math.sqrt(')">√x</button>
+            <button class="op-fn" onclick="cIn('**')">xʸ</button>
+            <button class="op-fn" onclick="cIn('Math.PI')">π</button>
+            <button class="op-math" onclick="cIn('*')">×</button>
+            <button onclick="cIn('7')">7</button>
+            <button onclick="cIn('8')">8</button>
+            <button onclick="cIn('9')">9</button>
+            <button class="op-math" onclick="cIn('-')">−</button>
+            <button onclick="cIn('4')">4</button>
+            <button onclick="cIn('5')">5</button>
+            <button onclick="cIn('6')">6</button>
+            <button class="op-math" onclick="cIn('+')">+</button>
+            <button onclick="cIn('1')">1</button>
+            <button onclick="cIn('2')">2</button>
+            <button onclick="cIn('3')">3</button>
+            <button onclick="cIn('.')">.</button>
+            <button onclick="cIn('0')" style="grid-column:span 1">0</button>
+            <button class="eq" onclick="cRes()">=</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ═══ REPORTE ═══ -->
+<div id="preview">
+  <div class="pvbar">
+    <span style="font-weight:700;font-size:14px" id="txt-resHeader">RESULTADOS DEL EXAMEN</span>
+    <button class="btn btn-red" onclick="window.print()" id="txt-btnPdf">Guardar PDF</button>
+  </div>
+  <div class="docpage" id="res-doc"></div>
+</div>
+
+<script>
+// ── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
+const _v  = "dW5pdmVyc2lkYWQ="; // "universidad" en base64
+const _TL = 90; // Tiempo límite en minutos (ajustable)
+const BLOCK1_SIZE = 19; // primeras 19 preguntas
+
+// Contextos estructurados para cada idioma
+const contextos = {
+  es: [
+    { indice: 0, titulo: "Contexto 1: Estrategias de inversión", 
+      html: `
+        <p>Una firma de inversión evalúa cuatro estrategias ($a_1, a_2, a_3, a_4$) frente a tres posibles escenarios de mercado ($e_1$: Bajista, $e_2$: Estable, $e_3$: Alcista). Los beneficios esperados en millones de euros son:</p>
+        <table>
+          <tr><th>Estrategia</th><th>e₁</th><th>e₂</th><th>e₃</th></tr>
+          <tr><td>$a_1$ (Renta Fija)</td><td>14</td><td>16</td><td>18</td></tr>
+          <tr><td>$a_2$ (Renta Variable)</td><td>-10</td><td>25</td><td>55</td></tr>
+          <tr><td>$a_3$ (Derivados)</td><td>-45</td><td>12</td><td>130</td></tr>
+          <tr><td>$a_4$ (Inmobiliario)</td><td>6</td><td>28</td><td>38</td></tr>
+        </table>
+      ` },
+    { indice: 9, titulo: "Contexto 2: Probabilidades de los escenarios",
+      html: `<p>Imagine que la probabilidad de los escenarios del Contexto 1 es $P(e_1) = 0.25$, $P(e_2) = 0.45$ y $P(e_3) = 0.30$.</p>` },
+    { indice: 19, titulo: "Contexto 3: Estudio de mercado",
+      html: `<p>Una empresa debe decidir si lanzar un producto ($a_1$) o no ($a_2$). $P(Éxito) = 0.6$. Beneficio si éxito: 120k. Pérdida si fracaso: 40k. Se puede contratar un estudio de mercado con fiabilidad del 80% ($P(+|Éxito)=0.8$, $P(-|Fracaso)=0.8$).</p>` }
+  ],
+  en: [
+    { indice: 0, titulo: "Context 1: Investment strategies",
+      html: `
+        <p>An investment firm evaluates four strategies ($a_1, a_2, a_3, a_4$) against three possible market scenarios ($e_1$: Bearish, $e_2$: Stable, $e_3$: Bullish). Expected profits in millions of euros are:</p>
+        <table>
+          <tr><th>Strategy</th><th>e₁</th><th>e₂</th><th>e₃</th></tr>
+          <tr><td>$a_1$ (Fixed Income)</td><td>14</td><td>16</td><td>18</td></tr>
+          <tr><td>$a_2$ (Equity)</td><td>-10</td><td>25</td><td>55</td></tr>
+          <tr><td>$a_3$ (Derivatives)</td><td>-45</td><td>12</td><td>130</td></tr>
+          <tr><td>$a_4$ (Real Estate)</td><td>6</td><td>28</td><td>38</td></tr>
+        </table>
+      ` },
+    { indice: 9, titulo: "Context 2: Scenario probabilities",
+      html: `<p>Assume the probabilities of the scenarios from Context 1 are $P(e_1) = 0.25$, $P(e_2) = 0.45$ and $P(e_3) = 0.30$.</p>` },
+    { indice: 19, titulo: "Context 3: Market research",
+      html: `<p>A company must decide whether to launch a product ($a_1$) or not ($a_2$). $P(Success) = 0.6$. Profit if success: 120k. Loss if failure: 40k. A market research study can be hired with 80% reliability ($P(+|Success)=0.8$, $P(-|Failure)=0.8$).</p>` }
+  ]
+};
+
+// Preguntas del examen (38 en total)
+const _Q = {
+  es: [
+    // Bloque I (preguntas 1-19)
+    { q: "Bajo el criterio de Wald (Pesimista), ¿qué estrategia se selecciona? (Contexto 1)", o: ["$a_3$, por su potencial de crecimiento.", "$a_2$, por el equilibrio entre pérdida y ganancia.", "$a_1$, ya que garantiza un beneficio mínimo de 14 M€.", "$a_4$, pues el peor escenario es superior a cero."], a: "Mg==" }, // c (2)
+    { q: "Calcule el valor del criterio de Hurwicz para la alternativa $a_2$ utilizando un coeficiente de optimismo $\\alpha = 0.6$:", o: ["29.0 M€", "22.5 M€", "16.0 M€", "35.0 M€"], a: "MQ==" }, // b (1)
+    { q: "Según la matriz de arrepentimiento de Savage (completada en el enunciado), ¿cuál es la decisión óptima?", o: ["$a_1$", "$a_3$", "$a_2$", "$a_4$"], a: "MQ==" }, // b (1)
+    { q: "Aplicando el criterio de Laplace, ¿cuál es el valor esperado de la alternativa $a_4$? (Contexto 1)", o: ["16.00 M€", "24.00 M€", "28.33 M€", "21.50 M€"], a: "Mg==" }, // c (2)
+    { q: "Si un decisor tiene un coeficiente de optimismo $\\alpha = 1$, su comportamiento es idéntico al criterio:", o: ["Wald", "Laplace", "Savage", "Maximax"], a: "Mw==" }, // d (3)
+    { q: "Análisis de Sensibilidad: en el criterio de Laplace, si fijamos $P(e_2)=0.4$ y $P(e_3)=p$, ¿para qué valor de $p$ las estrategias $a_1$ y $a_4$ son indiferentes?", o: ["$p=0.12$", "$p=0.25$", "$p=0.08$", "$p=0.30$"], a: "MA==" }, // a (0)
+    { q: "En una matriz de costos (donde los valores representan pagos a realizar), el criterio de Wald busca:", o: ["El mínimo de los mínimos.", "El máximo de los mínimos.", "El mínimo de los máximos.", "El promedio más bajo."], a: "Mg==" }, // c (2)
+    { q: "¿Cuál es el principal defecto del criterio de Laplace?", o: ["Es demasiado pesimista.", "Asigna la misma probabilidad a los estados sin tener evidencia real de ello.", "No permite comparar más de dos alternativas.", "Ignora los valores intermedios de la matriz."], a: "MQ==" }, // b (1)
+    { q: "El criterio de Savage es especialmente útil cuando:", o: ["El decisor quiere evitar la sensación de haber tomado la decisión equivocada tras conocer el estado.", "Se conocen las probabilidades exactas de cada escenario.", "El decisor es extremadamente arriesgado.", "No hay estados de la naturaleza."], a: "MA==" }, // a (0)
+    { q: "Calcule el RER (Resultado Esperado en Riesgo) para la alternativa $a_2$ (Contexto 2):", o: ["26.50 M€", "25.25 M€", "23.00 M€", "28.75 M€"], a: "MQ==" }, // b (1)
+    { q: "Calcule la Varianza de la alternativa $a_1$ (Contexto 2):", o: ["2.00", "2.64", "1.50", "4.00"], a: "MQ==" }, // b (1)
+    { q: "Determine el Coeficiente de Variación (CV) de la alternativa $a_3$ (Contexto 2):", o: ["1.25", "3.12", "2.08", "0.95"], a: "Mg==" }, // c (2)
+    { q: "Según la tabla de distribución para $a_2$, ¿cuál es la probabilidad de que el beneficio sea estrictamente mayor que 20 M€?", o: ["0.30", "0.45", "0.75", "0.70"], a: "Mg==" }, // c (2)
+    { q: "Para la alternativa $a_3$ (Derivados), ¿cuál es el valor de la Función de Supervivencia $S(15)$?", o: ["0.75", "0.30", "0.45", "0.00"], a: "MQ==" }, // b (1)
+    { q: "Si una alternativa A tiene una $F_A(x)$ que siempre está 'por debajo y a la derecha' de $F_B(x)$, decimos que:", o: ["B domina estocásticamente a A.", "A domina estocásticamente a B.", "Son alternativas equivalentes en riesgo.", "A tiene mayor varianza que B."], a: "MQ==" }, // b (1)
+    { q: "En el cálculo de varianzas, el término $E(X^2)$ para la alternativa $a_4$ es:", o: ["654.2", "702.4", "576.0", "812.1"], a: "MQ==" }, // b (1)
+    { q: "Un decisor elige la alternativa con menor CV porque:", o: ["Busca maximizar el beneficio bruto.", "Busca la alternativa con menos riesgo relativo por cada unidad de beneficio esperado.", "Es un decisor Maximax.", "Desconoce las probabilidades."], a: "MQ==" }, // b (1)
+    { q: "Si el beneficio esperado de un proyecto es 100€ y su desviación típica es 20€, la probabilidad de perder dinero bajo una distribución normal aproximada es de:", o: ["Muy baja (menos del 1%).", "15.8%", "50%", "5%"], a: "MA==" }, // a (0)
+    // Bloque II (preguntas 20-38) - continuamos numeración
+    { q: "Calcule el RER a priori de lanzar el producto (Contexto 3):", o: ["72k", "56k", "80k", "48k"], a: "MQ==" }, // b (1)
+    { q: "Calcule el REIP (Resultado Esperado con Información Perfecta):", o: ["72k", "120k", "80k", "56k"], a: "MA==" }, // a (0)
+    { q: "El VEIP (Valor Esperado de la Información Perfecta) es:", o: ["24k", "16k", "40k", "8k"], a: "MQ==" }, // b (1)
+    { q: "Determine la probabilidad marginal de que el estudio sea positivo $P(+)$:", o: ["0.60", "0.56", "0.80", "0.48"], a: "MQ==" }, // b (1)
+    { q: "Calcule la probabilidad a posteriori de éxito si el estudio es positivo $P(Éxito|+)$:", o: ["0.857", "0.800", "0.600", "0.920"], a: "MA==" }, // a (0)
+    { q: "Si el estudio de mercado cuesta 20k, ¿es racional contratarlo?", o: ["Sí, porque ayuda a decidir.", "No, porque el coste supera el VEIP de 16k.", "Sí, porque el beneficio esperado sube.", "Depende de si sale positivo."], a: "MQ==" }, // b (1)
+    { q: "El Valor Esperado de la Información Muestral (VEIM) siempre cumple que:", o: ["$VEIM \\geq VEIP$", "$VEIM \\leq VEIP$", "$VEIM = VEIP / 2$", "$VEIM = 0$"], a: "MQ==" }, // b (1)
+    { q: "En un árbol de decisión, los nodos cuadrados representan:", o: ["Eventos aleatorios.", "Puntos de decisión del agente.", "Resultados finales o pagos.", "Probabilidades a posteriori."], a: "MQ==" }, // b (1)
+    { q: "Si la información es totalmente ruidosa (no correlacionada con la realidad), el VEIP será:", o: ["Infinito.", "Igual al beneficio máximo.", "Cero.", "Negativo."], a: "Mg==" }, // c (2)
+    { q: "El Teorema de Bayes nos permite:", o: ["Convertir probabilidades a priori en verosimilitudes.", "Actualizar probabilidades a priori mediante nuevas evidencias para obtener probabilidades a posteriori.", "Elegir siempre la opción más pesimista.", "Calcular la varianza de una muestra."], a: "MQ==" }, // b (1)
+    { q: "Un Criterio Aleatorizado es útil cuando:", o: ["Queremos que una máquina decida por nosotros.", "Al combinar dos estrategias, logramos un perfil de riesgo/beneficio que domina a las estrategias puras.", "No tenemos una matriz de pagos.", "Todas las probabilidades son 0.5."], a: "MQ==" }, // b (1)
+    { q: "En el análisis de sensibilidad, si la 'línea' de una alternativa siempre está por encima de las demás para cualquier valor de $p$:", o: ["Esa alternativa es dominante.", "El problema no tiene solución.", "Debemos usar el criterio de Savage.", "Hay un error en los cálculos."], a: "MA==" }, // a (0)
+    { q: "¿Qué representa la Función de Supervivencia $S(x)$ en el punto $x=50$?", o: ["La probabilidad de ganar exactamente 50.", "La probabilidad de ganar 50 o menos.", "La probabilidad de ganar más de 50.", "El arrepentimiento de no ganar 50."], a: "Mg==" }, // c (2)
+    { q: "Si el Coeficiente de Variación de la Estrategia A es 0.2 y el de la B es 0.8:", o: ["B es preferible porque tiene más varianza.", "A es más estable en relación a su media.", "A y B son iguales.", "B tiene un RER mayor."], a: "MQ==" }, // b (1)
+    { q: "El concepto de Dominancia Estocástica de Segundo Orden se relaciona con:", o: ["El valor esperado únicamente.", "La comparación de las áreas bajo las funciones de distribución acumulada (aversión al riesgo).", "El criterio Maximax.", "El uso de información imperfecta."], a: "MQ==" }, // b (1)
+    { q: "Si el VEIP de un problema es 0, podemos concluir que:", o: ["No hay riesgo.", "La información adicional no cambiaría la decisión que ya es óptima a priori.", "La matriz de pagos es nula.", "Las probabilidades son iguales."], a: "MQ==" }, // b (1)
+    { q: "Complete la siguiente afirmación: 'Un decisor averso al riesgo preferirá una alternativa con...'", o: ["Menor valor esperado y menor varianza.", "Mayor varianza.", "Mayor arrepentimiento.", "Coeficiente de optimismo $\\alpha = 1$."], a: "MA==" }, // a (0)
+    { q: "En la toma de decisiones secuencial, la Inducción hacia atrás significa:", o: ["Empezar por el primer nodo de decisión.", "Resolver el árbol desde los resultados finales hacia el inicio.", "Ignorar las probabilidades.", "Usar solo el criterio de Wald."], a: "MQ==" }, // b (1)
+    { q: "El Índice de Sharpe (RER / Desviación Típica) es una medida de:", o: ["Arrepentimiento máximo.", "Retorno por unidad de riesgo.", "Optimismo relativo.", "Probabilidad de éxito."], a: "MQ==" }, // b (1)
+    { q: "Si en una matriz de 4 alternativas, $a_1$ tiene mejores resultados que $a_2$ en todos los estados:", o: ["$a_1$ domina absolutamente a $a_2$.", "$a_2$ es la mejor opción según Wald.", "Se debe aplicar Bayes.", "No se puede descartar $a_2$ sin probabilidades."], a: "MA==" } // a (0)
+  ],
+  en: [
+    // Block I (questions 1-19)
+    { q: "Under the Wald (Pessimistic) criterion, which strategy is selected? (Context 1)", o: ["$a_3$, due to its growth potential.", "$a_2$, for the balance between loss and gain.", "$a_1$, as it guarantees a minimum profit of 14 M€.", "$a_4$, since the worst scenario is above zero."], a: "Mg==" }, // c (2)
+    { q: "Calculate the Hurwicz criterion value for alternative $a_2$ using an optimism coefficient of $\\alpha = 0.6$:", o: ["29.0 M€", "22.5 M€", "16.0 M€", "35.0 M€"], a: "MQ==" }, // b (1)
+    { q: "According to the Savage regret matrix (completed in the problem statement), what is the optimal decision?", o: ["$a_1$", "$a_3$", "$a_2$", "$a_4$"], a: "MQ==" }, // b (1)
+    { q: "Applying the Laplace criterion, what is the expected value of alternative $a_4$? (Context 1)", o: ["16.00 M€", "24.00 M€", "28.33 M€", "21.50 M€"], a: "Mg==" }, // c (2)
+    { q: "If a decision-maker has an optimism coefficient of $\\alpha = 1$, their behaviour is identical to the criterion:", o: ["Wald", "Laplace", "Savage", "Maximax"], a: "Mw==" }, // d (3)
+    { q: "Sensitivity Analysis: under the Laplace criterion, if we fix $P(e_2)=0.4$ and $P(e_3)=p$, for what value of $p$ are strategies $a_1$ and $a_4$ indifferent?", o: ["$p=0.12$", "$p=0.25$", "$p=0.08$", "$p=0.30$"], a: "MA==" }, // a (0)
+    { q: "In a cost matrix (where values represent payments to be made), the Wald criterion seeks:", o: ["The minimum of the minima.", "The maximum of the minima.", "The minimum of the maxima.", "The lowest average."], a: "Mg==" }, // c (2)
+    { q: "What is the main drawback of the Laplace criterion?", o: ["It is too pessimistic.", "It assigns equal probability to all states without real evidence to support this.", "It does not allow comparing more than two alternatives.", "It ignores the intermediate values of the matrix."], a: "MQ==" }, // b (1)
+    { q: "The Savage criterion is especially useful when:", o: ["The decision-maker wants to avoid the feeling of having made the wrong decision after the state is revealed.", "The exact probabilities of each scenario are known.", "The decision-maker is extremely risk-seeking.", "There are no states of nature."], a: "MA==" }, // a (0)
+    { q: "Calculate the EV under Risk (EVR) for alternative $a_2$ (Context 2):", o: ["26.50 M€", "25.25 M€", "23.00 M€", "28.75 M€"], a: "MQ==" }, // b (1)
+    { q: "Calculate the Variance of alternative $a_1$ (Context 2):", o: ["2.00", "2.64", "1.50", "4.00"], a: "MQ==" }, // b (1)
+    { q: "Determine the Coefficient of Variation (CV) of alternative $a_3$ (Context 2):", o: ["1.25", "3.12", "2.08", "0.95"], a: "Mg==" }, // c (2)
+    { q: "According to the probability distribution table for $a_2$, what is the probability that the profit is strictly greater than 20 M€?", o: ["0.30", "0.45", "0.75", "0.70"], a: "Mg==" }, // c (2)
+    { q: "For alternative $a_3$ (Derivatives), what is the value of the Survival Function $S(15)$?", o: ["0.75", "0.30", "0.45", "0.00"], a: "MQ==" }, // b (1)
+    { q: "If an alternative A has a CDF $F_A(x)$ that always lies 'below and to the right' of $F_B(x)$, we say that:", o: ["B stochastically dominates A.", "A stochastically dominates B.", "They are equivalent alternatives in terms of risk.", "A has greater variance than B."], a: "MQ==" }, // b (1)
+    { q: "In the variance calculation, the term $E(X^2)$ for alternative $a_4$ is:", o: ["654.2", "702.4", "576.0", "812.1"], a: "MQ==" }, // b (1)
+    { q: "A decision-maker chooses the alternative with the lowest CV because:", o: ["They seek to maximise gross profit.", "They seek the alternative with the least relative risk per unit of expected return.", "They are a Maximax decision-maker.", "They do not know the probabilities."], a: "MQ==" }, // b (1)
+    { q: "If the expected profit of a project is €100 and its standard deviation is €20, the probability of losing money under an approximate normal distribution is:", o: ["Very low (less than 1%).", "15.8%", "50%", "5%"], a: "MA==" }, // a (0)
+    // Block II (questions 20-38)
+    { q: "Calculate the prior EV (EVR) of launching the product (Context 3):", o: ["72k", "56k", "80k", "48k"], a: "MQ==" }, // b (1)
+    { q: "Calculate the EVPI (Expected Value with Perfect Information):", o: ["72k", "120k", "80k", "56k"], a: "MA==" }, // a (0)
+    { q: "The EVPI (Expected Value of Perfect Information) is:", o: ["24k", "16k", "40k", "8k"], a: "MQ==" }, // b (1)
+    { q: "Determine the marginal probability that the study result is positive $P(+)$:", o: ["0.60", "0.56", "0.80", "0.48"], a: "MQ==" }, // b (1)
+    { q: "Calculate the posterior probability of success given a positive study result $P(Success|+)$:", o: ["0.857", "0.800", "0.600", "0.920"], a: "MA==" }, // a (0)
+    { q: "If the market research study costs 20k, is it rational to commission it?", o: ["Yes, because it helps make a decision.", "No, because the cost exceeds the EVPI of 16k.", "Yes, because the expected profit increases.", "It depends on whether the result is positive."], a: "MQ==" }, // b (1)
+    { q: "The Expected Value of Sample Information (EVSI) always satisfies:", o: ["$EVSI \\geq EVPI$", "$EVSI \\leq EVPI$", "$EVSI = EVPI / 2$", "$EVSI = 0$"], a: "MQ==" }, // b (1)
+    { q: "In a decision tree, square nodes represent:", o: ["Random events.", "Decision points of the agent.", "Final outcomes or payoffs.", "Posterior probabilities."], a: "MQ==" }, // b (1)
+    { q: "If the information is completely noisy (uncorrelated with reality), the EVPI will be:", o: ["Infinite.", "Equal to the maximum payoff.", "Zero.", "Negative."], a: "Mg==" }, // c (2)
+    { q: "Bayes' Theorem allows us to:", o: ["Convert prior probabilities into likelihoods.", "Update prior probabilities using new evidence to obtain posterior probabilities.", "Always choose the most pessimistic option.", "Calculate the variance of a sample."], a: "MQ==" }, // b (1)
+    { q: "A Randomised Strategy is useful when:", o: ["We want a machine to decide for us.", "By combining two strategies, we achieve a risk/return profile that dominates the pure strategies.", "We do not have a payoff matrix.", "All probabilities are 0.5."], a: "MQ==" }, // b (1)
+    { q: "In sensitivity analysis, if the 'line' of one alternative is always above all others for any value of $p$:", o: ["That alternative is dominant.", "The problem has no solution.", "We must use the Savage criterion.", "There is an error in the calculations."], a: "MA==" }, // a (0)
+    { q: "What does the Survival Function $S(x)$ represent at the point $x=50$?", o: ["The probability of gaining exactly 50.", "The probability of gaining 50 or less.", "The probability of gaining more than 50.", "The regret of not gaining 50."], a: "Mg==" }, // c (2)
+    { q: "If the Coefficient of Variation of Strategy A is 0.2 and of B is 0.8:", o: ["B is preferable because it has more variance.", "A is more stable relative to its mean.", "A and B are equivalent.", "B has a higher EVR."], a: "MQ==" }, // b (1)
+    { q: "The concept of Second-Order Stochastic Dominance is related to:", o: ["The expected value only.", "The comparison of areas under the cumulative distribution functions (risk aversion).", "The Maximax criterion.", "The use of imperfect information."], a: "MQ==" }, // b (1)
+    { q: "If the EVPI of a problem is 0, we can conclude that:", o: ["There is no risk.", "Additional information would not change the decision that is already optimal a priori.", "The payoff matrix is null.", "The probabilities are equal."], a: "MQ==" }, // b (1)
+    { q: "Complete the following statement: 'A risk-averse decision-maker will prefer an alternative with...'", o: ["Lower expected value and lower variance.", "Higher variance.", "Higher regret.", "Optimism coefficient $\\alpha = 1$."], a: "MA==" }, // a (0)
+    { q: "In sequential decision-making, Backward Induction means:", o: ["Starting from the first decision node.", "Solving the tree from the final outcomes back to the beginning.", "Ignoring probabilities.", "Using only the Wald criterion."], a: "MQ==" }, // b (1)
+    { q: "The Sharpe Index (EVR / Standard Deviation) is a measure of:", o: ["Maximum regret.", "Return per unit of risk.", "Relative optimism.", "Probability of success."], a: "MQ==" }, // b (1)
+    { q: "If in a matrix of 4 alternatives, $a_1$ has better outcomes than $a_2$ in all states:", o: ["$a_1$ absolutely dominates $a_2$.", "$a_2$ is the best option according to Wald.", "Bayes should be applied.", "$a_2$ cannot be discarded without probabilities."], a: "MA==" } // a (0)
+  ]
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+let lang = 'es', startTime = null, timerInterval = null, isFinishing = false;
+let sec = { fs: 0, tabs: 0 };
+let _rk = 0;
+
+function _xa(e){ return parseInt(atob(e)); }
+
+// Habilitar botón de inicio solo si se aceptan términos
+document.getElementById('accept-terms').addEventListener('change', function(e) {
+  document.getElementById('txt-btnStart').disabled = !e.target.checked;
+});
+
+function initExam() {
+  if (!document.getElementById('accept-terms').checked) {
+    alert(lang === 'es' ? 'Debes aceptar las normas del examen.' : 'You must accept the exam rules.');
+    return;
+  }
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  startTime = new Date();
+  startTimer();
+  renderQ();
+  initSecurity();
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}
+
+function initSecurity() {
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && !isFinishing) {
+      sec.fs++;
+      updateSecCounters();
+      showBlock();
+    }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !isFinishing) {
+      sec.tabs++;
+      updateSecCounters();
+    }
+  });
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('copy', e => { if (!isFinishing) e.preventDefault(); });
+}
+
+function updateSecCounters() {
+  ['fs','tab'].forEach(k => {
+    const v = k === 'fs' ? sec.fs : sec.tabs;
+    const el = document.getElementById('sb-'+k);
+    const mini = document.getElementById('sb-'+k+'-mini');
+    if (el) el.textContent = v;
+    if (mini) mini.textContent = v;
+  });
+}
+
+function showBlock() {
+  const el = document.getElementById('security-block');
+  el.style.display = 'flex';
+}
+
+function dismissBlock() {
+  document.getElementById('security-block').style.display = 'none';
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((new Date() - startTime) / 1000);
+    const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    const disp = document.getElementById('timer-display');
+    if (disp) {
+      disp.textContent = `${h}:${m}:${s}`;
+      if (_TL > 0) {
+        const limitSec = _TL * 60;
+        if (elapsed >= limitSec - 300) disp.classList.add('warn');
+        if (elapsed >= limitSec) { clearInterval(timerInterval); finishExam(true); }
+      }
+    }
+  }, 1000);
+}
+
+function getElapsedStr() {
+  if (!startTime) return '—';
+  const elapsed = Math.floor((new Date() - startTime) / 1000);
+  const h = Math.floor(elapsed / 3600);
+  const m = Math.floor((elapsed % 3600) / 60);
+  const s = elapsed % 60;
+  return `${h > 0 ? h + 'h ' : ''}${m}m ${s}s`;
+}
+
+function setLang(l) {
+  lang = l;
+  // Actualizar botones en ambos lugares
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`#btn-${l}, #btn-login-${l}`).forEach(b => b.classList.add('active'));
+  applyTexts();
+  renderQ();
+}
+
+function applyTexts() {
+  const t = _T[lang];
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+  set('txt-loginT', t.loginT); set('txt-loginM', t.loginM); set('txt-btnStart', t.btnStart);
+  set('txt-secMsg', t.secMsg); set('txt-sbFs', t.sbFs); set('txt-sbTab', t.sbTab);
+  set('txt-btnReload', t.btnReload);
+  set('txt-btnFinish', t.btnFinish); set('txt-step1', t.step1); set('txt-step2', t.step2); set('txt-step3', t.step3);
+  set('txt-hIdent', t.hIdent); set('lbl-name', t.lblName); set('lbl-id', t.lblId);
+  set('lbl-degree', t.lblDegree); set('lbl-subject', t.lblSubject);
+  set('txt-btnNext1', t.btnNext); set('txt-btnNext2', t.btnNext);
+  set('txt-btnBack1', t.btnBack); set('txt-btnBack2', t.btnBack);
+  set('txt-btnFinal', t.btnFinal); set('txt-calcTitle', t.calcTitle);
+  set('txt-hP1', t.hP1); set('txt-hP1sub', t.hP1sub); set('txt-hP2', t.hP2); set('txt-hP2sub', t.hP2sub);
+  set('txt-timerLabel', t.timerLabel); set('txt-incLabel', t.incLabel);
+  set('txt-resHeader', t.resHeader); set('txt-btnPdf', t.btnPdf);
+  set('txt-accept', t.accept);
+  // Textos de normas (opcional)
+  set('txt-normas', t.normas);
+  set('txt-norma1', t.norma1);
+  set('txt-norma2', t.norma2);
+  set('txt-norma3', t.norma3);
+  set('txt-norma4', t.norma4);
+  set('txt-norma5', t.norma5);
+}
+
+function renderQ() {
+  const b1 = document.getElementById('q-box-1');
+  const b2 = document.getElementById('q-box-2');
+  if (!b1 || !b2) return;
+  b1.innerHTML = ''; 
+  b2.innerHTML = '';
+
+  const qs = _Q[lang];
+  const ctxs = contextos[lang];
+
+  qs.forEach((item, i) => {
+    // Insertar contexto si corresponde
+    ctxs.forEach(ctx => {
+      if (ctx.indice === i) {
+        const ctxHtml = `
+          <div class="context-block">
+            <strong>${ctx.titulo}</strong>
+            ${ctx.html}
+          </div>`;
+        if (i < BLOCK1_SIZE) {
+          b1.innerHTML += ctxHtml;
+        } else {
+          b2.innerHTML += ctxHtml;
+        }
+      }
+    });
+
+    const html = `
+      <div class="question-block" id="qblock-${i}">
+        <div class="q-num">${_T[lang].colQ} ${i + 1}</div>
+        <div class="q-text">${item.q}</div>
+        ${item.o.map((opt, oi) => `
+          <label class="opt-label">
+            <input type="radio" name="q${i}" value="${oi}" onchange="onAnswered(${i}, ${qs.length})">
+            ${opt}
+          </label>`).join('')}
+      </div>`;
+    if (i < BLOCK1_SIZE) {
+      b1.innerHTML += html;
+    } else {
+      b2.innerHTML += html;
+    }
+  });
+}
+
+function onAnswered(qIdx, total) {
+  document.getElementById('qblock-' + qIdx)?.classList.add('answered');
+  const answered1 = countAnswered(0, BLOCK1_SIZE);
+  const answered2 = countAnswered(BLOCK1_SIZE, total);
+  const p1 = document.getElementById('prog1');
+  const p2 = document.getElementById('prog2');
+  if (p1) p1.style.width = (answered1 / BLOCK1_SIZE * 100) + '%';
+  if (p2) p2.style.width = (answered2 / (total - BLOCK1_SIZE) * 100) + '%';
+}
+
+function countAnswered(from, to) {
+  let c = 0;
+  for (let i = from; i < to; i++) {
+    if (document.querySelector(`input[name="q${i}"]:checked`)) c++;
+  }
+  return c;
+}
+
+function gotoTab(idx) {
+  document.querySelectorAll('.fsec, .step').forEach(el => el.classList.remove('active'));
+  document.getElementById('t' + idx).classList.add('active');
+  document.getElementById('s' + idx).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+let cExp = "";
+function cIn(v) { if (cExp === "0" || cExp === "Error") cExp = ""; cExp += v; updateC(); }
+function cFn(f) { cExp += f; updateC(); }
+function cClear() { cExp = ""; updateC(); }
+function updateC() {
+  let d = cExp.replace(/Math\.sqrt\(/g, '√(').replace(/\*\*/g, '^').replace(/Math\.PI/g, 'π');
+  document.getElementById('calc-display').value = d || "0";
+}
+function cRes() {
+  try {
+    let result = eval(cExp);
+    result = parseFloat(result.toFixed(10));
+    cExp = result.toString();
+    updateC();
+  } catch (e) {
+    document.getElementById('calc-display').value = "Error";
+    cExp = "";
+  }
+}
+
+async function finishExam(auto = false) {
+  if (!auto && !confirm(_T[lang].confirmMsg)) return;
+
+  isFinishing = true;
+  clearInterval(timerInterval);
+  const elapsed = getElapsedStr();
+  const tiempoSegundos = startTime ? Math.floor((new Date() - startTime) / 1000) : 0;
+
+  if (document.fullscreenElement) {
+    await document.exitFullscreen().catch(() => {});
+  }
+
+  const qs = _Q[lang];
+  const letras = ['A','B','C','D'];
+  const respuestasEnvio = {};
+  qs.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    respuestasEnvio[`p${i+1}`] = sel ? letras[parseInt(sel.value)] : null;
+  });
+
+  const EXAMEN_ID = '71ec24a3-24c6-4126-a0b9-e108dd7180ef';
+  const estudiante = window._estudiante;
+  let guardadoOk = false;
+  if (estudiante && window._sb) {
+    try {
+      const { error } = await window._sb.rpc('corregir_examen', {
+        p_examen_id:     EXAMEN_ID,
+        p_estudiante_id: estudiante.id,
+        p_respuestas:    respuestasEnvio,
+        p_tiempo_usado:  tiempoSegundos,
+        p_incidencias:   { fullscreen: sec.fs, tabs: sec.tabs }
+      });
+      if (!error) guardadoOk = true;
+    } catch(e) { console.error('Supabase:', e); }
+  }
+
+  let score = 0;
+  let detailsRows = '';
+
+  qs.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const ansIdx = sel ? parseInt(sel.value) : -1;
+    const correctIdx = _xa(item.a);
+    const answered = ansIdx !== -1;
+    const isCorrect = answered && (ansIdx === correctIdx);
+    if (isCorrect) score++;
+
+    const answerText  = answered ? item.o[ansIdx]     : '—';
+    const correctText = item.o[correctIdx];
+    const statusIcon  = !answered ? '○' : isCorrect ? '✓' : '✗';
+    const statusColor = !answered ? '#aaa' : isCorrect ? '#27ae60' : '#e31e24';
+
+    detailsRows += `
+      <tr>
+        <td>${item.q.substring(0, 60)}...</td>
+        <td>${answerText}</td>
+        <td><b>${correctText}</b></td>
+        <td style="color:${statusColor};font-weight:700;text-align:center">${statusIcon}</td>
+      </tr>`;
+  });
+
+  const nota     = ((score / qs.length) * 10).toFixed(2);
+  const t        = _T[lang];
+
+  const totalInc = sec.fs + sec.tabs;
+  let riskLabel, riskColor;
+  if      (totalInc === 0)  { riskLabel = lang === 'es' ? 'Sin incidencias ✓' : 'No incidents ✓';  riskColor = '#27ae60'; }
+  else if (totalInc <= 2)   { riskLabel = lang === 'es' ? 'Bajo'   : 'Low';    riskColor = '#e67e22'; }
+  else if (totalInc <= 5)   { riskLabel = lang === 'es' ? 'Medio'  : 'Medium'; riskColor = '#e67e22'; }
+  else                      { riskLabel = lang === 'es' ? 'Alto ⚠' : 'High ⚠'; riskColor = '#e31e24'; }
+
+  const student = {
+    name:    document.getElementById('fn-name')?.value    || '—',
+    id:      document.getElementById('fn-id')?.value      || '—',
+    degree:  document.getElementById('fn-degree')?.value  || '—',
+    subject: document.getElementById('fn-subject')?.value || '—',
+  };
+
+  document.getElementById('res-doc').innerHTML = `
+    <div style="text-align:center;margin-bottom:28px">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="48" style="margin-bottom:12px">
+      <h1 style="color:#E31E24;font-size:1.4rem;text-transform:uppercase;letter-spacing:1px">${t.resH}</h1>
+      <p style="color:#777;font-size:11px;margin-top:4px">${new Date().toLocaleString()}</p>
+    </div>
+
+    <table class="dtbl">
+      <tr>
+        <td><b>${t.lblName}:</b></td><td>${student.name}</td>
+        <td><b>${t.lblId}:</b></td><td>${student.id}</td>
+      </tr>
+      <tr>
+        <td><b>${t.lblDegree}:</b></td><td>${student.degree}</td>
+        <td><b>${t.lblSubject}:</b></td><td>${student.subject}</td>
+      </tr>
+    </table>
+
+    <div class="grade-box">
+      <div class="grade-num">${nota}<span style="font-size:1.5rem;color:#999"> / 10</span></div>
+      <div style="margin-top:10px;font-size:13px;color:#555">${t.resCorrect}: <b>${score} / ${qs.length}</b></div>
+      <div style="margin-top:6px;font-size:12px;color:#aaa">${t.resTime}: ${elapsed}</div>
+      <div style="margin-top:8px;font-size:12px;font-weight:700;color:${guardadoOk?'#27ae60':'#e67e22'}">
+        ${guardadoOk
+          ? (lang==='es'?'✅ Resultado guardado en el servidor.':'✅ Result saved to server.')
+          : (lang==='es'?'⚠️ Guarda este PDF como respaldo.':'⚠️ Save this PDF as backup.')}
+      </div>
+    </div>
+
+    <table class="dtbl">
+      <thead>
+        <tr>
+          <th style="width:42%">${t.colQ}</th>
+          <th style="width:22%">${t.colR}</th>
+          <th style="width:22%">${t.colC}</th>
+          <th style="width:14%;text-align:center">${t.colS}</th>
+        </tr>
+      </thead>
+      <tbody>${detailsRows}</tbody>
+    </table>
+
+    <div class="sec-audit">
+      <div class="sec-title">🔒 ${t.resSec}</div>
+      <table>
+        <tr>
+          <td>${t.resFs}:</td>
+          <td class="${sec.fs === 0 ? 'badge-ok' : sec.fs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.fs}</td>
+        </tr>
+        <tr>
+          <td>${t.resTabs}:</td>
+          <td class="${sec.tabs === 0 ? 'badge-ok' : sec.tabs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.tabs}</td>
+        </tr>
+        <tr>
+          <td>${t.resRisk}:</td>
+          <td style="color:${riskColor};font-weight:700">${riskLabel}</td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="font-size:9px;color:#ccc;text-align:center;margin-top:20px">
+      Documento generado automáticamente · Universidad Europea · ${new Date().toLocaleDateString()}
+    </p>
+  `;
+
+  document.getElementById('txt-resHeader').innerText = t.resHeader;
+  document.getElementById('txt-btnPdf').innerText     = t.btnPdf;
+  document.getElementById('app').style.display        = 'none';
+  document.getElementById('preview').style.display    = 'block';
+}
+
+// Textos i18n completos (español e inglés)
+const _T = {
+  es: {
+    loginT:"Acceso al Examen", loginM:"Introduzca la clave proporcionada por el docente", btnStart:"Comenzar Examen",
+    secMsg:"Has salido de pantalla completa o cambiado de pestaña. El sistema ha registrado este incidente.", sbFs:"Salidas pantalla", sbTab:"Cambios pestaña",
+    btnReload:"Volver al Examen",
+    btnFinish:"Entregar Examen", step1:"Identificación", step2:"Bloque I (1-19)", step3:"Bloque II (20-38)",
+    hIdent:"Datos del Estudiante", lblName:"Nombre y Apellidos", lblId:"ID / Expediente", lblDegree:"Grado / Titulación", lblSubject:"Asignatura",
+    btnNext:"Siguiente →", btnBack:"← Volver", btnFinal:"Finalizar y Entregar", calcTitle:"Calculadora Estadística",
+    hP1:"Bloque I", hP1sub:"Preguntas 1–19", hP2:"Bloque II", hP2sub:"Preguntas 20–38",
+    timerLabel:"Tiempo transcurrido", incLabel:"Incidencias:",
+    resH:"REPORTE DE EVALUACIÓN", resNote:"NOTA FINAL", resCorrect:"Respuestas correctas",
+    resTime:"Tiempo empleado", resSec:"AUDITORÍA DE SEGURIDAD",
+    resFs:"Salidas de pantalla completa", resTabs:"Cambios de pestaña",
+    resRisk:"Nivel de riesgo", colQ:"Pregunta", colR:"Tu respuesta", colC:"Correcta", colS:"Estado",
+    btnPdf:"Guardar PDF", resHeader:"RESULTADOS DEL EXAMEN",
+    confirmMsg:"¿Estás seguro de que deseas entregar el examen?",
+    accept:"He leído y acepto las normas del examen",
+    normas:"📋 Normas del examen:",
+    norma1:"Comunicación prohibida durante la prueba.",
+    norma2:"Utilice únicamente papel oficial y bolígrafo azul o negro.",
+    norma3:"No salga del modo pantalla completa ni cambie de pestaña.",
+    norma4:"Cualquier incidencia de seguridad (salida de pantalla completa, cambio de pestaña) quedará registrada y puede invalidar el examen.",
+    norma5:"Al acceder, acepta estas condiciones."
+  },
+  en: {
+    loginT:"Exam Access", loginM:"Enter the key provided by your instructor", btnStart:"Start Exam",
+    secMsg:"You exited full screen or switched tabs. The system has logged this incident.", sbFs:"Screen exits", sbTab:"Tab switches",
+    btnReload:"Return to Exam",
+    btnFinish:"Submit Exam", step1:"Identification", step2:"Block I (1-19)", step3:"Block II (20-38)",
+    hIdent:"Student Details", lblName:"Full Name", lblId:"Student ID", lblDegree:"Degree / Programme", lblSubject:"Subject",
+    btnNext:"Next →", btnBack:"← Back", btnFinal:"Finish & Submit", calcTitle:"Statistical Calculator",
+    hP1:"Block I", hP1sub:"Questions 1–19", hP2:"Block II", hP2sub:"Questions 20–38",
+    timerLabel:"Elapsed time", incLabel:"Incidents:",
+    resH:"EVALUATION REPORT", resNote:"FINAL GRADE", resCorrect:"Correct answers",
+    resTime:"Time elapsed", resSec:"SECURITY AUDIT",
+    resFs:"Full screen exits", resTabs:"Tab switches",
+    resRisk:"Risk level", colQ:"Question", colR:"Your answer", colC:"Correct", colS:"Status",
+    btnPdf:"Save PDF", resHeader:"EXAM RESULTS",
+    confirmMsg:"Are you sure you want to submit the exam?",
+    accept:"I have read and accept the exam rules",
+    normas:"📋 Exam rules:",
+    norma1:"Communication is prohibited during the test.",
+    norma2:"Use only official paper and blue or black pen.",
+    norma3:"Do not exit full-screen mode or switch tabs.",
+    norma4:"Any security incident (full-screen exit, tab switch) will be recorded and may invalidate the exam.",
+    norma5:"By accessing, you accept these conditions."
+  }
+};
+
+// Inicializar textos y botones
+applyTexts();
+</script>
+</body>
+</html>
