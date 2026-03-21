@@ -124,7 +124,7 @@
 
   <div class="grid">
 
-    <a class="modulo" href="examen.html">
+    <a class="modulo" href="#" onclick="irAlExamen()">
       <div class="icon">📝</div>
       <h3>Exams</h3>
       <p>Access active exams for your subject</p>
@@ -184,6 +184,23 @@
     sessionStorage.clear()
     window.location.href = 'index.html'
   }
+  window.irAlExamen = function() {
+  const asignaturas = {
+    'STAT-I': 'examen.html',
+    'TTD-I':  'examen-ttd.html'
+  }
+
+  // Buscar el código de la asignatura del estudiante
+  supabase
+    .from('asignaturas')
+    .select('codigo')
+    .eq('id', estudiante.asignatura_id)
+    .single()
+    .then(({ data }) => {
+      const url = data ? (asignaturas[data.codigo] || 'examen.html') : 'examen.html'
+      window.location.href = url
+    })
+}
 </script>
 
 </body>
