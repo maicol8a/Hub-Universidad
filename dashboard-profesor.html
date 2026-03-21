@@ -214,7 +214,7 @@ let currentActivo = false
 let allData = []
 
 // ── PASSWORD ─────────────────────────────────────────────────────────────────
-const _PWD = btoa('profe8824') 
+const _PWD = btoa('profe8824')
 
 window.checkPwd = function() {
   const entered = document.getElementById('pwd-input').value
@@ -299,23 +299,35 @@ window.cargarDatos = async function() {
   // Get results with student info
   const grupo = document.getElementById('sel-grupo').value
 
-  let query = sb
+  // Query 1: respuestas + estudiantes
+  const { data: respData, error } = await sb
     .from('respuestas')
-    .select(`
-      id, nota, respuestas, tiempo_usado, enviado_en,
-      estudiantes ( nombre, student_id, matriculas ( grupo, asignatura_id ) )
-    `)
+    .select('id, nota, respuestas, tiempo_usado, enviado_en, estudiantes(nombre, student_id)')
     .eq('examen_id', currentExamenId)
     .order('nota', { ascending: false })
 
-  const { data, error } = await query
+  // Query 2: matriculas para esta asignatura (para obtener el grupo)
+  const asigId = document.getElementById('sel-asignatura').value
+  const { data: matriculaData } = await sb
+    .from('matriculas')
+    .select('estudiante_id, grupo')
+    .eq('asignatura_id', asigId)
+
+  // Merge: añadir grupo a cada respuesta
+  const grupoMap = {}
+  ;(matriculaData || []).forEach(m => { grupoMap[m.estudiante_id] = m.grupo })
+
+  const data = (respData || []).map(r => ({
+    ...r,
+    grupo: grupoMap[r.estudiante_id] || '—'
+  }))
 
   if (error) { console.error(error); return }
 
   // Filter by group if selected
   const grupoFiltro = document.getElementById('sel-grupo').value
   allData = (data || []).filter(r =>
-    !grupoFiltro || r.estudiantes?.matriculas?.[0]?.grupo === grupoFiltro
+    !grupoFiltro || r.grupo === grupoFiltro
   )
   renderStats(allData)
   renderTabla(allData)
@@ -391,7 +403,7 @@ function renderTabla(data) {
     const pillCls  = nota >= 7 ? 'nota-ap' : nota >= 5 ? 'nota-me' : 'nota-su'
     const tiempo   = r.tiempo_usado ? `${Math.floor(r.tiempo_usado/60)}m ${r.tiempo_usado%60}s` : '—'
     const fecha    = r.enviado_en ? new Date(r.enviado_en).toLocaleString('es-ES') : '—'
-    const grupo    = r.estudiantes?.matriculas?.[0]?.grupo || '—'
+    const grupo    = r.grupo || '—'
     const nombre   = r.estudiantes?.nombre || '—'
     const sid      = r.estudiantes?.student_id || '—'
     const inc      = r.respuestas?.incidencias || {}
@@ -527,7 +539,7 @@ window.exportarCSV = function() {
     return [
       r.estudiantes?.student_id || '',
       r.estudiantes?.nombre || '',
-      r.estudiantes?.matriculas?.[0]?.grupo || '',
+      r.grupo || '',
       r.nota || '',
       r.tiempo_usado || '',
       inc.fullscreen ?? '',
