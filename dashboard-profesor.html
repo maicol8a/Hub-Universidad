@@ -315,6 +315,8 @@ window.cargarDatos = async function() {
     .eq('examen_id', examenId)
     .order('nota', { ascending: false })
 
+  console.log('examenId usado:', examenId)
+  console.log('asigId usado:', asigId)
   if (error) { console.error(error); return }
 
   // Query 2: get grupos for students who submitted this exam
