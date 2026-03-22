@@ -311,7 +311,7 @@ window.cargarDatos = async function() {
   // Query 1: respuestas + estudiantes
   const { data: respData, error } = await sb
     .from('respuestas')
-    .select('id, nota, respuestas, tiempo_usado, enviado_en, estudiantes(nombre, student_id)')
+    .select('id, nota, respuestas, tiempo_usado, enviado_en, estudiante_id, estudiantes(nombre, student_id)')
     .eq('examen_id', examenId)
     .order('nota', { ascending: false })
 
