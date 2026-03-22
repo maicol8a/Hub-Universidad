@@ -124,12 +124,14 @@ tbody tr:hover{background:var(--r8)}
   <!-- CONTROLS -->
   <div class="controls">
     <label>Subject</label>
-    <select id="sel-asignatura" onchange="cargarGrupos()">
+    <select id="sel-asignatura" onchange="cargarDatos()">
       <option value="">Loading...</option>
     </select>
     <label>Group</label>
     <select id="sel-grupo" onchange="cargarDatos()">
       <option value="">All groups</option>
+      <option value="EN">EN</option>
+      <option value="ESP">ESP</option>
     </select>
     <div id="exam-status-wrap" class="exam-status">
       <span class="dot off" id="dot-status"></span>
@@ -293,20 +295,24 @@ window.cargarDatos = async function() {
     .order('created_at', { ascending: false })
     .limit(1)
 
-  if (examenes?.length) {
-    currentExamenId = examenes[0].id
-    currentActivo   = examenes[0].activo
-    updateExamStatus()
+  if (!examenes?.length) {
+    document.getElementById('tabla-body').innerHTML =
+      '<tr><td colspan="10" class="empty">No exam found for this subject</td></tr>'
+    return
   }
 
-  // Get results with student info
-  const grupo = document.getElementById('sel-grupo').value
+  currentExamenId = examenes[0].id
+  currentActivo   = examenes[0].activo
+  updateExamStatus()
+
+  // Use local variable to avoid stale closure issues
+  const examenId = examenes[0].id
 
   // Query 1: respuestas + estudiantes
   const { data: respData, error } = await sb
     .from('respuestas')
     .select('id, nota, respuestas, tiempo_usado, enviado_en, estudiantes(nombre, student_id)')
-    .eq('examen_id', currentExamenId)
+    .eq('examen_id', examenId)
     .order('nota', { ascending: false })
 
   if (error) { console.error(error); return }
