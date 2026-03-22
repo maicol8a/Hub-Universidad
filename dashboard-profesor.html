@@ -317,15 +317,21 @@ window.cargarDatos = async function() {
 
   if (error) { console.error(error); return }
 
-  // Query 2: matriculas para esta asignatura (para obtener el grupo)
+  // Query 2: get grupos for students who submitted this exam
+  const estudianteIds = (respData || []).map(r => r.estudiante_id)
   const { data: matriculaData } = await sb
     .from('matriculas')
     .select('estudiante_id, grupo')
     .eq('asignatura_id', asigId)
+    .in('estudiante_id', estudianteIds.length ? estudianteIds : ['00000000-0000-0000-0000-000000000000'])
 
   // Merge: añadir grupo a cada respuesta
   const grupoMap = {}
   ;(matriculaData || []).forEach(m => { grupoMap[m.estudiante_id] = m.grupo })
+
+  // Debug: log to verify merge
+  console.log('grupoMap:', grupoMap)
+  console.log('sample respData:', respData?.[0])
 
   const data = (respData || []).map(r => ({
     ...r,
