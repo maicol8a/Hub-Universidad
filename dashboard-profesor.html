@@ -265,7 +265,7 @@ window.cargarGrupos = async function() {
   const { data } = await sb
     .from('matriculas')
     .select('grupo')
-    .eq('asignatura_id', asigIdMat)
+    .eq('asignatura_id', asigId)
     .order('grupo')
 
   if (data) {
@@ -309,8 +309,9 @@ window.cargarDatos = async function() {
     .eq('examen_id', currentExamenId)
     .order('nota', { ascending: false })
 
+  if (error) { console.error(error); return }
+
   // Query 2: matriculas para esta asignatura (para obtener el grupo)
-  const asigIdMat = document.getElementById('sel-asignatura').value
   const { data: matriculaData } = await sb
     .from('matriculas')
     .select('estudiante_id, grupo')
@@ -324,8 +325,6 @@ window.cargarDatos = async function() {
     ...r,
     grupo: grupoMap[r.estudiante_id] || '—'
   }))
-
-  if (error) { console.error(error); return }
 
   // Filter by group if selected
   const grupoFiltro = document.getElementById('sel-grupo').value
