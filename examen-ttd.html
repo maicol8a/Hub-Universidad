@@ -431,7 +431,8 @@ async function initExam() {
 
   const { data: preguntas, error } = await window._sb.rpc('obtener_preguntas', {
     p_examen_id: '71ec24a3-24c6-4126-a0b9-e108dd7180ef',
-    p_codigo:    codigo.toUpperCase()
+    p_codigo:    codigo.toUpperCase(),
+    p_idioma:    lang
   });
 
   if (error) {

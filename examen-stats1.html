@@ -518,7 +518,8 @@ async function initExam() {
   // Load questions from Supabase (with security verification)
   const { data: preguntas, error } = await window._sb.rpc('obtener_preguntas', {
     p_examen_id: '2df7125e-e2a8-48f2-aeb8-0e8617adeac8',
-    p_codigo:    codigo.toUpperCase()
+    p_codigo:    codigo.toUpperCase(),
+    p_idioma:    lang
   });
 
   if (error) {
