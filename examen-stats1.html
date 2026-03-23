@@ -14,11 +14,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Examen Oficial · Universidad Europea</title>
+<title>Statistics Exam · Universidad Europea</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
-/* (Estilos sin cambios, se mantienen igual que en la versión anterior) */
+/* Estilos base (sin cambios) */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --red:#E31E24; --rdk:#b8191f; --r8:rgba(227,30,36,0.08); --r15:rgba(227,30,36,0.15);
@@ -90,10 +90,14 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
 .opt-label:hover{background:var(--r8);border-color:var(--r15)}
 .opt-label input{accent-color:var(--red);width:15px;height:15px;flex-shrink:0}
 .answered .opt-label{opacity:.85}
+
+/* TABLAS INTERACTIVAS */
 .context-block{background:#eef;padding:1rem;border-radius:var(--r);border-left:4px solid var(--red);margin-bottom:1.5rem;font-size:13px}
 .context-block table{width:100%;border-collapse:collapse;margin-top:8px}
-.context-block th, .context-block td{border:1px solid #ccc;padding:6px;text-align:center}
+.context-block th, .context-block td{border:1px solid #ccc;padding:8px;text-align:center;vertical-align:middle}
 .context-block th{background:var(--r8);font-weight:700}
+.context-block input.table-input{width:70px;padding:4px;border:1px solid #aaa;border-radius:4px;text-align:center;font-size:12px}
+.context-block input.table-input:focus{outline:2px solid var(--red)}
 
 /* PROGRESO */
 .progress-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
@@ -154,75 +158,75 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
   const SUPABASE_KEY = 'sb_publishable_FGMSjudy2IdTe2igi5JRJQ_Paw90L8J'
   window._sb  = createClient(SUPABASE_URL, SUPABASE_KEY)
 
+  // Verificar sesión del hub — si no hay sesión, volver al login
   const est = JSON.parse(sessionStorage.getItem('estudiante') || 'null')
   if (!est) {
     window.location.href = 'index.html'
   } else {
     window._estudiante = est
+    // Auto-rellenar campos de identificación cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', () => {
       const s = id => document.getElementById(id)
       if (s('fn-name'))    s('fn-name').value    = est.nombre     || ''
       if (s('fn-id'))      s('fn-id').value      = est.student_id || ''
       if (s('fn-degree'))  s('fn-degree').value  = est.grupo      || ''
-      if (s('fn-subject')) s('fn-subject').value = 'Decision Making'
+      if (s('fn-subject')) s('fn-subject').value = 'Statistics I'
     })
   }
 </script>
 </head>
 <body>
 
-<!-- ═══ LOGIN ═══ -->
+<!-- ═══ LOGIN (igual) ═══ -->
 <div id="login-overlay">
   <div class="login-box">
     <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="48" style="margin-bottom:16px; display:block; margin-left:auto; margin-right:auto;">
     
-    <!-- Selector de idioma en login -->
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('es')" id="btn-login-es">ES</button>
       <button class="lang-btn" onclick="setLang('en')" id="btn-login-en">EN</button>
     </div>
 
-    <h3 id="txt-loginT">Acceso al Examen</h3>
-    <p id="txt-loginM">Introduzca la clave proporcionada por el docente</p>
+    <h3 id="txt-loginT">Exam Access</h3>
+    <p id="txt-loginM">Enter the key provided by your instructor</p>
     
-    <!-- INSTRUCCIONES DE SEGURIDAD -->
     <div class="instrucciones">
-      <strong id="txt-normas">📋 Normas del examen:</strong>
+      <strong id="txt-normas">📋 Exam rules:</strong>
       <ul>
-        <li id="txt-norma1">Comunicación prohibida durante la prueba.</li>
-        <li id="txt-norma2">Utilice únicamente papel oficial y bolígrafo azul o negro.</li>
-        <li id="txt-norma3">No salga del modo pantalla completa ni cambie de pestaña.</li>
-        <li id="txt-norma4">Cualquier incidencia de seguridad (salida de pantalla completa, cambio de pestaña) quedará registrada y puede invalidar el examen.</li>
-        <li id="txt-norma5">Al acceder, acepta estas condiciones.</li>
+        <li id="txt-norma1">Communication is prohibited during the test.</li>
+        <li id="txt-norma2">Use only official paper and blue or black pen.</li>
+        <li id="txt-norma3">Do not exit full-screen mode or switch tabs.</li>
+        <li id="txt-norma4">Any security incident (full-screen exit, tab switch) will be recorded and may invalidate the exam.</li>
+        <li id="txt-norma5">By accessing, you accept these conditions.</li>
       </ul>
     </div>
     
     <div class="checkbox">
       <input type="checkbox" id="accept-terms">
-      <label for="accept-terms" id="txt-accept">He leído y acepto las normas del examen</label>
+      <label for="accept-terms" id="txt-accept">I have read and accept the exam rules</label>
     </div>
     
     <input type="text" id="codigo-acceso"
-      placeholder="Código de acceso (proporcionado en clase)"
+      placeholder="Access code (provided in class)"
       style="width:100%;padding:10px 12px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:14px;margin-top:10px;text-transform:uppercase"
       onkeydown="if(event.key==='Enter')initExam()">
-    <p id="txt-codigo-error" style="color:#E31E24;font-size:12px;margin-top:6px;display:none">Código de acceso incorrecto. Por favor inténtalo de nuevo.</p>
-    <button class="btn btn-red" style="width:100%;margin-top:14px" onclick="initExam()" id="txt-btnStart" disabled>Comenzar Examen</button>
+    <p id="txt-codigo-error" style="color:#E31E24;font-size:12px;margin-top:6px;display:none">Incorrect access code. Please try again.</p>
+    <button class="btn btn-red" style="width:100%;margin-top:14px" onclick="initExam()" id="txt-btnStart" disabled>Start Exam</button>
   </div>
 </div>
 
-<!-- ═══ BLOQUEO ═══ -->
+<!-- ═══ SECURITY BLOCK ═══ -->
 <div id="security-block">
-  <h1>⚠️ EXAMEN BLOQUEADO</h1>
-  <p id="txt-secMsg">Has salido del modo de pantalla completa o cambiado de pestaña. El sistema ha registrado este incidente.</p>
+  <h1>⚠️ EXAM BLOCKED</h1>
+  <p id="txt-secMsg">You exited full screen or switched tabs. The system has logged this incident.</p>
   <div class="sec-counter">
-    <div><span id="sb-fs">0</span><label id="txt-sbFs">Salidas pantalla</label></div>
-    <div><span id="sb-tab">0</span><label id="txt-sbTab">Cambios de pestaña</label></div>
+    <div><span id="sb-fs">0</span><label id="txt-sbFs">Screen exits</label></div>
+    <div><span id="sb-tab">0</span><label id="txt-sbTab">Tab switches</label></div>
   </div>
-  <button class="btn btn-red" onclick="dismissBlock()" id="txt-btnReload">Volver al Examen</button>
+  <button class="btn btn-red" onclick="dismissBlock()" id="txt-btnReload">Return to Exam</button>
 </div>
 
-<!-- ═══ APP ═══ -->
+<!-- ═══ APP (5 tabs) ═══ -->
 <div id="app">
   <header class="topbar">
     <div style="display:flex;align-items:center;gap:14px">
@@ -232,85 +236,117 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
         <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
       </div>
     </div>
-    <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinish">Entregar Examen</button>
+    <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinish">Submit Exam</button>
   </header>
 
   <div class="main-layout">
 
-    <!-- Sidebar izquierdo: pasos + timer -->
+    <!-- Left sidebar: 5 pasos -->
     <aside class="sidebar-l">
       <div class="step active" id="s0" onclick="gotoTab(0)">
-        <span style="font-size:16px">①</span> <span id="txt-step1">Identificación</span>
+        <span style="font-size:16px">①</span> <span id="txt-step1">Identification</span>
       </div>
       <div class="step" id="s1" onclick="gotoTab(1)">
-        <span style="font-size:16px">②</span> <span id="txt-step2">Bloque I (Preguntas 1–19)</span>
+        <span style="font-size:16px">②</span> <span id="txt-step2">Block I: Measures</span>
       </div>
       <div class="step" id="s2" onclick="gotoTab(2)">
-        <span style="font-size:16px">③</span> <span id="txt-step3">Bloque II (Preguntas 20–38)</span>
+        <span style="font-size:16px">③</span> <span id="txt-step3">Block II: Outliers & Rules</span>
+      </div>
+      <div class="step" id="s3" onclick="gotoTab(3)">
+        <span style="font-size:16px">④</span> <span id="txt-step4">Block III: Transforms & Graphs</span>
+      </div>
+      <div class="step" id="s4" onclick="gotoTab(4)">
+        <span style="font-size:16px">⑤</span> <span id="txt-step5">Block IV: Bivariate</span>
       </div>
 
       <div class="timer-box">
-        <div style="margin-bottom:4px" id="txt-timerLabel">Tiempo transcurrido</div>
+        <div style="margin-bottom:4px" id="txt-timerLabel">Elapsed time</div>
         <div class="timer-val" id="timer-display">00:00:00</div>
-        <div style="margin-top:10px;font-size:11px" id="txt-incLabel">Incidencias:</div>
+        <div style="margin-top:10px;font-size:11px" id="txt-incLabel">Incidents:</div>
         <div style="color:var(--muted);font-size:11px;margin-top:3px">
           🖥 <span id="sb-fs-mini">0</span> · 🔁 <span id="sb-tab-mini">0</span>
         </div>
       </div>
     </aside>
 
-    <!-- Contenido principal -->
+    <!-- Main content -->
     <main class="fa">
-
       <!-- Tab 0: Identificación -->
       <div class="fsec active" id="t0">
-        <div class="sec-hdr"><h2 id="txt-hIdent">Datos del Estudiante</h2></div>
+        <div class="sec-hdr"><h2 id="txt-hIdent">Student Details</h2></div>
         <div class="fg-grid">
-          <div><label class="fl" id="lbl-name">Nombre y Apellidos</label><input type="text" id="fn-name"></div>
-          <div><label class="fl" id="lbl-id">ID / Expediente</label><input type="text" id="fn-id"></div>
+          <div><label class="fl" id="lbl-name">Full Name</label><input type="text" id="fn-name"></div>
+          <div><label class="fl" id="lbl-id">Student ID</label><input type="text" id="fn-id"></div>
         </div>
         <div class="fg-grid">
-          <div><label class="fl" id="lbl-degree">Grado / Titulación</label><input type="text" id="fn-degree"></div>
-          <div><label class="fl" id="lbl-subject">Asignatura</label><input type="text" id="fn-subject"></div>
+          <div><label class="fl" id="lbl-degree">Degree / Programme</label><input type="text" id="fn-degree"></div>
+          <div><label class="fl" id="lbl-subject">Subject</label><input type="text" id="fn-subject"></div>
         </div>
         <div style="margin-top:2rem;text-align:right">
-          <button class="btn btn-red" onclick="gotoTab(1)" id="txt-btnNext1">Siguiente →</button>
+          <button class="btn btn-red" onclick="gotoTab(1)" id="txt-btnNext1">Next →</button>
         </div>
       </div>
 
-      <!-- Tab 1: Bloque I (19 preguntas) -->
+      <!-- Tab 1: Block I (1-16) -->
       <div class="fsec" id="t1">
         <div class="sec-hdr">
-          <h2 id="txt-hP1">Bloque I</h2>
-          <small id="txt-hP1sub">Preguntas 1–19</small>
+          <h2 id="txt-hP1">Block I: Measures</h2>
+          <small id="txt-hP1sub">Questions 1–16</small>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="prog1" style="width:0%"></div></div>
         <div id="q-box-1"></div>
         <div style="display:flex;justify-content:space-between;margin-top:1rem">
-          <button class="btn btn-out" onclick="gotoTab(0)" id="txt-btnBack1">← Volver</button>
-          <button class="btn btn-red" onclick="gotoTab(2)" id="txt-btnNext2">Siguiente →</button>
+          <button class="btn btn-out" onclick="gotoTab(0)" id="txt-btnBack1">← Back</button>
+          <button class="btn btn-red" onclick="gotoTab(2)" id="txt-btnNext2">Next →</button>
         </div>
       </div>
 
-      <!-- Tab 2: Bloque II (19 preguntas) -->
+      <!-- Tab 2: Block II (17-24) -->
       <div class="fsec" id="t2">
         <div class="sec-hdr">
-          <h2 id="txt-hP2">Bloque II</h2>
-          <small id="txt-hP2sub">Preguntas 20–38</small>
+          <h2 id="txt-hP2">Block II: Outliers & Rules</h2>
+          <small id="txt-hP2sub">Questions 17–24</small>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="prog2" style="width:0%"></div></div>
         <div id="q-box-2"></div>
         <div style="display:flex;justify-content:space-between;margin-top:1rem">
-          <button class="btn btn-out" onclick="gotoTab(1)" id="txt-btnBack2">← Volver</button>
-          <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinal">Finalizar y Entregar</button>
+          <button class="btn btn-out" onclick="gotoTab(1)" id="txt-btnBack2">← Back</button>
+          <button class="btn btn-red" onclick="gotoTab(3)" id="txt-btnNext3">Next →</button>
         </div>
       </div>
 
+      <!-- Tab 3: Block III (25-31) -->
+      <div class="fsec" id="t3">
+        <div class="sec-hdr">
+          <h2 id="txt-hP3">Block III: Transforms & Graphs</h2>
+          <small id="txt-hP3sub">Questions 25–31</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog3" style="width:0%"></div></div>
+        <div id="q-box-3"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(2)" id="txt-btnBack3">← Back</button>
+          <button class="btn btn-red" onclick="gotoTab(4)" id="txt-btnNext4">Next →</button>
+        </div>
+      </div>
+
+      <!-- Tab 4: Block IV (32-38) -->
+      <div class="fsec" id="t4">
+        <div class="sec-hdr">
+          <h2 id="txt-hP4">Block IV: Bivariate Analysis</h2>
+          <small id="txt-hP4sub">Questions 32–38</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog4" style="width:0%"></div></div>
+        <div id="q-box-4"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(3)" id="txt-btnBack4">← Back</button>
+          <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinal">Finish & Submit</button>
+        </div>
+      </div>
     </main>
 
-    <!-- Sidebar derecho: calculadora -->
+    <!-- Right sidebar: calculator -->
     <aside class="sidebar-r">
-      <label class="fl" id="txt-calcTitle">Calculadora Estadística</label>
+      <label class="fl" id="txt-calcTitle">Statistical Calculator</label>
       <div class="calc-wrap">
         <div class="calc">
           <input type="text" id="calc-display" readonly value="0">
@@ -344,64 +380,113 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
   </div>
 </div>
 
-<!-- ═══ REPORTE ═══ -->
+<!-- ═══ REPORT ═══ -->
 <div id="preview">
   <div class="pvbar">
-    <span style="font-weight:700;font-size:14px" id="txt-resHeader">RESULTADOS DEL EXAMEN</span>
-    <button class="btn btn-red" onclick="window.print()" id="txt-btnPdf">Guardar PDF</button>
+    <span style="font-weight:700;font-size:14px" id="txt-resHeader">EXAM RESULTS</span>
+    <button class="btn btn-red" onclick="window.print()" id="txt-btnPdf">Save PDF</button>
   </div>
   <div class="docpage" id="res-doc"></div>
 </div>
 
 <script>
-// ── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
-const _v  = "dW5pdmVyc2lkYWQ="; // "universidad" en base64
-const _TL = 90; // Tiempo límite en minutos (ajustable)
-const BLOCK1_SIZE = 19; // primeras 19 preguntas
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const _v  = "dW5pdmVyc2lkYWQ="; // "universidad" in base64
+const _TL = 90; // time limit in minutes
 
-// Contextos estructurados para cada idioma
+// Bloques: [inicio, fin)
+const BLOCKS = [
+  { start: 0, end: 16 },   // Bloque I: preguntas 1-16
+  { start: 16, end: 24 },   // Bloque II: preguntas 17-24
+  { start: 24, end: 31 },   // Bloque III: preguntas 25-31
+  { start: 31, end: 38 }    // Bloque IV: preguntas 32-38
+];
+
+// Función para convertir tablas con asteriscos en inputs VACÍOS (sin placeholder)
+function buildInteractiveTable(tableHtml) {
+  // Reemplaza cada "*" seguido de cualquier contenido por un input vacío (sin placeholder)
+  return tableHtml.replace(/\*[^<]+/g, '<input type="text" class="table-input" value="">');
+}
+
+// Contextos con tablas interactivas (sin respuestas visibles)
 const contextos = {
-  es: [
-    { indice: 0, titulo: "Contexto 1: Estrategias de inversión", 
-      html: `
-        <p>Una firma de inversión evalúa cuatro estrategias ($a_1, a_2, a_3, a_4$) frente a tres posibles escenarios de mercado ($e_1$: Bajista, $e_2$: Estable, $e_3$: Alcista). Los beneficios esperados en millones de euros son:</p>
-        <table>
-          <tr><th>Estrategia</th><th>e₁</th><th>e₂</th><th>e₃</th></tr>
-          <tr><td>$a_1$ (Renta Fija)</td><td>14</td><td>16</td><td>18</td></tr>
-          <tr><td>$a_2$ (Renta Variable)</td><td>-10</td><td>25</td><td>55</td></tr>
-          <tr><td>$a_3$ (Derivados)</td><td>-45</td><td>12</td><td>130</td></tr>
-          <tr><td>$a_4$ (Inmobiliario)</td><td>6</td><td>28</td><td>38</td></tr>
-        </table>
-      ` },
-    { indice: 9, titulo: "Contexto 2: Probabilidades de los escenarios",
-      html: `<p>Imagine que la probabilidad de los escenarios del Contexto 1 es $P(e_1) = 0.25$, $P(e_2) = 0.45$ y $P(e_3) = 0.30$.</p>` },
-    { indice: 19, titulo: "Contexto 3: Estudio de mercado",
-      html: `<p>Una empresa debe decidir si lanzar un producto ($a_1$) o no ($a_2$). $P(Éxito) = 0.6$. Beneficio si éxito: 120k. Pérdida si fracaso: 40k. Se puede contratar un estudio de mercado con fiabilidad del 80% ($P(+|Éxito)=0.8$, $P(-|Fracaso)=0.8$).</p>` }
-  ],
   en: [
-    { indice: 0, titulo: "Context 1: Investment strategies",
+    { indice: 0, titulo: "Context for Q1: Frequency table",
       html: `
-        <p>An investment firm evaluates four strategies ($a_1, a_2, a_3, a_4$) against three possible market scenarios ($e_1$: Bearish, $e_2$: Stable, $e_3$: Bullish). Expected profits in millions of euros are:</p>
-        <table>
-          <tr><th>Strategy</th><th>e₁</th><th>e₂</th><th>e₃</th></tr>
-          <tr><td>$a_1$ (Fixed Income)</td><td>14</td><td>16</td><td>18</td></tr>
-          <tr><td>$a_2$ (Equity)</td><td>-10</td><td>25</td><td>55</td></tr>
-          <tr><td>$a_3$ (Derivatives)</td><td>-45</td><td>12</td><td>130</td></tr>
-          <tr><td>$a_4$ (Real Estate)</td><td>6</td><td>28</td><td>38</td></tr>
-        </table>
+        <p>The monthly income (in thousands of €) of 20 self‑employed workers is:</p>
+        <p><code>1.2 1.8 2.1 1.5 2.8 3.2 2.5 1.9 3.7 2.3 2.6 1.4 4.1 2.9 3.5 1.7 2.2 3.1 2.4 4.8</code></p>
+        <p>Complete the frequency distribution table (cells marked with * are the ones you must calculate):</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Interval</th><th>nᵢ (abs. freq.)</th><th>fᵢ (rel. freq.)</th><th>Nᵢ (cum. abs.)</th><th>Fᵢ (cum. rel.)</th></tr></thead>
+           <tbody>
+             <tr><td>[1; 2)</td><td>6</td><td>*0.30</td><td>6</td><td>0.30</td></tr>
+             <tr><td>[2; 3)</td><td>8</td><td>0.40</td><td>*14</td><td>0.70</td></tr>
+             <tr><td>[3; 4)</td><td>*4</td><td>0.20</td><td>18</td><td>0.90</td></tr>
+             <tr><td>[4; 5)</td><td>2</td><td>0.10</td><td>20</td><td>*1.00</td></tr>
+             <tr><td>TOTAL</td><td>20</td><td>*1.00</td><td>—</td><td>—</td></tr>
+           </tbody>
+         </table>
       ` },
-    { indice: 9, titulo: "Context 2: Scenario probabilities",
-      html: `<p>Assume the probabilities of the scenarios from Context 1 are $P(e_1) = 0.25$, $P(e_2) = 0.45$ and $P(e_3) = 0.30$.</p>` },
-    { indice: 19, titulo: "Context 3: Market research",
-      html: `<p>A company must decide whether to launch a product ($a_1$) or not ($a_2$). $P(Success) = 0.6$. Profit if success: 120k. Loss if failure: 40k. A market research study can be hired with 80% reliability ($P(+|Success)=0.8$, $P(-|Failure)=0.8$).</p>` }
+    { indice: 31, titulo: "Context for Q32: Contingency table",
+      html: `
+        <p>A company surveys 200 customers about their satisfaction level by purchase channel. Partial results:</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Purchase channel</th><th>Unsatisfied</th><th>Satisfied</th><th>Very Satisfied</th><th>TOTAL</th></tr></thead>
+           <tbody>
+             <tr><td>Online</td><td>10</td><td>50</td><td>20</td><td>*80</td></tr>
+             <tr><td>Physical Store</td><td>*20</td><td>60</td><td>40</td><td>120</td></tr>
+             <tr><td>TOTAL</td><td>30</td><td>*110</td><td>*60</td><td>200</td></tr>
+           </tbody>
+         </table>
+      ` }
+  ],
+  es: [
+    { indice: 0, titulo: "Contexto para P1: Tabla de frecuencias",
+      html: `
+        <p>Los ingresos mensuales (en miles de €) de 20 trabajadores autónomos son:</p>
+        <p><code>1,2 1,8 2,1 1,5 2,8 3,2 2,5 1,9 3,7 2,3 2,6 1,4 4,1 2,9 3,5 1,7 2,2 3,1 2,4 4,8</code></p>
+        <p>Completa la tabla de distribución de frecuencias (las celdas marcadas con * son las que debes calcular):</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Intervalo</th><th>nᵢ (frec. abs.)</th><th>fᵢ (frec. rel.)</th><th>Nᵢ (frec. acum. abs.)</th><th>Fᵢ (frec. acum. rel.)</th></tr></thead>
+           <tbody>
+             <tr><td>[1; 2)</td><td>6</td><td>*0,30</td><td>6</td><td>0,30</td></tr>
+             <tr><td>[2; 3)</td><td>8</td><td>0,40</td><td>*14</td><td>0,70</td></tr>
+             <tr><td>[3; 4)</td><td>*4</td><td>0,20</td><td>18</td><td>0,90</td></tr>
+             <tr><td>[4; 5)</td><td>2</td><td>0,10</td><td>20</td><td>*1,00</td></tr>
+             <tr><td>TOTAL</td><td>20</td><td>*1,00</td><td>—</td><td>—</td></tr>
+           </tbody>
+         </table>
+      ` },
+    { indice: 31, titulo: "Contexto para P32: Tabla de contingencia",
+      html: `
+        <p>Una empresa encuesta a 200 clientes sobre su nivel de satisfacción según el canal de compra. Resultados parciales:</p>
+         <table style="width:100%;border-collapse:collapse;margin-top:8px">
+           <thead><tr><th>Canal de compra</th><th>Insatisfecho</th><th>Satisfecho</th><th>Muy Satisfecho</th><th>TOTAL</th></tr></thead>
+           <tbody>
+             <tr><td>Online</td><td>10</td><td>50</td><td>20</td><td>*80</td></tr>
+             <tr><td>Tienda Física</td><td>*20</td><td>60</td><td>40</td><td>120</td></tr>
+             <tr><td>TOTAL</td><td>30</td><td>*110</td><td>*60</td><td>200</td></tr>
+           </tbody>
+         </table>
+      ` }
   ]
 };
 
-// Preguntas del examen (38 en total)
+// Aplicamos la transformación a cada contexto (en ambos idiomas)
+['en', 'es'].forEach(langKey => {
+  if (contextos[langKey]) {
+    contextos[langKey] = contextos[langKey].map(ctx => ({
+      ...ctx,
+      html: buildInteractiveTable(ctx.html)
+    }));
+  }
+});
+
+// Preguntas (38) – con respuestas en base64 (las mismas de antes)
 const _Q = { en: [], es: [] } // preguntas cargadas desde Supabase
 
 // ─────────────────────────────────────────────────────────────────────────────
-let lang = 'es', startTime = null, timerInterval = null, isFinishing = false;
+let lang = 'en', startTime = null, timerInterval = null, isFinishing = false;
 let sec = { fs: 0, tabs: 0 };
 let _rk = 0;
 
@@ -425,12 +510,14 @@ async function initExam() {
     return;
   }
 
+  // Disable button while loading
   const btn = document.getElementById('txt-btnStart');
   btn.disabled = true;
   btn.textContent = lang === 'es' ? 'Cargando...' : 'Loading...';
 
+  // Load questions from Supabase (with security verification)
   const { data: preguntas, error } = await window._sb.rpc('obtener_preguntas', {
-    p_examen_id: '71ec24a3-24c6-4126-a0b9-e108dd7180ef',
+    p_examen_id: '2df7125e-e2a8-48f2-aeb8-0e8617adeac8',
     p_codigo:    codigo.toUpperCase()
   });
 
@@ -443,6 +530,7 @@ async function initExam() {
     return;
   }
 
+  // Build _Q from Supabase data
   const qs = preguntas.map(p => ({
     q: p.enunciado,
     o: [p.opcion_a, p.opcion_b, p.opcion_c, p.opcion_d].filter(Boolean)
@@ -531,7 +619,6 @@ function getElapsedStr() {
 
 function setLang(l) {
   lang = l;
-  // Actualizar botones en ambos lugares
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll(`#btn-${l}, #btn-login-${l}`).forEach(b => b.classList.add('active'));
   applyTexts();
@@ -544,17 +631,20 @@ function applyTexts() {
   set('txt-loginT', t.loginT); set('txt-loginM', t.loginM); set('txt-btnStart', t.btnStart);
   set('txt-secMsg', t.secMsg); set('txt-sbFs', t.sbFs); set('txt-sbTab', t.sbTab);
   set('txt-btnReload', t.btnReload);
-  set('txt-btnFinish', t.btnFinish); set('txt-step1', t.step1); set('txt-step2', t.step2); set('txt-step3', t.step3);
+  set('txt-btnFinish', t.btnFinish); set('txt-step1', t.step1); set('txt-step2', t.step2);
+  set('txt-step3', t.step3); set('txt-step4', t.step4); set('txt-step5', t.step5);
   set('txt-hIdent', t.hIdent); set('lbl-name', t.lblName); set('lbl-id', t.lblId);
   set('lbl-degree', t.lblDegree); set('lbl-subject', t.lblSubject);
-  set('txt-btnNext1', t.btnNext); set('txt-btnNext2', t.btnNext);
-  set('txt-btnBack1', t.btnBack); set('txt-btnBack2', t.btnBack);
+  set('txt-btnNext1', t.btnNext); set('txt-btnNext2', t.btnNext); set('txt-btnNext3', t.btnNext); set('txt-btnNext4', t.btnNext);
+  set('txt-btnBack1', t.btnBack); set('txt-btnBack2', t.btnBack); set('txt-btnBack3', t.btnBack); set('txt-btnBack4', t.btnBack);
   set('txt-btnFinal', t.btnFinal); set('txt-calcTitle', t.calcTitle);
-  set('txt-hP1', t.hP1); set('txt-hP1sub', t.hP1sub); set('txt-hP2', t.hP2); set('txt-hP2sub', t.hP2sub);
+  set('txt-hP1', t.hP1); set('txt-hP1sub', t.hP1sub);
+  set('txt-hP2', t.hP2); set('txt-hP2sub', t.hP2sub);
+  set('txt-hP3', t.hP3); set('txt-hP3sub', t.hP3sub);
+  set('txt-hP4', t.hP4); set('txt-hP4sub', t.hP4sub);
   set('txt-timerLabel', t.timerLabel); set('txt-incLabel', t.incLabel);
   set('txt-resHeader', t.resHeader); set('txt-btnPdf', t.btnPdf);
   set('txt-accept', t.accept);
-  // Textos de normas (opcional)
   set('txt-normas', t.normas);
   set('txt-norma1', t.norma1);
   set('txt-norma2', t.norma2);
@@ -564,67 +654,64 @@ function applyTexts() {
 }
 
 function renderQ() {
-  const b1 = document.getElementById('q-box-1');
-  const b2 = document.getElementById('q-box-2');
-  if (!b1 || !b2) return;
-  b1.innerHTML = ''; 
-  b2.innerHTML = '';
+  // Vaciar contenedores
+  for (let i = 1; i <= 4; i++) {
+    const box = document.getElementById(`q-box-${i}`);
+    if (box) box.innerHTML = '';
+  }
 
   const qs = _Q[lang];
   const ctxs = contextos[lang];
 
   qs.forEach((item, i) => {
-    // Insertar contexto si corresponde
+    let blockIndex = -1;
+    for (let b = 0; b < BLOCKS.length; b++) {
+      if (i >= BLOCKS[b].start && i < BLOCKS[b].end) {
+        blockIndex = b + 1;
+        break;
+      }
+    }
+    if (blockIndex === -1) return;
+
+    const container = document.getElementById(`q-box-${blockIndex}`);
+    if (!container) return;
+
+    // Insertar contexto si existe
     ctxs.forEach(ctx => {
       if (ctx.indice === i) {
-        const ctxHtml = `
-          <div class="context-block">
-            <strong>${ctx.titulo}</strong>
-            ${ctx.html}
-          </div>`;
-        if (i < BLOCK1_SIZE) {
-          b1.innerHTML += ctxHtml;
-        } else {
-          b2.innerHTML += ctxHtml;
+        const temp = document.createElement('div');
+        temp.innerHTML = ctx.html;
+        while (temp.firstChild) {
+          container.appendChild(temp.firstChild);
         }
       }
     });
 
-    const html = `
-      <div class="question-block" id="qblock-${i}">
-        <div class="q-num">${_T[lang].colQ} ${i + 1}</div>
-        <div class="q-text">${item.q}</div>
-        ${item.o.map((opt, oi) => `
-          <label class="opt-label">
-            <input type="radio" name="q${i}" value="${oi}" onchange="onAnswered(${i}, ${qs.length})">
-            ${opt}
-          </label>`).join('')}
-      </div>`;
-    if (i < BLOCK1_SIZE) {
-      b1.innerHTML += html;
-    } else {
-      b2.innerHTML += html;
-    }
+    // Crear bloque de pregunta
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question-block';
+    qDiv.id = `qblock-${i}`;
+    qDiv.innerHTML = `
+      <div class="q-num">${_T[lang].colQ} ${i + 1}</div>
+      <div class="q-text">${item.q}</div>
+      ${item.o.map((opt, oi) => `
+        <label class="opt-label">
+          <input type="radio" name="q${i}" value="${oi}" onchange="onAnswered(${i}, ${qs.length})">
+          ${opt}
+        </label>`).join('')}
+    `;
+    container.appendChild(qDiv);
   });
-// Re-renderizar LaTeX tras insertar preguntas dinámicamente
-  if (window.renderMathInElement) {
-    renderMathInElement(document.body, {
-      delimiters: [
-        {left: '$$', right: '$$', display: true},
-        {left: '$',  right: '$',  display: false}
-      ]
-    })
-  }
 }
 
 function onAnswered(qIdx, total) {
   document.getElementById('qblock-' + qIdx)?.classList.add('answered');
-  const answered1 = countAnswered(0, BLOCK1_SIZE);
-  const answered2 = countAnswered(BLOCK1_SIZE, total);
-  const p1 = document.getElementById('prog1');
-  const p2 = document.getElementById('prog2');
-  if (p1) p1.style.width = (answered1 / BLOCK1_SIZE * 100) + '%';
-  if (p2) p2.style.width = (answered2 / (total - BLOCK1_SIZE) * 100) + '%';
+  BLOCKS.forEach((block, bIndex) => {
+    const answered = countAnswered(block.start, block.end);
+    const totalInBlock = block.end - block.start;
+    const prog = document.getElementById(`prog${bIndex+1}`);
+    if (prog) prog.style.width = (answered / totalInBlock * 100) + '%';
+  });
 }
 
 function countAnswered(from, to) {
@@ -642,6 +729,7 @@ function gotoTab(idx) {
   window.scrollTo(0, 0);
 }
 
+// Calculadora
 let cExp = "";
 function cIn(v) { if (cExp === "0" || cExp === "Error") cExp = ""; cExp += v; updateC(); }
 function cFn(f) { cExp += f; updateC(); }
@@ -674,7 +762,11 @@ async function finishExam(auto = false) {
     await document.exitFullscreen().catch(() => {});
   }
 
+  let score = 0;
+  let detailsRows = '';
   const qs = _Q[lang];
+
+  // Recoger respuestas para enviar a Supabase
   const letras = ['A','B','C','D'];
   const respuestasEnvio = {};
   qs.forEach((item, i) => {
@@ -682,7 +774,8 @@ async function finishExam(auto = false) {
     respuestasEnvio[`p${i+1}`] = sel ? letras[parseInt(sel.value)] : null;
   });
 
-  const EXAMEN_ID = '71ec24a3-24c6-4126-a0b9-e108dd7180ef';
+  // Enviar a Supabase en segundo plano (sin bloquear el reporte)
+  const EXAMEN_ID = '2df7125e-e2a8-48f2-aeb8-0e8617adeac8';
   const estudiante = window._estudiante;
   let guardadoOk = false;
   if (estudiante && window._sb) {
@@ -697,9 +790,6 @@ async function finishExam(auto = false) {
       if (!error) guardadoOk = true;
     } catch(e) { console.error('Supabase:', e); }
   }
-
-  let score = 0;
-  let detailsRows = '';
 
   qs.forEach((item, i) => {
     const sel = document.querySelector(`input[name="q${i}"]:checked`);
@@ -748,14 +838,8 @@ async function finishExam(auto = false) {
     </div>
 
     <table class="dtbl">
-      <tr>
-        <td><b>${t.lblName}:</b></td><td>${student.name}</td>
-        <td><b>${t.lblId}:</b></td><td>${student.id}</td>
-      </tr>
-      <tr>
-        <td><b>${t.lblDegree}:</b></td><td>${student.degree}</td>
-        <td><b>${t.lblSubject}:</b></td><td>${student.subject}</td>
-      </tr>
+       <tr><td><b>${t.lblName}:</b></td><td>${student.name}</td><td><b>${t.lblId}:</b></td><td>${student.id}</td></tr>
+       <tr><td><b>${t.lblDegree}:</b></td><td>${student.degree}</td><td><b>${t.lblSubject}:</b></td><td>${student.subject}</td></tr>
     </table>
 
     <div class="grade-box">
@@ -770,37 +854,21 @@ async function finishExam(auto = false) {
     </div>
 
     <table class="dtbl">
-      <thead>
-        <tr>
-          <th style="width:42%">${t.colQ}</th>
-          <th style="width:22%">${t.colR}</th>
-          <th style="width:22%">${t.colC}</th>
-          <th style="width:14%;text-align:center">${t.colS}</th>
-        </tr>
-      </thead>
+      <thead><tr><th style="width:42%">${t.colQ}</th><th style="width:22%">${t.colR}</th><th style="width:22%">${t.colC}</th><th style="width:14%;text-align:center">${t.colS}</th></tr></thead>
       <tbody>${detailsRows}</tbody>
     </table>
 
     <div class="sec-audit">
       <div class="sec-title">🔒 ${t.resSec}</div>
       <table>
-        <tr>
-          <td>${t.resFs}:</td>
-          <td class="${sec.fs === 0 ? 'badge-ok' : sec.fs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.fs}</td>
-        </tr>
-        <tr>
-          <td>${t.resTabs}:</td>
-          <td class="${sec.tabs === 0 ? 'badge-ok' : sec.tabs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.tabs}</td>
-        </tr>
-        <tr>
-          <td>${t.resRisk}:</td>
-          <td style="color:${riskColor};font-weight:700">${riskLabel}</td>
-        </tr>
+        <tr><td>${t.resFs}:</td><td class="${sec.fs === 0 ? 'badge-ok' : sec.fs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.fs}</td></tr>
+        <tr><td>${t.resTabs}:</td><td class="${sec.tabs === 0 ? 'badge-ok' : sec.tabs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.tabs}</td></tr>
+        <tr><td>${t.resRisk}:</td><td style="color:${riskColor};font-weight:700">${riskLabel}</td></tr>
       </table>
     </div>
 
     <p style="font-size:9px;color:#ccc;text-align:center;margin-top:20px">
-      Documento generado automáticamente · Universidad Europea · ${new Date().toLocaleDateString()}
+      Automatically generated document · Universidad Europea · ${new Date().toLocaleDateString()}
     </p>
   `;
 
@@ -810,39 +878,19 @@ async function finishExam(auto = false) {
   document.getElementById('preview').style.display    = 'block';
 }
 
-// Textos i18n completos (español e inglés)
+// i18n texts
 const _T = {
-  es: {
-    loginT:"Acceso al Examen", loginM:"Introduzca la clave proporcionada por el docente", btnStart:"Comenzar Examen",
-    secMsg:"Has salido de pantalla completa o cambiado de pestaña. El sistema ha registrado este incidente.", sbFs:"Salidas pantalla", sbTab:"Cambios pestaña",
-    btnReload:"Volver al Examen",
-    btnFinish:"Entregar Examen", step1:"Identificación", step2:"Bloque I (1-19)", step3:"Bloque II (20-38)",
-    hIdent:"Datos del Estudiante", lblName:"Nombre y Apellidos", lblId:"ID / Expediente", lblDegree:"Grado / Titulación", lblSubject:"Asignatura",
-    btnNext:"Siguiente →", btnBack:"← Volver", btnFinal:"Finalizar y Entregar", calcTitle:"Calculadora Estadística",
-    hP1:"Bloque I", hP1sub:"Preguntas 1–19", hP2:"Bloque II", hP2sub:"Preguntas 20–38",
-    timerLabel:"Tiempo transcurrido", incLabel:"Incidencias:",
-    resH:"REPORTE DE EVALUACIÓN", resNote:"NOTA FINAL", resCorrect:"Respuestas correctas",
-    resTime:"Tiempo empleado", resSec:"AUDITORÍA DE SEGURIDAD",
-    resFs:"Salidas de pantalla completa", resTabs:"Cambios de pestaña",
-    resRisk:"Nivel de riesgo", colQ:"Pregunta", colR:"Tu respuesta", colC:"Correcta", colS:"Estado",
-    btnPdf:"Guardar PDF", resHeader:"RESULTADOS DEL EXAMEN",
-    confirmMsg:"¿Estás seguro de que deseas entregar el examen?",
-    accept:"He leído y acepto las normas del examen",
-    normas:"📋 Normas del examen:",
-    norma1:"Comunicación prohibida durante la prueba.",
-    norma2:"Utilice únicamente papel oficial y bolígrafo azul o negro.",
-    norma3:"No salga del modo pantalla completa ni cambie de pestaña.",
-    norma4:"Cualquier incidencia de seguridad (salida de pantalla completa, cambio de pestaña) quedará registrada y puede invalidar el examen.",
-    norma5:"Al acceder, acepta estas condiciones."
-  },
   en: {
     loginT:"Exam Access", loginM:"Enter the key provided by your instructor", btnStart:"Start Exam",
     secMsg:"You exited full screen or switched tabs. The system has logged this incident.", sbFs:"Screen exits", sbTab:"Tab switches",
     btnReload:"Return to Exam",
-    btnFinish:"Submit Exam", step1:"Identification", step2:"Block I (1-19)", step3:"Block II (20-38)",
+    btnFinish:"Submit Exam", step1:"Identification", step2:"Block I (1-16)", step3:"Block II (17-24)", step4:"Block III (25-31)", step5:"Block IV (32-38)",
     hIdent:"Student Details", lblName:"Full Name", lblId:"Student ID", lblDegree:"Degree / Programme", lblSubject:"Subject",
     btnNext:"Next →", btnBack:"← Back", btnFinal:"Finish & Submit", calcTitle:"Statistical Calculator",
-    hP1:"Block I", hP1sub:"Questions 1–19", hP2:"Block II", hP2sub:"Questions 20–38",
+    hP1:"Block I: Measures", hP1sub:"Questions 1–16",
+    hP2:"Block II: Outliers & Rules", hP2sub:"Questions 17–24",
+    hP3:"Block III: Transforms & Graphs", hP3sub:"Questions 25–31",
+    hP4:"Block IV: Bivariate", hP4sub:"Questions 32–38",
     timerLabel:"Elapsed time", incLabel:"Incidents:",
     resH:"EVALUATION REPORT", resNote:"FINAL GRADE", resCorrect:"Correct answers",
     resTime:"Time elapsed", resSec:"SECURITY AUDIT",
@@ -857,10 +905,35 @@ const _T = {
     norma3:"Do not exit full-screen mode or switch tabs.",
     norma4:"Any security incident (full-screen exit, tab switch) will be recorded and may invalidate the exam.",
     norma5:"By accessing, you accept these conditions."
+  },
+  es: {
+    loginT:"Acceso al Examen", loginM:"Introduzca la clave proporcionada por el docente", btnStart:"Comenzar Examen",
+    secMsg:"Has salido de pantalla completa o cambiado de pestaña. El sistema ha registrado este incidente.", sbFs:"Salidas pantalla", sbTab:"Cambios pestaña",
+    btnReload:"Volver al Examen",
+    btnFinish:"Entregar Examen", step1:"Identificación", step2:"Bloque I (1-16)", step3:"Bloque II (17-24)", step4:"Bloque III (25-31)", step5:"Bloque IV (32-38)",
+    hIdent:"Datos del Estudiante", lblName:"Nombre y Apellidos", lblId:"ID / Expediente", lblDegree:"Grado / Titulación", lblSubject:"Asignatura",
+    btnNext:"Siguiente →", btnBack:"← Volver", btnFinal:"Finalizar y Entregar", calcTitle:"Calculadora Estadística",
+    hP1:"Bloque I: Medidas", hP1sub:"Preguntas 1–16",
+    hP2:"Bloque II: Outliers y Reglas", hP2sub:"Preguntas 17–24",
+    hP3:"Bloque III: Transformaciones y Gráficos", hP3sub:"Preguntas 25–31",
+    hP4:"Bloque IV: Análisis Bivariado", hP4sub:"Preguntas 32–38",
+    timerLabel:"Tiempo transcurrido", incLabel:"Incidencias:",
+    resH:"REPORTE DE EVALUACIÓN", resNote:"NOTA FINAL", resCorrect:"Respuestas correctas",
+    resTime:"Tiempo empleado", resSec:"AUDITORÍA DE SEGURIDAD",
+    resFs:"Salidas de pantalla completa", resTabs:"Cambios de pestaña",
+    resRisk:"Nivel de riesgo", colQ:"Pregunta", colR:"Tu respuesta", colC:"Correcta", colS:"Estado",
+    btnPdf:"Guardar PDF", resHeader:"RESULTADOS DEL EXAMEN",
+    confirmMsg:"¿Estás seguro de que deseas entregar el examen?",
+    accept:"He leído y acepto las normas del examen",
+    normas:"📋 Normas del examen:",
+    norma1:"Comunicación prohibida durante la prueba.",
+    norma2:"Utilice únicamente papel oficial y bolígrafo azul o negro.",
+    norma3:"No salga del modo pantalla completa ni cambie de pestaña.",
+    norma4:"Cualquier incidencia de seguridad (salida de pantalla completa, cambio de pestaña) quedará registrada y puede invalidar el examen.",
+    norma5:"Al acceder, acepta estas condiciones."
   }
 };
 
-// Inicializar textos y botones
 applyTexts();
 </script>
 </body>
