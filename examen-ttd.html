@@ -833,7 +833,6 @@ async function finishExam(auto = false) {
       <tr>
         <td>${item.q.substring(0, 60)}...</td>
         <td>${answerText}</td>
-        <td style="text-align:center;color:#aaa">—</td>
       </tr>`;
   });
 
@@ -895,9 +894,8 @@ async function finishExam(auto = false) {
     <table class="dtbl">
       <thead>
         <tr>
-          <th style="width:60%">${t.colQ}</th>
-          <th style="width:26%">${t.colR}</th>
-          <th style="width:14%;text-align:center">${t.colS}</th>
+          <th style="width:65%">${t.colQ}</th>
+          <th style="width:35%">${t.colR}</th>
         </tr>
       </thead>
       <tbody>${detailsRows}</tbody>
