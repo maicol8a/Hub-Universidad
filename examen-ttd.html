@@ -398,7 +398,7 @@ const _est = JSON.parse(sessionStorage.getItem('estudiante') || '{}')
 const _grupo = (_est.grupo || 'EN').toUpperCase()
 let lang = _grupo === 'EN' ? 'en' : 'es'
 let startTime = null, timerInterval = null, isFinishing = false;
-let sec = { fs: 0, tabs: 0 };
+let sec = { fs: 0, tabs: 0, blur: 0, keys: 0, devtools: 0 };
 let _rk = 0;
 
 function _xa(e){ return parseInt(atob(e)); }
@@ -462,24 +462,116 @@ async function initExam() {
 }
 
 function initSecurity() {
+  // ── Fullscreen exit ──────────────────────────────────────────────
   document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement && !isFinishing) {
+    const inFull = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!inFull && !isFinishing) {
       sec.fs++;
       updateSecCounters();
-      showBlock();
+      showBlock(lang === 'es'
+        ? '🚫 Has salido de pantalla completa.'
+        : '🚫 You exited full screen.');
     }
   });
+  document.addEventListener('webkitfullscreenchange', () => {
+    const inFull = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!inFull && !isFinishing) {
+      sec.fs++;
+      updateSecCounters();
+      showBlock(lang === 'es'
+        ? '🚫 Has salido de pantalla completa.'
+        : '🚫 You exited full screen.');
+    }
+  });
+
+  // ── Tab switch / minimize ────────────────────────────────────────
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && !isFinishing) {
       sec.tabs++;
       updateSecCounters();
     }
   });
+
+  // ── Window blur (Alt+Tab, desktop click, notifications) ──────────
+  window.addEventListener('blur', () => {
+    if (!isFinishing) {
+      sec.blur++;
+      updateSecCounters();
+      showBlock(lang === 'es'
+        ? '🚫 Has perdido el foco del examen (Alt+Tab o notificación detectada).'
+        : '🚫 Exam focus lost (Alt+Tab or notification detected).');
+    }
+  });
+
+  // ── Keyboard lockdown ────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (isFinishing) return;
+    const k = e.key.toLowerCase();
+    const ctrl = e.ctrlKey || e.metaKey;
+    const shift = e.shiftKey;
+    const alt = e.altKey;
+
+    // Keys that attempt to escape or cheat
+    const blocked = (
+      e.key === 'F12' ||                          // DevTools
+      e.key === 'F5'  ||                          // Reload
+      e.key === 'F11' ||                          // Fullscreen toggle
+      (ctrl && k === 'r') ||                      // Reload
+      (ctrl && k === 'w') ||                      // Close tab
+      (ctrl && k === 't') ||                      // New tab
+      (ctrl && k === 'n') ||                      // New window
+      (ctrl && shift && k === 'i') ||             // DevTools
+      (ctrl && shift && k === 'j') ||             // DevTools console
+      (ctrl && shift && k === 'c') ||             // DevTools inspect
+      (ctrl && shift && k === 'k') ||             // DevTools (Firefox)
+      (ctrl && k === 'u') ||                      // View source
+      (ctrl && k === 'p') ||                      // Print
+      (ctrl && k === 's') ||                      // Save
+      (ctrl && k === 'a') ||                      // Select all
+      (ctrl && k === 'c') ||                      // Copy
+      (ctrl && k === 'v') ||                      // Paste
+      (ctrl && k === 'x') ||                      // Cut
+      (ctrl && k === 'tab') ||                    // Switch tab
+      (alt  && k === 'tab') ||                    // Alt+Tab (some browsers)
+      (alt  && e.key === 'F4')                    // Close window
+    );
+
+    if (blocked) {
+      e.preventDefault();
+      e.stopPropagation();
+      sec.keys++;
+      updateSecCounters();
+      showBlock(lang === 'es'
+        ? `🚫 Combinación de teclas bloqueada: ${e.key}${ctrl?' +Ctrl':''}${shift?' +Shift':''}${alt?' +Alt':''}`
+        : `🚫 Blocked key combination: ${e.key}${ctrl?' +Ctrl':''}${shift?' +Shift':''}${alt?' +Alt':''}`);
+    }
+  }, true); // capture phase = before any other handler
+
+  // ── DevTools detection via window resize ─────────────────────────
+  const _origH = window.outerHeight;
+  const _origW = window.outerWidth;
+  window.addEventListener('resize', () => {
+    if (isFinishing) return;
+    const hDiff = _origH - window.outerHeight;
+    const wDiff = _origW - window.outerWidth;
+    if (hDiff > 150 || wDiff > 150) {
+      sec.devtools++;
+      updateSecCounters();
+      showBlock(lang === 'es'
+        ? '🚫 Posible apertura de herramientas de desarrollo detectada.'
+        : '🚫 Possible DevTools opening detected.');
+    }
+  });
+
+  // ── Block context menu, copy, paste ─────────────────────────────
   document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('copy', e => { if (!isFinishing) e.preventDefault(); });
+  document.addEventListener('copy',  e => e.preventDefault());
+  document.addEventListener('paste', e => e.preventDefault());
+  document.addEventListener('cut',   e => e.preventDefault());
 }
 
 function updateSecCounters() {
+  const total = sec.fs + sec.tabs + sec.blur + sec.keys + sec.devtools;
   ['fs','tab'].forEach(k => {
     const v = k === 'fs' ? sec.fs : sec.tabs;
     const el = document.getElementById('sb-'+k);
@@ -487,11 +579,18 @@ function updateSecCounters() {
     if (el) el.textContent = v;
     if (mini) mini.textContent = v;
   });
+  // Update total incidents in sidebar
+  const totalEl = document.getElementById('sb-total-mini');
+  if (totalEl) totalEl.textContent = total;
 }
 
-function showBlock() {
+function showBlock(msg) {
   const el = document.getElementById('security-block');
   el.style.display = 'flex';
+  if (msg) {
+    const msgEl = document.getElementById('txt-secMsg');
+    if (msgEl) msgEl.textContent = msg;
+  }
 }
 
 function dismissBlock() {
@@ -690,7 +789,7 @@ async function finishExam(auto = false) {
   let guardadoOk = false;
 
   // Security check: too many incidents → force zero grade
-  const totalIncidencias = sec.fs + sec.tabs;
+  const totalIncidencias = sec.fs + sec.tabs + sec.blur + sec.keys + sec.devtools;
   const penalizado = totalIncidencias > 0;
 
   if (estudiante && window._sb) {
@@ -701,7 +800,7 @@ async function finishExam(auto = false) {
         p_estudiante_id: estudiante.id,
         p_respuestas:    penalizado ? {} : respuestasEnvio,
         p_tiempo_usado:  tiempoSegundos,
-        p_incidencias:   { fullscreen: sec.fs, tabs: sec.tabs }
+        p_incidencias:   { fullscreen: sec.fs, tabs: sec.tabs, blur: sec.blur, keys: sec.keys, devtools: sec.devtools }
       });
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('timeout')), 10000)
@@ -746,7 +845,7 @@ async function finishExam(auto = false) {
     ? window._supabaseResult.correctas : 0;
   const t        = _T[lang];
 
-  const totalInc = sec.fs + sec.tabs;
+  const totalInc = sec.fs + sec.tabs + sec.blur + sec.keys + sec.devtools;
   let riskLabel, riskColor;
   if      (totalInc === 0)  { riskLabel = lang === 'es' ? 'Sin incidencias ✓' : 'No incidents ✓';  riskColor = '#27ae60'; }
   else if (totalInc <= 2)   { riskLabel = lang === 'es' ? 'Bajo'   : 'Low';    riskColor = '#e67e22'; }
@@ -809,14 +908,26 @@ async function finishExam(auto = false) {
       <table>
         <tr>
           <td>${t.resFs}:</td>
-          <td class="${sec.fs === 0 ? 'badge-ok' : sec.fs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.fs}</td>
+          <td class="${sec.fs === 0 ? 'badge-ok' : 'badge-alert'}">${sec.fs}</td>
         </tr>
         <tr>
           <td>${t.resTabs}:</td>
-          <td class="${sec.tabs === 0 ? 'badge-ok' : sec.tabs <= 2 ? 'badge-warn' : 'badge-alert'}">${sec.tabs}</td>
+          <td class="${sec.tabs === 0 ? 'badge-ok' : 'badge-alert'}">${sec.tabs}</td>
         </tr>
         <tr>
-          <td>${t.resRisk}:</td>
+          <td>${lang === 'es' ? 'Pérdidas de foco (Alt+Tab)' : 'Focus losses (Alt+Tab)'}:</td>
+          <td class="${sec.blur === 0 ? 'badge-ok' : 'badge-alert'}">${sec.blur}</td>
+        </tr>
+        <tr>
+          <td>${lang === 'es' ? 'Teclas bloqueadas' : 'Blocked key combos'}:</td>
+          <td class="${sec.keys === 0 ? 'badge-ok' : 'badge-alert'}">${sec.keys}</td>
+        </tr>
+        <tr>
+          <td>${lang === 'es' ? 'Intentos DevTools' : 'DevTools attempts'}:</td>
+          <td class="${sec.devtools === 0 ? 'badge-ok' : 'badge-alert'}">${sec.devtools}</td>
+        </tr>
+        <tr>
+          <td><strong>${t.resRisk}:</strong></td>
           <td style="color:${riskColor};font-weight:700">${riskLabel}</td>
         </tr>
       </table>
@@ -859,7 +970,7 @@ const _T = {
     norma1:"Comunicación prohibida durante la prueba.",
     norma2:"Utilice únicamente papel oficial y bolígrafo azul o negro.",
     norma3:"No salga del modo pantalla completa ni cambie de pestaña.",
-    norma4:"Cualquier incidencia de seguridad (salida de pantalla completa, cambio de pestaña) quedará registrada y puede invalidar el examen.",
+    norma4:"CUALQUIER incidencia de seguridad quedará registrada e invalidará el examen: salida de pantalla completa, cambio de pestaña, pérdida de foco (Alt+Tab), uso de combinaciones de teclas prohibidas o intento de abrir herramientas de desarrollo.",
     norma5:"Al acceder, acepta estas condiciones."
   },
   en: {
@@ -882,7 +993,7 @@ const _T = {
     norma1:"Communication is prohibited during the test.",
     norma2:"Use only official paper and blue or black pen.",
     norma3:"Do not exit full-screen mode or switch tabs.",
-    norma4:"Any security incident (full-screen exit, tab switch) will be recorded and may invalidate the exam.",
+    norma4:"ANY security incident will be recorded and will invalidate the exam: full-screen exit, tab switch, focus loss (Alt+Tab), use of prohibited key combinations, or attempt to open developer tools.",
     norma5:"By accessing, you accept these conditions."
   }
 };
