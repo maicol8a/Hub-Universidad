@@ -780,40 +780,41 @@ async function finishExam(auto = false) {
   let guardadoOk = false;
   if (estudiante && window._sb) {
     try {
-      const { error } = await window._sb.rpc('corregir_examen', {
+      const { data: result, error } = await window._sb.rpc('corregir_examen', {
         p_examen_id:     EXAMEN_ID,
         p_estudiante_id: estudiante.id,
         p_respuestas:    respuestasEnvio,
         p_tiempo_usado:  tiempoSegundos,
         p_incidencias:   { fullscreen: sec.fs, tabs: sec.tabs }
       });
-      if (!error) guardadoOk = true;
+      if (!error && result?.[0]) {
+        guardadoOk = true;
+        window._supabaseResult = result[0];
+      }
     } catch(e) { console.error('Supabase:', e); }
   }
 
+  // Use Supabase result for score (responses already sent above)
+  // Build report rows from student answers only (correct answers stay in Supabase)
   qs.forEach((item, i) => {
     const sel = document.querySelector(`input[name="q${i}"]:checked`);
     const ansIdx = sel ? parseInt(sel.value) : -1;
-    const correctIdx = _xa(item.a);
     const answered = ansIdx !== -1;
-    const isCorrect = answered && (ansIdx === correctIdx);
-    if (isCorrect) score++;
-
-    const answerText  = answered ? item.o[ansIdx]     : '—';
-    const correctText = item.o[correctIdx];
-    const statusIcon  = !answered ? '○' : isCorrect ? '✓' : '✗';
-    const statusColor = !answered ? '#aaa' : isCorrect ? '#27ae60' : '#e31e24';
+    const answerText = answered ? item.o[ansIdx] : '—';
 
     detailsRows += `
       <tr>
         <td>${item.q.substring(0, 60)}...</td>
         <td>${answerText}</td>
-        <td><b>${correctText}</b></td>
-        <td style="color:${statusColor};font-weight:700;text-align:center">${statusIcon}</td>
+        <td style="text-align:center;color:#aaa">—</td>
       </tr>`;
   });
 
-  const nota     = ((score / qs.length) * 10).toFixed(2);
+  // Get nota from Supabase result
+  const nota = guardadoOk && window._supabaseResult
+    ? parseFloat(window._supabaseResult.nota).toFixed(2)
+    : '—';
+  score = guardadoOk && window._supabaseResult ? window._supabaseResult.correctas : 0;
   const t        = _T[lang];
 
   const totalInc = sec.fs + sec.tabs;
@@ -854,7 +855,7 @@ async function finishExam(auto = false) {
     </div>
 
     <table class="dtbl">
-      <thead><tr><th style="width:42%">${t.colQ}</th><th style="width:22%">${t.colR}</th><th style="width:22%">${t.colC}</th><th style="width:14%;text-align:center">${t.colS}</th></tr></thead>
+      <thead><tr><th style="width:56%">${t.colQ}</th><th style="width:30%">${t.colR}</th><th style="width:14%;text-align:center">—</th></tr></thead>
       <tbody>${detailsRows}</tbody>
     </table>
 
