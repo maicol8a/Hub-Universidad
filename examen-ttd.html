@@ -669,9 +669,13 @@ async function finishExam(auto = false) {
   const elapsed = getElapsedStr();
   const tiempoSegundos = startTime ? Math.floor((new Date() - startTime) / 1000) : 0;
 
-  if (document.fullscreenElement) {
-    await document.exitFullscreen().catch(() => {});
-  }
+  // Mac-safe fullscreen exit — never let this block the report
+  try {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      const exitFn = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exitFn) await exitFn.call(document).catch(() => {});
+    }
+  } catch(e) { /* ignore fullscreen errors on Safari/Mac */ }
 
   const qs = _Q[lang];
   const letras = ['A','B','C','D'];
@@ -684,20 +688,35 @@ async function finishExam(auto = false) {
   const EXAMEN_ID = '71ec24a3-24c6-4126-a0b9-e108dd7180ef';
   const estudiante = window._estudiante;
   let guardadoOk = false;
+
+  // Security check: too many incidents → force zero grade
+  const totalIncidencias = sec.fs + sec.tabs;
+  const penalizado = totalIncidencias > 0;
+
   if (estudiante && window._sb) {
     try {
-      const { data: result, error } = await window._sb.rpc('corregir_examen', {
+      // Add timeout to prevent hanging on slow connections (Mac issue)
+      const rpcPromise = window._sb.rpc('corregir_examen', {
         p_examen_id:     EXAMEN_ID,
         p_estudiante_id: estudiante.id,
-        p_respuestas:    respuestasEnvio,
+        p_respuestas:    penalizado ? {} : respuestasEnvio,
         p_tiempo_usado:  tiempoSegundos,
         p_incidencias:   { fullscreen: sec.fs, tabs: sec.tabs }
       });
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 10000)
+      );
+      const { data: result, error } = await Promise.race([rpcPromise, timeoutPromise]);
       if (!error && result?.[0]) {
         guardadoOk = true;
         window._supabaseResult = result[0];
+        // Override nota if penalized
+        if (penalizado) window._supabaseResult.nota = 0;
       }
-    } catch(e) { console.error('Supabase:', e); }
+    } catch(e) {
+      console.error('Supabase error:', e);
+      // Still show report even if Supabase fails
+    }
   }
 
   let score = 0;
@@ -719,11 +738,12 @@ async function finishExam(auto = false) {
       </tr>`;
   });
 
-  // Get nota from Supabase result
-  const nota = guardadoOk && window._supabaseResult
-    ? parseFloat(window._supabaseResult.nota).toFixed(2)
-    : '—';
-  score = guardadoOk && window._supabaseResult ? window._supabaseResult.correctas : 0;
+  // Get nota — penalized students get 0, failed Supabase gets '—'
+  const notaVal = penalizado ? 0
+    : (guardadoOk && window._supabaseResult ? parseFloat(window._supabaseResult.nota) : null);
+  const nota = notaVal !== null ? notaVal.toFixed(2) : '—';
+  score = (guardadoOk && window._supabaseResult && !penalizado)
+    ? window._supabaseResult.correctas : 0;
   const t        = _T[lang];
 
   const totalInc = sec.fs + sec.tabs;
@@ -762,10 +782,14 @@ async function finishExam(auto = false) {
       <div class="grade-num">${nota}<span style="font-size:1.5rem;color:#999"> / 10</span></div>
       <div style="margin-top:10px;font-size:13px;color:#555">${t.resCorrect}: <b>${score} / ${qs.length}</b></div>
       <div style="margin-top:6px;font-size:12px;color:#aaa">${t.resTime}: ${elapsed}</div>
-      <div style="margin-top:8px;font-size:12px;font-weight:700;color:${guardadoOk?'#27ae60':'#e67e22'}">
-        ${guardadoOk
-          ? (lang==='es'?'✅ Resultado guardado en el servidor.':'✅ Result saved to server.')
-          : (lang==='es'?'⚠️ Guarda este PDF como respaldo.':'⚠️ Save this PDF as backup.')}
+      <div style="margin-top:8px;font-size:12px;font-weight:700;color:${penalizado?'#e31e24':guardadoOk?'#27ae60':'#e67e22'}">
+        ${penalizado
+          ? (lang==='es'
+              ? '🚫 Calificación anulada por incumplimiento de normas de seguridad.'
+              : '🚫 Grade overridden due to security policy violations.')
+          : guardadoOk
+            ? (lang==='es'?'✅ Resultado guardado en el servidor.':'✅ Result saved to server.')
+            : (lang==='es'?'⚠️ Guarda este PDF como respaldo.':'⚠️ Save this PDF as backup.')}
       </div>
     </div>
 
@@ -806,8 +830,12 @@ async function finishExam(auto = false) {
 
   document.getElementById('txt-resHeader').innerText = t.resHeader;
   document.getElementById('txt-btnPdf').innerText     = t.btnPdf;
-  document.getElementById('app').style.display        = 'none';
-  document.getElementById('preview').style.display    = 'block';
+  // Force report display — use setTimeout to ensure DOM is ready (Mac fix)
+  setTimeout(() => {
+    document.getElementById('app').style.display     = 'none';
+    document.getElementById('preview').style.display = 'block';
+    window.scrollTo(0, 0);
+  }, 100);
 }
 
 // Textos i18n completos (español e inglés)
