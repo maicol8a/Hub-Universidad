@@ -231,7 +231,7 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
   <header class="topbar">
     <div style="display:flex;align-items:center;gap:14px">
       <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/Universidad-europea-logo_poc9mEM.2e16d0ba.fill-767x384.png" height="40">
-      <div class="lang-toggle">
+      <div class="lang-toggle" style="display:none">
         <button class="lang-btn active" onclick="setLang('es')" id="btn-es">ES</button>
         <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
       </div>
@@ -516,10 +516,15 @@ async function initExam() {
   btn.textContent = lang === 'es' ? 'Cargando...' : 'Loading...';
 
   // Load questions from Supabase (with security verification)
+  // Detect language from student group (EN→en, ESP→es)
+  const grupo = window._estudiante?.grupo || 'EN'
+  const idiomaExamen = grupo.toUpperCase() === 'EN' ? 'en' : 'es'
+  lang = idiomaExamen  // set global lang to match group
+
   const { data: preguntas, error } = await window._sb.rpc('obtener_preguntas', {
     p_examen_id: '2df7125e-e2a8-48f2-aeb8-0e8617adeac8',
     p_codigo:    codigo.toUpperCase(),
-    p_idioma:    lang
+    p_idioma:    idiomaExamen
   });
 
   if (error) {
@@ -536,8 +541,12 @@ async function initExam() {
     q: p.enunciado,
     o: [p.opcion_a, p.opcion_b, p.opcion_c, p.opcion_d].filter(Boolean)
   }));
-  _Q.en = qs;
-  _Q.es = qs;
+  // Store questions for the loaded language
+  _Q[idiomaExamen] = qs;
+
+  // Update lang buttons to reflect actual language
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`#btn-${idiomaExamen}, #btn-login-${idiomaExamen}`).forEach(b => b.classList.add('active'));
 
   document.getElementById('txt-codigo-error').style.display = 'none';
   document.getElementById('login-overlay').style.display = 'none';
