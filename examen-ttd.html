@@ -397,7 +397,7 @@ const contextos = {
           <tr><th>Estrategia</th><th>e₁</th><th>e₂</th><th>e₃</th></tr>
           <tr><td>$a_1$ (Renta Fija)</td><td>14</td><td>16</td><td>18</td></tr>
           <tr><td>$a_2$ (Renta Variable)</td><td>-10</td><td>25</td><td>55</td></tr>
-          <tr><td>$a_3$ (Derivados)</td><td>-45</td><td>12</td><td>130</td></tr>
+          <tr><td>$a_3$ (Derivados)</td><td>-45</td><td>121</td><td>130</td></tr>
           <tr><td>$a_4$ (Inmobiliario)</td><td>6</td><td>28</td><td>38</td></tr>
         </table>
       ` },
@@ -414,7 +414,7 @@ const contextos = {
           <tr><th>Strategy</th><th>e₁</th><th>e₂</th><th>e₃</th></tr>
           <tr><td>$a_1$ (Fixed Income)</td><td>14</td><td>16</td><td>18</td></tr>
           <tr><td>$a_2$ (Equity)</td><td>-10</td><td>25</td><td>55</td></tr>
-          <tr><td>$a_3$ (Derivatives)</td><td>-45</td><td>12</td><td>130</td></tr>
+          <tr><td>$a_3$ (Derivatives)</td><td>-45</td><td>121</td><td>130</td></tr>
           <tr><td>$a_4$ (Real Estate)</td><td>6</td><td>28</td><td>38</td></tr>
         </table>
       ` },
@@ -604,6 +604,27 @@ function initSecurity() {
   document.addEventListener('copy',  e => e.preventDefault());
   document.addEventListener('paste', e => e.preventDefault());
   document.addEventListener('cut',   e => e.preventDefault());
+
+  // ── Numeric keyboard support for calculator ───────────────────
+  document.addEventListener('keydown', e => {
+    // Only when no input/textarea is focused (avoid blocking table inputs)
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    if (isFinishing) return;
+
+    const key = e.key;
+    if ('0123456789'.includes(key))           { cIn(key); return; }
+    if (key === '.' || key === ',')           { cIn('.'); return; }
+    if (key === '+')                          { cIn('+'); return; }
+    if (key === '-')                          { cIn('-'); return; }
+    if (key === '*')                          { cIn('*'); return; }
+    if (key === '/')                          { e.preventDefault(); cIn('/'); return; }
+    if (key === '(')                          { cIn('('); return; }
+    if (key === ')')                          { cIn(')'); return; }
+    if (key === 'Enter' || key === '=')       { cRes(); return; }
+    if (key === 'Backspace' && !e.ctrlKey)    { cBack(); return; }
+    if (key === 'Escape')                     { cClear(); return; }
+  });
 }
 
 function updateSecCounters() {
@@ -710,6 +731,7 @@ function renderQ() {
 
   const qs = _Q[lang];
   if (!qs || !qs.length) return;
+  const ctxs = (contextos[lang] || []);
 
   qs.forEach((item, i) => {
     // Find which block this question belongs to
@@ -718,14 +740,27 @@ function renderQ() {
     const container = document.getElementById('q-box-' + blockIndex);
     if (!container) return;
 
-    // Detect if options are empty (table question — enunciado has the HTML)
-    const hasOptions = item.o && item.o.some(o => o.trim() !== '');
-    const optionsHtml = hasOptions ? item.o.map((opt, oi) => `
+    // Insert context block BEFORE its first question
+    ctxs.forEach(ctx => {
+      if (ctx.indice === i) {
+        container.innerHTML += `
+          <div class="context-block">
+            <strong>${ctx.titulo}</strong>
+            ${ctx.html}
+          </div>`;
+      }
+    });
+
+    // Detect if options are empty (table question — enunciado contains the HTML)
+    const hasOptions = item.o && item.o.some(o => o && o.trim() !== '');
+    const optionsHtml = hasOptions
+      ? item.o.map((opt, oi) => `
           <label class="opt-label">
             <input type="radio" name="q${i}" value="${'ABCDE'[oi]}"
               onchange="onAnswered(${i}, ${qs.length})">
             ${opt}
-          </label>`).join('') : '';
+          </label>`).join('')
+      : '';
 
     container.innerHTML += `
       <div class="question-block" id="qblock-${i}">
