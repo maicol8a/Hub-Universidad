@@ -315,8 +315,6 @@ window.cargarDatos = async function() {
     .eq('examen_id', examenId)
     .order('nota', { ascending: false })
 
-  console.log('examenId usado:', examenId)
-  console.log('asigId usado:', asigId)
   if (error) { console.error(error); return }
 
   // Query 2: get grupos for students who submitted this exam
@@ -366,19 +364,44 @@ function updateExamStatus() {
 window.toggleExamen = async function() {
   if (!currentExamenId) return
   const newState = !currentActivo
-  const confirm_msg = newState
-    ? 'Open the exam? Students will be able to access it.'
-    : 'Close the exam? No more submissions will be accepted.'
-  if (!confirm(confirm_msg)) return
 
-  const { error } = await sb
-    .from('examenes')
-    .update({ activo: newState })
-    .eq('id', currentExamenId)
+  if (!newState) {
+    // Closing exam → warn and auto-backup
+    const confirmed = confirm(
+      '⚠️ Close the exam?\n\n' +
+      '• No more submissions will be accepted.\n' +
+      '• A CSV backup will be downloaded automatically.\n\n' +
+      'Proceed?'
+    )
+    if (!confirmed) return
 
-  if (!error) {
-    currentActivo = newState
-    updateExamStatus()
+    const { error } = await sb
+      .from('examenes')
+      .update({ activo: false })
+      .eq('id', currentExamenId)
+
+    if (!error) {
+      currentActivo = false
+      updateExamStatus()
+      // Auto-download backup CSV
+      if (allData.length > 0) {
+        exportarCSV(true) // true = called from close, adds timestamp
+        alert('✅ Exam closed.\n📥 CSV backup downloaded automatically.\nKeep it in a safe place.')
+      } else {
+        alert('✅ Exam closed.\n⚠️ No submissions found — nothing to export.')
+      }
+    }
+  } else {
+    // Opening exam
+    if (!confirm('Open the exam? Students will be able to access it.')) return
+    const { error } = await sb
+      .from('examenes')
+      .update({ activo: true })
+      .eq('id', currentExamenId)
+    if (!error) {
+      currentActivo = true
+      updateExamStatus()
+    }
   }
 }
 
@@ -543,33 +566,53 @@ function renderMasFalladas(data, totalQ) {
 }
 
 // ── EXPORT CSV ────────────────────────────────────────────────────────────────
-window.exportarCSV = function() {
+window.exportarCSV = function(isBackup = false) {
   if (!allData.length) { alert('No data to export.'); return }
 
-  const sel   = document.getElementById('sel-asignatura')
+  const sel    = document.getElementById('sel-asignatura')
   const nombre = sel.options[sel.selectedIndex]?.text || 'export'
+  const grupo  = document.getElementById('sel-grupo').value || 'ALL'
+  const ts     = new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)
 
-  const headers = ['Student ID','Name','Group','Grade','Time (s)','FS exits','Tab switches','Submitted']
+  const headers = [
+    'Student ID','Name','Group','Grade','Correct','Time (min)',
+    'FS exits','Tab switches','Blur (Alt+Tab)','Keys blocked','DevTools',
+    'Total incidents','Submitted'
+  ]
+
   const rows = allData.map(r => {
-    const inc = r.respuestas?.incidencias || {}
+    const inc    = r.respuestas?.incidencias || {}
+    const total  = (inc.fullscreen||0)+(inc.tabs||0)+(inc.blur||0)+(inc.keys||0)+(inc.devtools||0)
+    const mins   = r.tiempo_usado ? (r.tiempo_usado/60).toFixed(1) : ''
+    const nota   = parseFloat(r.nota) || 0
+    const totalQ = Object.keys(r.respuestas||{}).filter(k=>k.startsWith('p')).length
+    const correct = Math.round((nota/10)*totalQ)
     return [
-      r.estudiantes?.student_id || '',
-      r.estudiantes?.nombre || '',
+      `"${r.estudiantes?.student_id || ''}"`,
+      `"${r.estudiantes?.nombre || ''}"`,
       r.grupo || '',
-      r.nota || '',
-      r.tiempo_usado || '',
-      inc.fullscreen ?? '',
-      inc.tabs ?? '',
+      nota.toFixed(2),
+      `${correct}/${totalQ}`,
+      mins,
+      inc.fullscreen ?? 0,
+      inc.tabs ?? 0,
+      inc.blur ?? 0,
+      inc.keys ?? 0,
+      inc.devtools ?? 0,
+      total,
       r.enviado_en ? new Date(r.enviado_en).toLocaleString('es-ES') : ''
     ].join(',')
   })
 
-  const csv  = [headers.join(','), ...rows].join('\n')
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
-  const a    = document.createElement('a')
-  a.href     = URL.createObjectURL(blob)
-  a.download = `results_${nombre.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`
+  const prefix   = isBackup ? 'BACKUP' : 'results'
+  const filename = `${prefix}_${nombre.replace(/\s+/g,'_')}_${grupo}_${ts}.csv`
+  const csv      = [headers.join(','), ...rows].join('\n')
+  const blob     = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' })
+  const a        = document.createElement('a')
+  a.href         = URL.createObjectURL(blob)
+  a.download     = filename
   a.click()
+  console.log(`📥 Exported: ${filename} (${rows.length} rows)`)
 }
 
 // ── LOGOUT ────────────────────────────────────────────────────────────────────
