@@ -401,9 +401,9 @@ const contextos = {
           <tr><td>$a_4$ (Inmobiliario)</td><td>6</td><td>28</td><td>38</td></tr>
         </table>
       ` },
-    { indice: 9, titulo: "Contexto 2: Probabilidades de los escenarios",
+    { indice: 10, titulo: "Contexto 2: Probabilidades de los escenarios",
       html: `<p>Imagine que la probabilidad de los escenarios del Contexto 1 es $P(e_1) = 0.25$, $P(e_2) = 0.45$ y $P(e_3) = 0.30$.</p>` },
-    { indice: 19, titulo: "Contexto 3: Estudio de mercado",
+    { indice: 20, titulo: "Contexto 3: Estudio de mercado",
       html: `<p>Una empresa debe decidir si lanzar un producto ($a_1$) o no ($a_2$). $P(Éxito) = 0.6$. Beneficio si éxito: 120k. Pérdida si fracaso: 40k. Se puede contratar un estudio de mercado con fiabilidad del 80% ($P(+|Éxito)=0.8$, $P(-|Fracaso)=0.8$).</p>` }
   ],
   en: [
@@ -418,9 +418,9 @@ const contextos = {
           <tr><td>$a_4$ (Real Estate)</td><td>6</td><td>28</td><td>38</td></tr>
         </table>
       ` },
-    { indice: 9, titulo: "Context 2: Scenario probabilities",
+    { indice: 10, titulo: "Context 2: Scenario probabilities",
       html: `<p>Assume the probabilities of the scenarios from Context 1 are $P(e_1) = 0.25$, $P(e_2) = 0.45$ and $P(e_3) = 0.30$.</p>` },
-    { indice: 19, titulo: "Context 3: Market research",
+    { indice: 20, titulo: "Context 3: Market research",
       html: `<p>A company must decide whether to launch a product ($a_1$) or not ($a_2$). $P(Success) = 0.6$. Profit if success: 120k. Loss if failure: 40k. A market research study can be hired with 80% reliability ($P(+|Success)=0.8$, $P(-|Failure)=0.8$).</p>` }
   ]
 };
@@ -935,11 +935,14 @@ async function finishExam(auto = false) {
     const sel = document.querySelector(`input[name="q${i}"]:checked`);
     const ansIdx = sel ? parseInt(sel.value) : -1;
     const answered = ansIdx !== -1;
-    const answerText = answered ? item.o[ansIdx] : '—';
+    const answerText = answered && item.o && item.o[ansIdx] != null
+      ? item.o[ansIdx] : '—';
 
+    // Strip HTML tags for report display (Q3/Q14 have HTML tables in enunciado)
+    const plainQ = item.q.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 70);
     detailsRows += `
       <tr>
-        <td>${item.q.substring(0, 60)}...</td>
+        <td>${plainQ}...</td>
         <td>${answerText}</td>
       </tr>`;
   });
