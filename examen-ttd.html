@@ -215,7 +215,7 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
     <div><span id="sb-fs">0</span><label id="txt-sbFs">Salidas pantalla</label></div>
     <div><span id="sb-tab">0</span><label id="txt-sbTab">Cambios de pestaña</label></div>
   </div>
-  <button class="btn btn-red" onclick="dismissBlock()" id="txt-btnReload">Volver al Examen</button>
+  <p style="color:#aaa;font-size:13px;margin-top:12px">⏱ El examen se entregará automáticamente en 3 segundos... / Exam submits in 3 seconds...</p>
 </div>
 
 <!-- ═══ APP ═══ -->
@@ -585,19 +585,23 @@ function updateSecCounters() {
 }
 
 function showBlock(msg) {
+  if (isFinishing) return; // already generating report
   const el = document.getElementById('security-block');
   el.style.display = 'flex';
-  if (msg) {
-    const msgEl = document.getElementById('txt-secMsg');
-    if (msgEl) msgEl.textContent = msg;
-  }
+  const msgEl = document.getElementById('txt-secMsg');
+  if (msgEl) msgEl.textContent = (msg || (lang === 'es'
+    ? '🚫 Incidencia de seguridad detectada. Generando reporte...'
+    : '🚫 Security incident detected. Generating report...'));
+
+  // Show blocked message for 3 seconds then auto-submit with penalty
+  setTimeout(() => {
+    el.style.display = 'none';
+    finishExam(true); // auto = true, penalizado will be true
+  }, 3000);
 }
 
 function dismissBlock() {
-  document.getElementById('security-block').style.display = 'none';
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  }
+  // Disabled: once blocked, exam submits automatically
 }
 
 function startTimer() {
