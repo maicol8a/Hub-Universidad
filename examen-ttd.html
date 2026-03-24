@@ -102,7 +102,7 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
 /* CALCULADORA */
 .calc-wrap{margin-top:1.5rem}
 .calc{background:#1a1a1a;padding:12px;border-radius:10px}
-#calc-display{width:100%;height:45px;background:#000;color:#00ff41;text-align:right;padding:8px 10px;font-family:monospace;font-size:16px;border:1px solid #333;margin-bottom:9px;border-radius:4px}
+#calc-display{width:100%;height:45px;background:#000;color:#00ff41;text-align:right;padding:8px 10px;font-family:monospace;font-size:14px;border:1px solid #333;margin-bottom:9px;border-radius:4px;overflow:hidden;white-space:nowrap}
 .calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .calc button{padding:10px 4px;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:11px;background:#333;color:white;transition:.1s}
 .calc button:active{transform:scale(.95)}
@@ -235,10 +235,16 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
         <span style="font-size:16px">①</span> <span id="txt-step1">Identificación</span>
       </div>
       <div class="step" id="s1" onclick="gotoTab(1)">
-        <span style="font-size:16px">②</span> <span id="txt-step2">Bloque I (Preguntas 1–19)</span>
+        <span style="font-size:16px">②</span> <span>Bloque I (1–10)</span>
       </div>
       <div class="step" id="s2" onclick="gotoTab(2)">
-        <span style="font-size:16px">③</span> <span id="txt-step3">Bloque II (Preguntas 20–38)</span>
+        <span style="font-size:16px">③</span> <span>Bloque II (11–20)</span>
+      </div>
+      <div class="step" id="s3" onclick="gotoTab(3)">
+        <span style="font-size:16px">④</span> <span>Bloque III (21–29)</span>
+      </div>
+      <div class="step" id="s4" onclick="gotoTab(4)">
+        <span style="font-size:16px">⑤</span> <span>Bloque IV (30–35)</span>
       </div>
 
       <div class="timer-box">
@@ -270,30 +276,54 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
         </div>
       </div>
 
-      <!-- Tab 1: Bloque I (19 preguntas) -->
       <div class="fsec" id="t1">
         <div class="sec-hdr">
-          <h2 id="txt-hP1">Bloque I</h2>
-          <small id="txt-hP1sub">Preguntas 1–19</small>
+          <h2>Bloque I: Criterios Clásicos</h2>
+          <small>Preguntas 1–10</small>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="prog1" style="width:0%"></div></div>
         <div id="q-box-1"></div>
         <div style="display:flex;justify-content:space-between;margin-top:1rem">
-          <button class="btn btn-out" onclick="gotoTab(0)" id="txt-btnBack1">← Volver</button>
-          <button class="btn btn-red" onclick="gotoTab(2)" id="txt-btnNext2">Siguiente →</button>
+          <button class="btn btn-out" onclick="gotoTab(0)">← Volver</button>
+          <button class="btn btn-red" onclick="gotoTab(2)">Siguiente →</button>
         </div>
       </div>
 
-      <!-- Tab 2: Bloque II (19 preguntas) -->
       <div class="fsec" id="t2">
         <div class="sec-hdr">
-          <h2 id="txt-hP2">Bloque II</h2>
-          <small id="txt-hP2sub">Preguntas 20–38</small>
+          <h2>Bloque II: Riesgo y Distribuciones</h2>
+          <small>Preguntas 11–20</small>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="prog2" style="width:0%"></div></div>
         <div id="q-box-2"></div>
         <div style="display:flex;justify-content:space-between;margin-top:1rem">
-          <button class="btn btn-out" onclick="gotoTab(1)" id="txt-btnBack2">← Volver</button>
+          <button class="btn btn-out" onclick="gotoTab(1)">← Volver</button>
+          <button class="btn btn-red" onclick="gotoTab(3)">Siguiente →</button>
+        </div>
+      </div>
+
+      <div class="fsec" id="t3">
+        <div class="sec-hdr">
+          <h2>Bloque III: Información y Bayes</h2>
+          <small>Preguntas 21–29</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog3" style="width:0%"></div></div>
+        <div id="q-box-3"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(2)">← Volver</button>
+          <button class="btn btn-red" onclick="gotoTab(4)">Siguiente →</button>
+        </div>
+      </div>
+
+      <div class="fsec" id="t4">
+        <div class="sec-hdr">
+          <h2>Bloque IV: Interpretación</h2>
+          <small>Preguntas 30–35</small>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog4" style="width:0%"></div></div>
+        <div id="q-box-4"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:1rem">
+          <button class="btn btn-out" onclick="gotoTab(3)">← Volver</button>
           <button class="btn btn-red" onclick="finishExam()" id="txt-btnFinal">Finalizar y Entregar</button>
         </div>
       </div>
@@ -308,8 +338,8 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
           <input type="text" id="calc-display" readonly value="0">
           <div class="calc-grid">
             <button class="clear" onclick="cClear()">C</button>
+            <button class="op-fn" onclick="cBack()" style="background:#555;color:white;font-size:14px">⌫</button>
             <button class="op-fn" onclick="cIn('(')">(</button>
-            <button class="op-fn" onclick="cIn(')')">)</button>
             <button class="op-math" onclick="cIn('/')">÷</button>
             <button class="op-fn" onclick="cFn('Math.sqrt(')">√x</button>
             <button class="op-fn" onclick="cIn('**')">xʸ</button>
@@ -326,9 +356,10 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
             <button onclick="cIn('1')">1</button>
             <button onclick="cIn('2')">2</button>
             <button onclick="cIn('3')">3</button>
-            <button onclick="cIn('.')">.</button>
+            <button onclick="cIn(')')">)</button>
             <button onclick="cIn('0')" style="grid-column:span 1">0</button>
-            <button class="eq" onclick="cRes()">=</button>
+            <button onclick="cIn('.')">.</button>
+            <button class="eq" onclick="cRes()">= </button>
           </div>
         </div>
       </div>
@@ -349,7 +380,12 @@ input[type="text"]:focus,input[type="password"]:focus{outline:none;border-color:
 // ── CONFIGURACIÓN ─────────────────────────────────────────────────────────────
 const _v  = "dW5pdmVyc2lkYWQ="; // "universidad" en base64
 const _TL = 90; // Tiempo límite en minutos (ajustable)
-const BLOCK1_SIZE = 19; // primeras 19 preguntas
+const BLOCKS = [
+  { start: 0,  end: 10, label: 'Bloque I: Criterios Clásicos',   sub: 'Preguntas 1–10'  },
+  { start: 10, end: 20, label: 'Bloque II: Riesgo y Distribuciones', sub: 'Preguntas 11–20' },
+  { start: 20, end: 29, label: 'Bloque III: Información y Bayes', sub: 'Preguntas 21–29' },
+  { start: 29, end: 35, label: 'Bloque IV: Interpretación',       sub: 'Preguntas 30–35' },
+];
 
 // Contextos estructurados para cada idioma
 const contextos = {
@@ -666,67 +702,57 @@ function applyTexts() {
 }
 
 function renderQ() {
-  const b1 = document.getElementById('q-box-1');
-  const b2 = document.getElementById('q-box-2');
-  if (!b1 || !b2) return;
-  b1.innerHTML = ''; 
-  b2.innerHTML = '';
+  // Clear all block containers
+  for (let b = 1; b <= BLOCKS.length; b++) {
+    const box = document.getElementById('q-box-' + b);
+    if (box) box.innerHTML = '';
+  }
 
   const qs = _Q[lang];
-  const ctxs = contextos[lang];
+  if (!qs || !qs.length) return;
 
   qs.forEach((item, i) => {
-    // Insertar contexto si corresponde
-    ctxs.forEach(ctx => {
-      if (ctx.indice === i) {
-        const ctxHtml = `
-          <div class="context-block">
-            <strong>${ctx.titulo}</strong>
-            ${ctx.html}
-          </div>`;
-        if (i < BLOCK1_SIZE) {
-          b1.innerHTML += ctxHtml;
-        } else {
-          b2.innerHTML += ctxHtml;
-        }
-      }
-    });
+    // Find which block this question belongs to
+    let blockIndex = BLOCKS.findIndex(b => i >= b.start && i < b.end) + 1;
+    if (blockIndex < 1) return;
+    const container = document.getElementById('q-box-' + blockIndex);
+    if (!container) return;
 
-    const html = `
-      <div class="question-block" id="qblock-${i}">
-        <div class="q-num">${_T[lang].colQ} ${i + 1}</div>
-        <div class="q-text">${item.q}</div>
-        ${item.o.map((opt, oi) => `
+    // Detect if options are empty (table question — enunciado has the HTML)
+    const hasOptions = item.o && item.o.some(o => o.trim() !== '');
+    const optionsHtml = hasOptions ? item.o.map((opt, oi) => `
           <label class="opt-label">
-            <input type="radio" name="q${i}" value="${oi}" onchange="onAnswered(${i}, ${qs.length})">
+            <input type="radio" name="q${i}" value="${'ABCDE'[oi]}"
+              onchange="onAnswered(${i}, ${qs.length})">
             ${opt}
-          </label>`).join('')}
+          </label>`).join('') : '';
+
+    container.innerHTML += `
+      <div class="question-block" id="qblock-${i}">
+        <div class="q-num">Pregunta ${i + 1}</div>
+        <div class="q-text">${item.q}</div>
+        ${optionsHtml}
       </div>`;
-    if (i < BLOCK1_SIZE) {
-      b1.innerHTML += html;
-    } else {
-      b2.innerHTML += html;
-    }
   });
-// Re-renderizar LaTeX tras insertar preguntas dinámicamente
+
   if (window.renderMathInElement) {
     renderMathInElement(document.body, {
       delimiters: [
         {left: '$$', right: '$$', display: true},
         {left: '$',  right: '$',  display: false}
       ]
-    })
+    });
   }
 }
 
 function onAnswered(qIdx, total) {
   document.getElementById('qblock-' + qIdx)?.classList.add('answered');
-  const answered1 = countAnswered(0, BLOCK1_SIZE);
-  const answered2 = countAnswered(BLOCK1_SIZE, total);
-  const p1 = document.getElementById('prog1');
-  const p2 = document.getElementById('prog2');
-  if (p1) p1.style.width = (answered1 / BLOCK1_SIZE * 100) + '%';
-  if (p2) p2.style.width = (answered2 / (total - BLOCK1_SIZE) * 100) + '%';
+  BLOCKS.forEach((block, bi) => {
+    const size = block.end - block.start;
+    const answered = countAnswered(block.start, block.end);
+    const prog = document.getElementById('prog' + (bi + 1));
+    if (prog) prog.style.width = (answered / size * 100) + '%';
+  });
 }
 
 function countAnswered(from, to) {
@@ -745,22 +771,58 @@ function gotoTab(idx) {
 }
 
 let cExp = "";
-function cIn(v) { if (cExp === "0" || cExp === "Error") cExp = ""; cExp += v; updateC(); }
-function cFn(f) { cExp += f; updateC(); }
-function cClear() { cExp = ""; updateC(); }
+let cHistory = []; // history for undo
+
+function cIn(v) {
+  if (cExp === "Error") cExp = "";
+  cHistory.push(cExp);
+  cExp += v;
+  updateC();
+}
+function cFn(f) {
+  if (cExp === "Error") cExp = "";
+  cHistory.push(cExp);
+  cExp += f;
+  updateC();
+}
+function cClear() {
+  cHistory = [];
+  cExp = "";
+  updateC();
+}
+function cBack() {
+  // Backspace: remove last character or restore last history state
+  if (cExp === "Error") { cExp = ""; updateC(); return; }
+  // Handle multi-char tokens: Math.sqrt(, Math.PI, **
+  if (cExp.endsWith('Math.sqrt(')) { cExp = cExp.slice(0,-10); }
+  else if (cExp.endsWith('Math.PI'))  { cExp = cExp.slice(0,-7); }
+  else if (cExp.endsWith('**'))       { cExp = cExp.slice(0,-2); }
+  else if (cExp.length > 0)           { cExp = cExp.slice(0,-1); }
+  updateC();
+}
 function updateC() {
-  let d = cExp.replace(/Math\.sqrt\(/g, '√(').replace(/\*\*/g, '^').replace(/Math\.PI/g, 'π');
-  document.getElementById('calc-display').value = d || "0";
+  let d = cExp
+    .replace(/Math\.sqrt\(/g, '√(')
+    .replace(/\*\*/g, '^')
+    .replace(/Math\.PI/g, 'π');
+  const el = document.getElementById('calc-display');
+  el.value = d || "0";
+  // Auto-scroll to end so long expressions stay visible
+  el.scrollLeft = el.scrollWidth;
 }
 function cRes() {
   try {
+    // Allow large expressions — no length limit
     let result = eval(cExp);
-    result = parseFloat(result.toFixed(10));
+    if (!isFinite(result)) throw new Error('Infinite');
+    // Keep up to 10 significant decimals, remove trailing zeros
+    result = parseFloat(result.toPrecision(12));
+    cHistory = [];
     cExp = result.toString();
     updateC();
   } catch (e) {
     document.getElementById('calc-display').value = "Error";
-    cExp = "";
+    cExp = "Error";
   }
 }
 
