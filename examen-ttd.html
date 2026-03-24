@@ -1054,6 +1054,35 @@ async function finishExam(auto = false) {
     document.getElementById('app').style.display     = 'none';
     document.getElementById('preview').style.display = 'block';
     window.scrollTo(0, 0);
+
+    // If time ran out (auto=true) → show countdown then auto-print
+    if (auto) {
+      // Add auto-print notice above the PDF button
+      const pvbar = document.querySelector('.pvbar');
+      if (pvbar) {
+        const notice = document.createElement('span');
+        notice.id = 'auto-print-notice';
+        notice.style.cssText = 'color:#e67e22;font-size:13px;font-weight:700';
+        notice.textContent = lang === 'es'
+          ? '⏱ El PDF se descargará automáticamente en 5 segundos...'
+          : '⏱ PDF will download automatically in 5 seconds...';
+        pvbar.insertBefore(notice, pvbar.firstChild);
+      }
+
+      // Countdown and auto-print
+      let countdown = 5;
+      const interval = setInterval(() => {
+        countdown--;
+        const el = document.getElementById('auto-print-notice');
+        if (el) el.textContent = lang === 'es'
+          ? `⏱ El PDF se descargará automáticamente en ${countdown} segundos...`
+          : `⏱ PDF will download automatically in ${countdown} seconds...`;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          window.print();
+        }
+      }, 1000);
+    }
   }, 100);
 }
 
