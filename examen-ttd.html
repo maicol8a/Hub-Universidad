@@ -690,11 +690,11 @@ function getElapsedStr() {
 
 function setLang(l) {
   lang = l;
-  // Actualizar botones en ambos lugares
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll(`#btn-${l}, #btn-login-${l}`).forEach(b => b.classList.add('active'));
   applyTexts();
-  renderQ();
+  // NOTE: renderQ() intentionally NOT called here — language is fixed by group
+  // at page load. Calling renderQ() here would destroy all student answers.
 }
 
 function applyTexts() {
@@ -723,18 +723,40 @@ function applyTexts() {
 }
 
 function renderQ() {
-  // Clear all block containers
+  const qs = _Q[lang];
+  if (!qs || !qs.length) return;
+
+  // Save current answers before any re-render
+  const savedAnswers = {};
+  qs.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    if (sel) savedAnswers[i] = sel.value;
+  });
+
+  // Only clear and rebuild if questions not yet rendered
+  const alreadyRendered = document.getElementById('qblock-0') !== null;
+  if (alreadyRendered) {
+    // Just re-apply texts without rebuilding — preserve all answers
+    if (window.renderMathInElement) {
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$',  right: '$',  display: false}
+        ]
+      });
+    }
+    return;
+  }
+
+  // Clear all block containers (first render only)
   for (let b = 1; b <= BLOCKS.length; b++) {
     const box = document.getElementById('q-box-' + b);
     if (box) box.innerHTML = '';
   }
 
-  const qs = _Q[lang];
-  if (!qs || !qs.length) return;
   const ctxs = (contextos[lang] || []);
 
   qs.forEach((item, i) => {
-    // Find which block this question belongs to
     let blockIndex = BLOCKS.findIndex(b => i >= b.start && i < b.end) + 1;
     if (blockIndex < 1) return;
     const container = document.getElementById('q-box-' + blockIndex);
@@ -751,7 +773,7 @@ function renderQ() {
       }
     });
 
-    // Detect if options are empty (table question — enunciado contains the HTML)
+    // Detect if options are empty (table question)
     const hasOptions = item.o && item.o.some(o => o && o.trim() !== '');
     const optionsHtml = hasOptions
       ? item.o.map((opt, oi) => `
@@ -768,6 +790,12 @@ function renderQ() {
         <div class="q-text">${item.q}</div>
         ${optionsHtml}
       </div>`;
+  });
+
+  // Restore any previously saved answers (safety net)
+  Object.entries(savedAnswers).forEach(([i, val]) => {
+    const radio = document.querySelector(`input[name="q${i}"][value="${val}"]`);
+    if (radio) { radio.checked = true; radio.closest('.question-block')?.classList.add('answered'); }
   });
 
   if (window.renderMathInElement) {
@@ -1055,33 +1083,49 @@ async function finishExam(auto = false) {
     document.getElementById('preview').style.display = 'block';
     window.scrollTo(0, 0);
 
-    // If time ran out (auto=true) → show countdown then auto-print
+    // If time ran out (auto=true) → replace PDF button with unmissable overlay
     if (auto) {
-      // Add auto-print notice above the PDF button
-      const pvbar = document.querySelector('.pvbar');
-      if (pvbar) {
-        const notice = document.createElement('span');
-        notice.id = 'auto-print-notice';
-        notice.style.cssText = 'color:#e67e22;font-size:13px;font-weight:700';
-        notice.textContent = lang === 'es'
-          ? '⏱ El PDF se descargará automáticamente en 5 segundos...'
-          : '⏱ PDF will download automatically in 5 seconds...';
-        pvbar.insertBefore(notice, pvbar.firstChild);
-      }
+      // First try auto-print (works on most browsers)
+      try { window.print(); } catch(e) {}
 
-      // Countdown and auto-print
-      let countdown = 5;
-      const interval = setInterval(() => {
-        countdown--;
-        const el = document.getElementById('auto-print-notice');
-        if (el) el.textContent = lang === 'es'
-          ? `⏱ El PDF se descargará automáticamente en ${countdown} segundos...`
-          : `⏱ PDF will download automatically in ${countdown} seconds...`;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          window.print();
-        }
-      }, 1000);
+      // Also show fullscreen overlay so student can't miss it
+      const overlay = document.createElement('div');
+      overlay.id = 'print-overlay';
+      overlay.style.cssText = `
+        position:fixed;inset:0;background:rgba(0,0,0,0.85);
+        display:flex;flex-direction:column;align-items:center;
+        justify-content:center;gap:20px;z-index:99999;
+      `;
+      overlay.innerHTML = \`
+        <div style="text-align:center;color:white;padding:20px">
+          <div style="font-size:3rem;margin-bottom:12px">⏰</div>
+          <h2 style="font-size:1.5rem;margin-bottom:8px">
+            \${lang==='es' ? '¡Tiempo agotado!' : 'Time is up!'}
+          </h2>
+          <p style="color:#ccc;margin-bottom:24px;font-size:14px">
+            \${lang==='es'
+              ? 'Tu examen ha sido entregado. Guarda tu reporte en PDF.'
+              : 'Your exam has been submitted. Save your report as PDF.'}
+          </p>
+          <button onclick="window.print();document.getElementById('print-overlay').style.display='none'"
+            style="background:#E31E24;color:white;border:none;padding:16px 40px;
+                   border-radius:8px;font-size:1.1rem;font-weight:700;cursor:pointer;
+                   font-family:inherit;animation:pulse 1.5s infinite">
+            📥 \${lang==='es' ? 'Guardar PDF ahora' : 'Save PDF now'}
+          </button>
+          <p style="color:#aaa;font-size:12px;margin-top:16px">
+            \${lang==='es'
+              ? 'Entrega el PDF a tu profesor.'
+              : 'Submit the PDF to your instructor.'}
+          </p>
+        </div>
+      \`;
+      document.body.appendChild(overlay);
+
+      // Add pulse animation
+      const style = document.createElement('style');
+      style.textContent = '@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}';
+      document.head.appendChild(style);
     }
   }, 100);
 }
