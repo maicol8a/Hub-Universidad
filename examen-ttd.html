@@ -1096,30 +1096,19 @@ async function finishExam(auto = false) {
         display:flex;flex-direction:column;align-items:center;
         justify-content:center;gap:20px;z-index:99999;
       `;
-      overlay.innerHTML = \`
-        <div style="text-align:center;color:white;padding:20px">
-          <div style="font-size:3rem;margin-bottom:12px">⏰</div>
-          <h2 style="font-size:1.5rem;margin-bottom:8px">
-            \${lang==='es' ? '¡Tiempo agotado!' : 'Time is up!'}
-          </h2>
-          <p style="color:#ccc;margin-bottom:24px;font-size:14px">
-            \${lang==='es'
-              ? 'Tu examen ha sido entregado. Guarda tu reporte en PDF.'
-              : 'Your exam has been submitted. Save your report as PDF.'}
-          </p>
-          <button onclick="window.print();document.getElementById('print-overlay').style.display='none'"
-            style="background:#E31E24;color:white;border:none;padding:16px 40px;
-                   border-radius:8px;font-size:1.1rem;font-weight:700;cursor:pointer;
-                   font-family:inherit;animation:pulse 1.5s infinite">
-            📥 \${lang==='es' ? 'Guardar PDF ahora' : 'Save PDF now'}
-          </button>
-          <p style="color:#aaa;font-size:12px;margin-top:16px">
-            \${lang==='es'
-              ? 'Entrega el PDF a tu profesor.'
-              : 'Submit the PDF to your instructor.'}
-          </p>
-        </div>
-      \`;
+      overlay.innerHTML = '<div style="text-align:center;color:white;padding:20px">'
+        + '<div style="font-size:3rem;margin-bottom:12px">⏰</div>'
+        + '<h2 style="font-size:1.5rem;margin-bottom:8px">'
+        + (lang==="es" ? "¡Tiempo agotado!" : "Time is up!") + "</h2>"
+        + '<p style="color:#ccc;margin-bottom:24px;font-size:14px">'
+        + (lang==="es" ? "Tu examen ha sido entregado. Guarda tu reporte en PDF." : "Your exam has been submitted. Save your report as PDF.")
+        + "</p>"
+        + '<button onclick="window.print();document.getElementById('print-overlay').style.display='none'"'
+        + ' style="background:#E31E24;color:white;border:none;padding:16px 40px;border-radius:8px;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:inherit;animation:pulse 1.5s infinite">'
+        + "📥 " + (lang==="es" ? "Guardar PDF ahora" : "Save PDF now") + "</button>"
+        + '<p style="color:#aaa;font-size:12px;margin-top:16px">'
+        + (lang==="es" ? "Entrega el PDF a tu profesor." : "Submit the PDF to your instructor.")
+        + "</p></div>";
       document.body.appendChild(overlay);
 
       // Add pulse animation
