@@ -266,7 +266,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
       <label class="opt" id="opt_q7_a"><input type="checkbox" name="q7" value="a" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Removing the outliers will reduce the standard deviation</span></label>
       <label class="opt" id="opt_q7_b"><input type="checkbox" name="q7" value="b" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The median will increase substantially after removal</span></label>
       <label class="opt" id="opt_q7_c"><input type="checkbox" name="q7" value="c" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The mean is more sensitive to these outliers than the median</span></label>
-      <label class="opt" id="opt_q7_d"><input type="checkbox" name="q7" value="d" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">All outliers identified by $1.5\times IQR$ should always be deleted</span></label>
+      <label class="opt" id="opt_q7_d"><input type="checkbox" name="q7" value="d" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">All outliers identified by $1.5 	imes IQR$ should always be deleted</span></label>
       <div class="cfmarea" id="cfm_q7"><button class="cfmbtn" id="cfmbtn_q7" onclick="lockMulti('q7')" style="display:none">Lock my answer &rarr;</button></div>
     </div>
     <div class="qexp" id="exp_q7">✓ (a) Outliers inflate $\sigma$ by increasing squared deviations from the mean. ✓ (c) The mean is not resistant to extreme values; the median shifts only marginally. ✗ (b) The median is a resistant statistic — it barely changes when extremes are removed. ✗ (d) Outliers must be investigated (data entry error? legitimate extreme?), never automatically deleted.</div>
@@ -287,7 +287,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qhead"><div class="qnum">9</div><div class="qtxt">In a bivariate table of Gender (M / F) × Purchase Decision (Yes / No), the analyst computes $P(\text{Yes} \mid \text{Female}) = 0.73$. A manager says: “73% of all buyers are women.” Is this correct?</div></div>
     <div class="qopts" id="opts_q9">
       <label class="opt" id="opt_q9_a"><input type="radio" name="q9" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Yes — conditional probabilities always express the share within the total population</span></label>
-      <label class="opt" id="opt_q9_b"><input type="radio" name="q9" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">No — $P(	\text{Yes}\mid	\text{Female}) = 0.73$ means 73% of <em>women</em> make a purchase; the manager is claiming $P(	\Text{Female}\mid	\text{Yes})$, which is a different quantity entirely</span></label>
+      <label class="opt" id="opt_q9_b"><input type="radio" name="q9" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">No — $P(	ext{Yes}\mid	ext{Female}) = 0.73$ means 73% of <em>women</em> make a purchase; the manager is claiming $P(	ext{Female}\mid	ext{Yes})$, which is a different quantity entirely</span></label>
       <label class="opt" id="opt_q9_c"><input type="radio" name="q9" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Yes — it is equivalent to saying women represent 73% of the purchasing segment</span></label>
       <label class="opt" id="opt_q9_d"><input type="radio" name="q9" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">No — 0.73 is the marginal frequency of females in the table, not a conditional probability</span></label>
     </div>
@@ -406,7 +406,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qopts" id="opts_q20">
       <label class="opt" id="opt_q20_a"><input type="radio" name="q20" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$F = 119.5$ (arithmetic average); called ideal because it is easy to compute</span></label>
       <label class="opt" id="opt_q20_b"><input type="radio" name="q20" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$F = 239$; the geometric mean requires multiplication, not a square root</span></label>
-      <label class="opt" id="opt_q20_c"><input type="radio" name="q20" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = \sqrt{122 	\times 117} \approx 119.5$; called ‘ideal’ because it satisfies both the <em>time-reversal test</em> ($F_{0,t} \cdot F_{t,0} = 1$) and the <em>factor-reversal test</em>, which neither $L$ nor $P$ individually passes</span></label>
+      <label class="opt" id="opt_q20_c"><input type="radio" name="q20" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = \sqrt{122 	imes 117} \approx 119.5$; called ‘ideal’ because it satisfies both the <em>time-reversal test</em> ($F_{0,t} \cdot F_{t,0} = 1$) and the <em>factor-reversal test</em>, which neither $L$ nor $P$ individually passes</span></label>
       <label class="opt" id="opt_q20_d"><input type="radio" name="q20" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$F \approx 119.5$; called ideal because it always equals the true cost-of-living index</span></label>
     </div>
     <div class="qexp" id="exp_q20">Irving Fisher (1922): the geometric mean of $L$ and $P$ satisfies two key axiomatic tests: (1) time reversal $F_{0,t}\cdot F_{t,0}=1$; (2) factor reversal $F_\text{price}\times F_\text{qty}=$ value index. This is why the US BEA and IMF recommend it for price statistics.</div>
@@ -468,9 +468,9 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qhead"><div class="qnum">26</div><div class="qtxt">Using an <strong>additive decomposition</strong> model, the trend projects €3.1 M for Q2. The seasonal component for Q2 is $-0.20$ M; the cyclical component is $+0.08$ M. What is the point forecast?</div></div>
     <div class="qopts" id="opts_q26">
       <label class="opt" id="opt_q26_a"><input type="radio" name="q26" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$3.1 	imes (-0.20) 	imes 0.08$ — gives a negative result, which is impossible for revenue</span></label>
-      <label class="opt" id="opt_q26_b"><input type="radio" name="q26" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$3.1 + 0.20 - 0.08 = 	\text{€}3.22$ M</span></label>
-      <label class="opt" id="opt_q26_c"><input type="radio" name="q26" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$3.1 	\times 0.80 = 	\text{€}2.48$ M (multiplicative model formula)</span></label>
-      <label class="opt" id="opt_q26_d"><input type="radio" name="q26" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$3.1 + (-0.20) + 0.08 = 	\text{€}2.98$ M — additive model: $\hat{Y} = T + S + C$</span></label>
+      <label class="opt" id="opt_q26_b"><input type="radio" name="q26" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$3.1 + 0.20 - 0.08 = 	ext{€}3.22$ M</span></label>
+      <label class="opt" id="opt_q26_c"><input type="radio" name="q26" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$3.1 	imes 0.80 = 	ext{€}2.48$ M (multiplicative model formula)</span></label>
+      <label class="opt" id="opt_q26_d"><input type="radio" name="q26" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$3.1 + (-0.20) + 0.08 = 	ext{€}2.98$ M — additive model: $\hat{Y} = T + S + C$</span></label>
     </div>
     <div class="qexp" id="exp_q26">Additive model: $\hat{Y}_t = T_t + S_t + C_t$ (irregular $I_t$ is not forecast). $3.1 + (-0.20) + 0.08 = 2.98$. The negative seasonal component for Q2 reflects a below-average quarter, partially offset by a positive cyclical reading.</div>
   </div>
@@ -531,7 +531,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qhead"><div class="qnum">32</div><div class="qtxt">After fitting a regression, the residual plot (residuals vs. $\hat{Y}$) shows a clear <strong>fan shape</strong> — the spread of residuals increases as fitted values grow. What does this indicate?</div></div>
     <div class="qopts" id="opts_q32">
       <label class="opt" id="opt_q32_a"><input type="radio" name="q32" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Multicollinearity between the predictor and the response</span></label>
-      <label class="opt" id="opt_q32_b"><input type="radio" name="q32" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Heteroscedasticity: the assumption of constant error variance $	\text{Var}(\varepsilon_i) = \sigma^2$ is violated — making standard errors and $t$-tests unreliable</span></label>
+      <label class="opt" id="opt_q32_b"><input type="radio" name="q32" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Heteroscedasticity: the assumption of constant error variance $	ext{Var}(\varepsilon_i) = \sigma^2$ is violated — making standard errors and $t$-tests unreliable</span></label>
       <label class="opt" id="opt_q32_c"><input type="radio" name="q32" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Perfect model fit; the fan shape is expected in well-specified models</span></label>
       <label class="opt" id="opt_q32_d"><input type="radio" name="q32" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Strong positive autocorrelation in the residuals</span></label>
     </div>
@@ -553,7 +553,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qopts" id="opts_q34">
       <label class="opt" id="opt_q34_a"><input type="radio" name="q34" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">They measure different aspects of the model and are numerically unrelated</span></label>
       <label class="opt" id="opt_q34_b"><input type="radio" name="q34" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$F = 2t$ in simple regression</span></label>
-      <label class="opt" id="opt_q34_c"><input type="radio" name="q34" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = t^2$: with exactly one predictor, the $F$-test ($H_0$: all slopes $= 0$) and the $t$-test on $\hat{\beta}_1$ are algebraically equivalent — they always yield exactly the same $p$-value</span></label>
+      <label class="opt" id="opt_q34_c"><input type="radio" name="q34" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = t^2$: with exactly one predictor, the $F$-test ($H_0$: all slopes $= 0$) and the $t$-test on $\hat{eta}_1$ are algebraically equivalent — they always yield exactly the same $p$-value</span></label>
       <label class="opt" id="opt_q34_d"><input type="radio" name="q34" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The $F$-statistic tests the intercept; the $t$-statistic tests the slope</span></label>
     </div>
     <div class="qexp" id="exp_q34">With $k=1$ predictor: $F = t^2$ exactly (follows from $F_{1,\nu} = t_\nu^2$). Both test $H_0:\beta_1=0$. The $F$-test becomes a distinct, more powerful test only in <em>multiple</em> regression, where it tests whether <em>all</em> $k$ slopes are simultaneously zero.</div>
@@ -575,7 +575,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qopts" id="opts_q36">
       <label class="opt" id="opt_q36_a"><input type="radio" name="q36" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The model will have a very low $R^2$</span></label>
       <label class="opt" id="opt_q36_b"><input type="radio" name="q36" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The residuals will exhibit heteroscedasticity</span></label>
-      <label class="opt" id="opt_q36_c"><input type="radio" name="q36" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The intercept $\hat{\beta}_0$ will be biased downward</span></label>
+      <label class="opt" id="opt_q36_c"><input type="radio" name="q36" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The intercept $\hat{eta}_0$ will be biased downward</span></label>
       <label class="opt" id="opt_q36_d"><input type="radio" name="q36" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$X_2$ and $X_3$ are highly collinear; their individual $t$-statistics are unreliable (inflated SEs), making it impossible to assess their separate contributions — even if $R^2$ remains high</span></label>
     </div>
     <div class="qexp" id="exp_q36">$\text{VIF}_j = 1/(1-R_j^2)$ where $R_j^2$ measures how well $X_j$ is predicted by the other regressors. $\text{VIF}>5$–10 signals severe multicollinearity: inflated SEs, unstable coefficients, yet potentially high $R^2$ — a classic multicollinearity paradox.</div>
@@ -596,7 +596,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
       <label class="opt" id="opt_q38_a"><input type="radio" name="q38" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The new predictor introduces heteroscedasticity into the residuals</span></label>
       <label class="opt" id="opt_q38_b"><input type="radio" name="q38" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Adding the predictor also reduces the unadjusted $R^2$</span></label>
       <label class="opt" id="opt_q38_c"><input type="radio" name="q38" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The new variable adds less explanatory power than expected by chance; the marginal gain in $R^2$ does not justify losing one degree of freedom — the variable should likely be excluded</span></label>
-      <label class="opt" id="opt_q38_d"><input type="radio" name="q38" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">A decreasing adjusted $\bar{R}^2$ always proves the model is overfitted</span></label>
+      <label class="opt" id="opt_q38_d"><input type="radio" name="q38" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">A decreasing adjusted $ar{R}^2$ always proves the model is overfitted</span></label>
     </div>
     <div class="qexp" id="exp_q38">Adjusted $\bar{R}^2 = 1 - \frac{SS_\text{res}/(n-k-1)}{SS_\text{tot}/(n-1)}$ penalises each added predictor. It rises only if the new predictor reduces $SS_\text{res}$ by more than the penalty warrants. A decrease signals the variable adds noise rather than signal. AIC and BIC provide similar penalised criteria.</div>
   </div>
@@ -604,9 +604,10 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qhead"><div class="qnum">39</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which of the following are fundamental <strong>conditions that OLS relies on</strong> to produce unbiased estimates with valid standard errors?</div></div>
     <div class="qopts" id="opts_q39">
       <label class="opt" id="opt_q39_a"><input type="checkbox" name="q39" value="a" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$E(\varepsilon_i) = 0$: the expected value of the error term is zero for all observations</span></label>
-      <label class="opt" id="opt_q39_b"><input type="checkbox" name="q39" value="b" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$\text{Var}(\varepsilon_i) = \sigma^2$ for all $i$: the error variance is constant across all observations (homoscedasticity)</span></label>
+      <label class="opt" id="opt_q39_b"><input type="checkbox" name="q39" value="b" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$	ext{Var}(\varepsilon_i) = \sigma^2$ for all $i$: the error variance is constant across all observations (homoscedasticity)</span></label>
       <label class="opt" id="opt_q39_c"><input type="checkbox" name="q39" value="c" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The predictor variables must themselves follow a normal distribution</span></label>
-      <label class="opt" id="opt_q39_d"><input type="checkbox" name="q39" value="d" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$\text{Cov}(\varepsilon_i, \varepsilon_j) = 0$ for $i\leq j$: the error terms are uncorrelated with each other</span></label>
+      <label class="opt" id="opt_q39_d"><input type="checkbox" name="q39" value="d" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$	ext{Cov}(\varepsilon_i, \varepsilon_j) = 0$ for $i 
+eq j$: the error terms are uncorrelated with each other</span></label>
       <div class="cfmarea" id="cfm_q39"><button class="cfmbtn" id="cfmbtn_q39" onclick="lockMulti('q39')" style="display:none">Lock my answer &rarr;</button></div>
     </div>
     <div class="qexp" id="exp_q39">✓ (a) Zero mean errors ensure unbiasedness. ✓ (b) Homoscedasticity ensures efficiency and valid SEs. ✓ (d) No autocorrelation ensures efficiency and valid SEs. ✗ (c) <strong>Normality of predictors is not required.</strong> Normality of <em>residuals</em> is needed only for exact finite-sample $t$/$F$ inference — and relaxes asymptotically via the Central Limit Theorem.</div>
@@ -616,7 +617,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qopts" id="opts_q40">
       <label class="opt" id="opt_q40_a"><input type="checkbox" name="q40" value="a" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Overfitting is indicated by a very low $R^2$ on the training sample</span></label>
       <label class="opt" id="opt_q40_b"><input type="checkbox" name="q40" value="b" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">A model with many predictors relative to sample size may fit training data closely by capturing noise rather than genuine signal, and generalise poorly to new data</span></label>
-      <label class="opt" id="opt_q40_c"><input type="checkbox" name="q40" value="c" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Penalised criteria such as adjusted $\bar{R}^2$, AIC, and BIC are designed to discourage overfitting by penalising model complexity (number of estimated parameters)</span></label>
+      <label class="opt" id="opt_q40_c"><input type="checkbox" name="q40" value="c" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Penalised criteria such as adjusted $ar{R}^2$, AIC, and BIC are designed to discourage overfitting by penalising model complexity (number of estimated parameters)</span></label>
       <label class="opt" id="opt_q40_d"><input type="checkbox" name="q40" value="d" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Including all available predictors always improves the model by maximising information use</span></label>
       <div class="cfmarea" id="cfm_q40"><button class="cfmbtn" id="cfmbtn_q40" onclick="lockMulti('q40')" style="display:none">Lock my answer &rarr;</button></div>
     </div>
@@ -712,7 +713,8 @@ async function startExam(){
   _rfs().then(function(){_S.on=true;_go();}).catch(function(){_S.on=true;_go();});
 }
 function _go(){
-  window._examStart=Date.now();
+  window._examStart = Date.now();
+  window._qTimings  = {}; // {q1: {answered_at_sec: 12.4}, ...}
   document.getElementById('splash').style.display='none';
   document.getElementById('exam').style.display='block';
   _setupLocks();
@@ -723,6 +725,12 @@ function _setupLocks(){
       var n=this.name;
       document.querySelectorAll('input[name="'+n+'"]').forEach(function(x){x.disabled=true;});
       document.querySelectorAll('#opts_'+n+' .opt').forEach(function(l){l.classList.add('locked');});
+      // Record time elapsed when answer is locked
+      if(window._examStart && !window._qTimings[n]){
+        window._qTimings[n] = {
+          answered_at_sec: parseFloat(((Date.now()-window._examStart)/1000).toFixed(1))
+        };
+      }
     });
   });
   document.querySelectorAll('input.qchk').forEach(function(c){
@@ -737,6 +745,12 @@ function lockMulti(qid){
   document.querySelectorAll('#opts_'+qid+' .opt').forEach(function(l){l.classList.add('locked');});
   var b=document.getElementById('cfmbtn_'+qid);
   if(b){b.innerHTML='&#10003; Answer locked';b.classList.add('locked-btn');b.disabled=true;}
+  // Record time elapsed when multi answer is locked
+  if(window._examStart && !window._qTimings[qid]){
+    window._qTimings[qid] = {
+      answered_at_sec: parseFloat(((Date.now()-window._examStart)/1000).toFixed(1))
+    };
+  }
 }
 var _lm={a:1,b:2,c:4,d:8};
 function _fb(qid,idx,ok){
@@ -783,7 +797,7 @@ async function submitExam(){
         p_estudiante_id:est.id||'00000000-0000-0000-0000-000000000000',
         p_respuestas:respuestas,
         p_tiempo_usado:tUsado,
-        p_incidencias:{voided:false}
+        p_incidencias:{voided:false,timings:window._qTimings||{}}
       }),
       new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},10000)})
     ]);
