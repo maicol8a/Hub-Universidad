@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Final Exam &mdash; Statistics I &mdash; UEM</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false})"></script>
+<style>
+:root{--red:#FF3228;--red2:#cc1f17;--red3:#fff0ef;--grn:#15803d;--grn2:#dcfce7;--org:#b45309;--org2:#fef3c7;--blu:#1d4ed8;--blu2:#dbeafe;--bdr:#e2e8f0;--bg:#f8fafc;--card:#fff;--txt:#1e293b;--sub:#64748b;--muted:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:Arial,Helvetica,sans-serif;font-size:14.5px;line-height:1.6;color:var(--txt);background:var(--bg);-webkit-user-select:none;user-select:none}
+#splash{position:fixed;inset:0;background:linear-gradient(150deg,#ffffff 0%,#fff5f4 55%,#ffe8e6 100%);z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;overflow-y:auto}
+#splash img{height:72px;margin-bottom:22px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.15))}
+#splash h1{color:#fff;font-size:clamp(20px,4vw,30px);font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+#splash h2{color:rgba(255,255,255,.7);font-size:clamp(13px,2.5vw,16px);font-weight:400;margin-bottom:26px}
+.splbox{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;max-width:540px;width:100%;margin-bottom:18px;color:#374151;font-size:13px;text-align:left;line-height:1.75;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.splbox strong{color:var(--red)}
+.splwarn{background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:12px 16px;max-width:540px;width:100%;margin-bottom:22px;color:#92400e;font-size:12.5px;text-align:left;line-height:1.6}
+.splwarn b{color:#78350f;font-weight:700}
+#startbtn{background:var(--red);color:#fff;border:none;border-radius:8px;padding:14px 36px;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:background .2s,transform .1s;box-shadow:0 4px 16px rgba(255,50,40,.4);-webkit-tap-highlight-color:transparent}
+#startbtn:hover{background:var(--red2);transform:translateY(-1px)}
+#voidov{position:fixed;inset:0;background:#7f1d1d;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.vicon{font-size:72px;margin-bottom:16px}
+#voidov h1{color:#fff;font-size:clamp(22px,5vw,34px);font-weight:800;margin-bottom:10px}
+#voidov p{color:rgba(255,255,255,.8);font-size:15px;margin-bottom:8px;max-width:500px}
+#vreason{color:#fca5a5;font-size:16px;font-weight:600;margin:12px 0;padding:10px 20px;background:rgba(0,0,0,.25);border-radius:6px;max-width:500px}
+#vts{color:rgba(255,255,255,.5);font-size:12px;margin-top:14px}
+#exam{display:none}
+header{background:var(--red);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+header img{height:58px;flex-shrink:0}
+.htxt h1{font-size:clamp(15px,3vw,19px);font-weight:700;margin-bottom:2px}
+.htxt p{font-size:11.5px;opacity:.85}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+.intro{background:#fff;border-left:5px solid var(--red);border-radius:0 8px 8px 0;padding:13px 17px;margin-bottom:22px;font-size:13px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.intro strong{color:var(--red)}
+.sechdr{background:var(--red);color:#fff;padding:9px 16px;border-radius:6px;font-size:14.5px;font-weight:700;margin:28px 0 13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seclet{background:rgba(255,255,255,.25);border-radius:4px;padding:1px 8px;font-size:12px;font-weight:800;flex-shrink:0}
+.sectag{background:rgba(255,255,255,.15);border-radius:4px;padding:1px 8px;font-size:11px;margin-left:auto}
+.qcard{background:var(--card);border:1.5px solid var(--bdr);border-radius:10px;padding:16px 18px;margin-bottom:13px;transition:border-color .2s}
+.qcard.q-ok{border-color:#16a34a}.qcard.q-err{border-color:#dc2626}
+.qhead{display:flex;align-items:flex-start;gap:11px;margin-bottom:11px}
+.qnum{background:var(--red);color:#fff;border-radius:50%;min-width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.qtxt{flex:1;font-weight:600;font-size:14.5px;line-height:1.55;word-break:break-word;overflow-wrap:anywhere;min-width:0}
+.mbadge{display:inline-block;background:#7c3aed;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;margin-right:7px;vertical-align:middle;white-space:nowrap}
+.qopts{display:flex;flex-direction:column;gap:5px}
+.opt{display:flex;align-items:flex-start;gap:9px;cursor:pointer;padding:8px 11px;border-radius:6px;border:1.5px solid transparent;transition:background .12s,border-color .12s;line-height:1.5;word-break:break-word;overflow-wrap:anywhere;min-width:0}
+.opt:hover:not(.locked){background:#f1f5f9;border-color:#cbd5e1}
+.opt input{flex-shrink:0;margin-top:3px;accent-color:var(--red);width:15px;height:15px;cursor:pointer}
+.opt input:disabled{opacity:1;cursor:default}
+.opt.locked{cursor:default}
+.optletter{flex-shrink:0;font-weight:700;color:var(--sub);width:22px;font-size:13px;padding-top:1px}
+.opttxt{flex:1;font-size:13.5px;line-height:1.5;min-width:0;word-break:break-word;overflow-wrap:anywhere}
+.opt.f-ok{background:var(--grn2)!important;border-color:#16a34a!important;color:var(--grn);font-weight:600}
+.opt.f-ok .optletter{color:var(--grn)}
+.opt.f-err{background:#fee2e2!important;border-color:#dc2626!important;color:#991b1b}
+.opt.f-err .optletter{color:#dc2626}
+.opt.f-miss{background:var(--org2)!important;border-color:#f59e0b!important;color:var(--org)}
+.opt.f-miss .optletter{color:var(--org)}
+.opt:has(input[type=radio]:disabled:checked){background:var(--blu2)!important;border-color:#3b82f6!important}
+.opt:has(input[type=radio]:disabled:checked) .optletter,.opt:has(input[type=radio]:disabled:checked) .opttxt{color:var(--blu)}
+.opt:has(input[type=radio]:disabled:not(:checked)){opacity:.65}
+.opt:has(input[type=checkbox]:disabled:checked){background:var(--blu2)!important;border-color:#3b82f6!important}
+.opt:has(input[type=checkbox]:disabled:not(:checked)){opacity:.65}
+.cfmarea{margin-top:9px;padding-left:2px}
+.cfmbtn{background:var(--red);color:#fff;border:none;border-radius:5px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:6px}
+.cfmbtn:hover{background:var(--red2)}
+.cfmbtn.locked-btn{background:var(--grn)!important;cursor:default}
+.qexp{display:none;margin-top:11px;background:#f0fdf4;border-left:3px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;color:#166534;line-height:1.55;word-break:break-word;overflow-wrap:anywhere}
+.qexp.e-err{background:#fff5f5;border-left-color:#dc2626;color:#7f1d1d}
+#scorepanel{display:none;background:#fff;border:2px solid var(--red);border-radius:12px;padding:22px 24px;margin-bottom:22px;box-shadow:0 4px 20px rgba(255,50,40,.12)}
+#scorepanel h2{color:var(--red);font-size:18px;margin-bottom:14px}
+.stotal{font-size:42px;font-weight:800;color:var(--red);line-height:1}
+.stotalx{font-size:15px;color:var(--sub);margin-top:4px}
+.sgrade{font-size:28px;font-weight:700;margin:6px 0 4px}
+.smsg{font-size:14px;color:var(--sub);margin-bottom:14px}
+.schips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.schip{background:#f8fafc;border:1px solid var(--bdr);border-radius:5px;padding:5px 11px;font-size:12px}
+.schip strong{color:var(--red)}
+#printmsg{font-size:12px;color:var(--sub);margin-top:10px;font-style:italic}
+.btnsubmit{display:block;width:100%;background:var(--red);color:#fff;border:none;border-radius:8px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:24px;letter-spacing:.3px}
+.btnsubmit:hover:not(:disabled){background:var(--red2)}
+.btnsubmit:disabled{opacity:.55;cursor:not-allowed}
+.btnretry{display:block;width:100%;background:#fff;color:var(--red);border:2px solid var(--red);border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;margin-top:9px;transition:background .15s}
+.btnretry:hover{background:var(--red3)}
+footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--bdr);margin-top:32px}
+@media print{
+  @page{size:A4;margin:1.5cm}
+  #splash,#voidov,#startbtn,.btnsubmit,.btnretry,.cfmbtn,header,footer{display:none!important}
+  #exam{display:block!important}
+  #scorepanel{display:block!important;box-shadow:none!important;break-inside:avoid;margin-bottom:16px}
+  .qcard{break-inside:avoid;margin-bottom:10px;border:1px solid #ddd}
+  .sechdr{background:#FF3228!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .opt.f-ok,.opt.f-err,.opt.f-miss{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .qexp{display:none!important}
+  .wrap{padding:0}
+  body{background:#fff}
+}
+</style>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  window._sb = createClient(
+    'https://jivjhtqfqktmufmyeyzj.supabase.co',
+    'sb_publishable_FGMSjudy2IdTe2igi5JRJQ_Paw90L8J'
+  )
+  // Verify session from hub login
+  const est = JSON.parse(sessionStorage.getItem('estudiante') || 'null')
+  if (!est) {
+    window.location.href = 'index.html'
+  } else {
+    window._estudiante = est
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = id => document.getElementById(id)
+      if (s('fn-name'))  s('fn-name').value  = est.nombre     || ''
+      if (s('fn-id'))    s('fn-id').value    = est.student_id || ''
+      if (s('fn-group')) s('fn-group').value = est.grupo      || ''
+    })
+  }
+</script>
+</head>
+<body>
+
+<div id="splash">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/UE_Madrid_Logo_Positive_RGB.png" alt="UEM">
+  <h1 style="color:#1e293b;font-weight:800">Final Exam &mdash; Statistics I</h1>
+  <h2 style="color:#64748b">Business, Economics &amp; Finance &nbsp;&middot;&nbsp; Universidad Europea de Madrid &nbsp;&middot;&nbsp; 2025&ndash;26</h2>
+  <div class="splbox">
+    <strong>Exam information:</strong><br>
+    &bull; <strong>40 questions</strong> &mdash; 9 sections, all course topics<br>
+    &bull; <span style="background:#7c3aed;color:#fff;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700">MULTI</span> questions: select <em>all</em> correct options, then click <em>Lock my answer</em><br>
+    &bull; Single-answer questions lock automatically once an option is selected<br>
+    &bull; Score: each correct question = 1 point (max 40) &rarr; scaled to <strong>0&ndash;10</strong><br>
+    &bull; A results report is generated and printed automatically on submission
+  </div>
+  <div class="splwarn">
+    <b style="color:#78350f">&#9888; Anti-cheating system:</b> This exam runs in fullscreen mode. Any attempt to exit fullscreen, switch tabs, minimise the window, or take a screenshot will <strong>automatically void your exam</strong>. There are no exceptions.
+  </div>
+  <div style="margin:16px 0 0">
+    <input type="text" id="access-code"
+      placeholder="Access code (provided in class)"
+      style="width:100%;padding:10px 14px;border:1.5px solid #cbd5e1;border-radius:8px;
+             font-size:15px;font-family:inherit;text-transform:uppercase;letter-spacing:2px;
+             text-align:center;margin-bottom:8px"
+      onkeydown="if(event.key==='Enter')startExam()">
+    <p id="code-error" style="color:#dc2626;font-size:12px;margin:0 0 8px;display:none">
+      Incorrect code or exam not available.
+    </p>
+  </div>
+  <button id="startbtn" onclick="startExam()">&#9889; Enter Fullscreen &amp; Start Exam</button>
+</div>
+
+<div id="voidov">
+  <div class="vicon">&#9888;</div>
+  <h1>THIS EXAM HAS BEEN VOIDED</h1>
+  <p>This examination session was automatically terminated by the security system.</p>
+  <div id="vreason">Reason: &mdash;</div>
+  <p>Please contact your examiner immediately to report this incident.</p>
+  <div id="vts"></div>
+</div>
+
+<div id="exam">
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/UE_Madrid_Logo_Positive_RGB.png" alt="UEM">
+    <div class="htxt">
+      <h1>Final Exam &mdash; Statistics I</h1>
+      <p>Business, Economics &amp; Finance &nbsp;&middot;&nbsp; Universidad Europea de Madrid &nbsp;&middot;&nbsp; 2025&ndash;26</p>
+    </div>
+  </header>
+  <div class="wrap">
+    <div class="intro">
+      <strong>40 questions &mdash; all course sections.</strong>
+      Emphasis on <strong>interpretation and analytical reasoning</strong> over calculation.
+      Questions marked <span style="background:#7c3aed;color:#fff;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700">MULTI</span> require selecting <em>all</em> correct options before clicking <em>Lock my answer</em>.
+      All answers are <strong>final once confirmed</strong>. Score is scaled from 0 to 10.
+    </div>
+    <div id="scorepanel">
+      <h2>&#128202; Results</h2>
+      <div class="stotal" id="stval">0/40</div>
+      <div class="stotalx">questions answered correctly</div>
+      <div class="sgrade" id="sgval">Grade: 0.00 / 10</div>
+      <div class="smsg" id="smsg"></div>
+      <div class="schips" id="schips"><div class="schip" id="sc_A"><strong>A</strong> Q1&ndash;Q4: <span id="scv_A">&ndash;</span></div>
+<div class="schip" id="sc_B"><strong>B</strong> Q5&ndash;Q7: <span id="scv_B">&ndash;</span></div>
+<div class="schip" id="sc_C"><strong>C</strong> Q8&ndash;Q10: <span id="scv_C">&ndash;</span></div>
+<div class="schip" id="sc_D"><strong>D</strong> Q11&ndash;Q14: <span id="scv_D">&ndash;</span></div>
+<div class="schip" id="sc_E"><strong>E</strong> Q15&ndash;Q18: <span id="scv_E">&ndash;</span></div>
+<div class="schip" id="sc_F"><strong>F</strong> Q19&ndash;Q23: <span id="scv_F">&ndash;</span></div>
+<div class="schip" id="sc_G"><strong>G</strong> Q24&ndash;Q29: <span id="scv_G">&ndash;</span></div>
+<div class="schip" id="sc_H"><strong>H</strong> Q30&ndash;Q34: <span id="scv_H">&ndash;</span></div>
+<div class="schip" id="sc_I"><strong>I</strong> Q35&ndash;Q40: <span id="scv_I">&ndash;</span></div>
+</div>
+      <div id="printmsg"></div>
+      <button class="btnretry" onclick="retryExam()">&#8635; New attempt</button>
+    </div>
+
+  <div class="sechdr"><span class="seclet">A</span>Foundations: Variables, Scales &amp; Frequency Tables<span class="sectag">Q1&ndash;Q4</span></div>
+
+  <div class="qcard" id="qc_q1" data-sec="A">
+    <div class="qhead"><div class="qnum">1</div><div class="qtxt">A logistics company records four variables per shipment: delivery time (hours), route type (urban / suburban / rural), number of packages, and customer satisfaction rating (1–5 stars). Which variable is measured on an <strong>ordinal scale</strong>?</div></div>
+    <div class="qopts" id="opts_q1">
+      <label class="opt" id="opt_q1_a"><input type="radio" name="q1" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Delivery time (hours)</span></label>
+      <label class="opt" id="opt_q1_b"><input type="radio" name="q1" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Customer satisfaction rating (1–5 stars)</span></label>
+      <label class="opt" id="opt_q1_c"><input type="radio" name="q1" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Number of packages delivered</span></label>
+      <label class="opt" id="opt_q1_d"><input type="radio" name="q1" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Route type (urban / suburban / rural)</span></label>
+    </div>
+    <div class="qexp" id="exp_q1">Customer rating (1–5 stars) is ordinal: ranked categories with no guarantee of equal spacing between values. Delivery time and packages are ratio variables (true zero, equal intervals). Route type is nominal (unordered categories).</div>
+  </div>
+  <div class="qcard" id="qc_q2" data-sec="A">
+    <div class="qhead"><div class="qnum">2</div><div class="qtxt">A frequency table has class [40,…50) with <strong>cumulative relative frequency</strong> $F_3 = 0.72$. A manager states: “72% of values fall within the interval [40,…50).” What is wrong?</div></div>
+    <div class="qopts" id="opts_q2">
+      <label class="opt" id="opt_q2_a"><input type="radio" name="q2" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">0.72 is the absolute frequency, not the relative frequency</span></label>
+      <label class="opt" id="opt_q2_b"><input type="radio" name="q2" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Cumulative frequencies can only be applied to nominal variables</span></label>
+      <label class="opt" id="opt_q2_c"><input type="radio" name="q2" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The third class cannot be [40,…50) without knowing the first interval width</span></label>
+      <label class="opt" id="opt_q2_d"><input type="radio" name="q2" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$F_3 = 0.72$ means 72% of values lie <em>below the upper bound</em> of the third class (i.e., below 50) — not that they fall <em>within</em> [40,…50)</span></label>
+    </div>
+    <div class="qexp" id="exp_q2">The cumulative relative frequency $F_i = \sum_{j=1}^{i} f_j$ accumulates all proportions up to and including class $i$. Saying '72% fall in [40,50)' confuses $f_i$ (class-specific frequency) with $F_i$ (the running total up to that class).</div>
+  </div>
+  <div class="qcard" id="qc_q3" data-sec="A">
+    <div class="qhead"><div class="qnum">3</div><div class="qtxt">A dataset of 300 employee salaries shows $\bar{x} = €48\,000$, median $= €39\,000$, mode $= €35\,000$. The HR director reports: “the typical salary is €48,000.” What is the most precise critique?</div></div>
+    <div class="qopts" id="opts_q3">
+      <label class="opt" id="opt_q3_a"><input type="radio" name="q3" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The distribution is positively skewed (mean &gt; median &gt; mode); the mean is inflated by high earners, so the median or mode better represents the salary most employees actually receive</span></label>
+      <label class="opt" id="opt_q3_b"><input type="radio" name="q3" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The mean is always the most reliable measure of central tendency regardless of distributional shape</span></label>
+      <label class="opt" id="opt_q3_c"><input type="radio" name="q3" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Both mean and median are wrong; only the mode should be used for salary data</span></label>
+      <label class="opt" id="opt_q3_d"><input type="radio" name="q3" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The difference between mean and median is negligible and both are equally valid here</span></label>
+    </div>
+    <div class="qexp" id="exp_q3">The sequence mean > median > mode is the signature of right (positive) skewness. A small number of very high earners pulls $\bar{x}$ above the value experienced by most employees. The median (€39,000) is the robust, appropriate summary for skewed salary data.</div>
+  </div>
+  <div class="qcard" id="qc_q4" data-sec="A">
+    <div class="qhead"><div class="qnum">4</div><div class="qtxt">Two investment funds have identical standard deviations $\sigma = 9\%$. Fund A has mean annual return $\bar{x}_A = 3\%$; Fund B has $\bar{x}_B = 14\%$. What does the <strong>coefficient of variation (CV)</strong> reveal?</div></div>
+    <div class="qopts" id="opts_q4">
+      <label class="opt" id="opt_q4_a"><input type="radio" name="q4" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Both funds carry equal risk because their standard deviations are the same</span></label>
+      <label class="opt" id="opt_q4_b"><input type="radio" name="q4" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Fund A is the safer choice because its mean return is lower</span></label>
+      <label class="opt" id="opt_q4_c"><input type="radio" name="q4" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Fund B is more efficient: $CV_B = 9/14 ≈ 0.64$ versus $CV_A = 9/3 = 3.0$ — Fund B carries far less risk per unit of expected return</span></label>
+      <label class="opt" id="opt_q4_d"><input type="radio" name="q4" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The CV cannot be applied to financial returns because returns can be negative</span></label>
+    </div>
+    <div class="qexp" id="exp_q4">$CV = \sigma/\bar{x}$ normalises dispersion by the mean. Equal $\sigma$ does not mean equal relative risk: Fund A's $CV = 3.0$ implies three times more risk per unit of return than Fund B's $CV = 0.64$. This is the key insight CV adds beyond raw standard deviation.</div>
+  </div>
+  <div class="sechdr"><span class="seclet">B</span>Dispersion, Shape, Concentration &amp; Outliers<span class="sectag">Q5&ndash;Q7</span></div>
+
+  <div class="qcard" id="qc_q5" data-sec="B">
+    <div class="qhead"><div class="qnum">5</div><div class="qtxt">A distribution of stock returns has skewness $AS_1 = +1.9$ and <strong>excess kurtosis</strong> $K = +3.1$. Which description is correct?</div></div>
+    <div class="qopts" id="opts_q5">
+      <label class="opt" id="opt_q5_a"><input type="radio" name="q5" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The distribution is symmetric with extremely heavy tails</span></label>
+      <label class="opt" id="opt_q5_b"><input type="radio" name="q5" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The distribution has a long right tail (positive skew) and is leptokurtic — more peaked and fat-tailed than a normal distribution</span></label>
+      <label class="opt" id="opt_q5_c"><input type="radio" name="q5" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The distribution is negatively skewed and platykurtic</span></label>
+      <label class="opt" id="opt_q5_d"><input type="radio" name="q5" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Excess kurtosis $> 0$ always implies negative skewness</span></label>
+    </div>
+    <div class="qexp" id="exp_q5">$AS_1 = +1.9 > 0$ → long right tail. $K = +3.1 > 0$ → leptokurtic (excess kurtosis above the normal’s baseline of 0). For financial returns this combination is common: extreme positive events occur more often than a normal model predicts.</div>
+  </div>
+  <div class="qcard" id="qc_q6" data-sec="B">
+    <div class="qhead"><div class="qnum">6</div><div class="qtxt">Country X has Gini index $= 0.26$; Country Y has Gini index $= 0.53$. Both experienced the same nominal GDP growth over the last decade. Which conclusion is most justified?</div></div>
+    <div class="qopts" id="opts_q6">
+      <label class="opt" id="opt_q6_a"><input type="radio" name="q6" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Country X’s economy grew more productively</span></label>
+      <label class="opt" id="opt_q6_b"><input type="radio" name="q6" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Country Y’s population is wealthier on average</span></label>
+      <label class="opt" id="opt_q6_c"><input type="radio" name="q6" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Income inequality decreased in both countries because GDP grew</span></label>
+      <label class="opt" id="opt_q6_d"><input type="radio" name="q6" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Despite similar aggregate growth, income is significantly more unequally distributed in Country Y — GDP growth does not imply equitable distribution</span></label>
+    </div>
+    <div class="qexp" id="exp_q6">The Gini index (0 = perfect equality, 1 = maximum concentration) measures distributional inequality, not aggregate wealth. Country Y’s higher Gini means growth has been concentrated in fewer hands — a core distinction between GDP-level and distributional analysis.</div>
+  </div>
+  <div class="qcard" id="qc_q7" data-sec="B">
+    <div class="qhead"><div class="qnum">7</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> A dataset of 400 monthly sales figures contains 15 outliers identified by the $1.5 \times IQR$ rule. Which statements are <strong>correct</strong>?</div></div>
+    <div class="qopts" id="opts_q7">
+      <label class="opt" id="opt_q7_a"><input type="checkbox" name="q7" value="a" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Removing the outliers will reduce the standard deviation</span></label>
+      <label class="opt" id="opt_q7_b"><input type="checkbox" name="q7" value="b" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The median will increase substantially after removal</span></label>
+      <label class="opt" id="opt_q7_c"><input type="checkbox" name="q7" value="c" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The mean is more sensitive to these outliers than the median</span></label>
+      <label class="opt" id="opt_q7_d"><input type="checkbox" name="q7" value="d" class="qchk" data-q="q7" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">All outliers identified by $1.5 	imes IQR$ should always be deleted</span></label>
+      <div class="cfmarea" id="cfm_q7"><button class="cfmbtn" id="cfmbtn_q7" onclick="lockMulti('q7')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q7">✓ (a) Outliers inflate $\sigma$ by increasing squared deviations from the mean. ✓ (c) The mean is not resistant to extreme values; the median shifts only marginally. ✗ (b) The median is a resistant statistic — it barely changes when extremes are removed. ✗ (d) Outliers must be investigated (data entry error? legitimate extreme?), never automatically deleted.</div>
+  </div>
+  <div class="sechdr"><span class="seclet">C</span>Visualization &amp; Bivariate Distributions<span class="sectag">Q8&ndash;Q10</span></div>
+
+  <div class="qcard" id="qc_q8" data-sec="C">
+    <div class="qhead"><div class="qnum">8</div><div class="qtxt">A bar chart compares satisfaction scores for four hotels: 96.2%, 96.9%, 97.5%, 98.1%. The Y-axis starts at 95.8% instead of 0. What is the <strong>primary statistical problem</strong>?</div></div>
+    <div class="qopts" id="opts_q8">
+      <label class="opt" id="opt_q8_a"><input type="radio" name="q8" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Bar charts cannot display percentage values above 95%</span></label>
+      <label class="opt" id="opt_q8_b"><input type="radio" name="q8" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">This data should be shown in a pie chart, not a bar chart</span></label>
+      <label class="opt" id="opt_q8_c"><input type="radio" name="q8" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The truncated Y-axis visually amplifies differences of under 2 percentage points, making them appear disproportionately large — a classic misleading visualisation technique</span></label>
+      <label class="opt" id="opt_q8_d"><input type="radio" name="q8" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">There is no problem; truncated axes are standard practice for scores close to 100%</span></label>
+    </div>
+    <div class="qexp" id="exp_q8">Darrell Huff's 'gee-whiz graph' (How to Lie with Statistics, 1954): starting the Y-axis at 95.8% transforms a ~2% absolute spread into a visually dramatic gap. Correct approach: start at 0, or use a clearly labelled inset with disclosed truncation.</div>
+  </div>
+  <div class="qcard" id="qc_q9" data-sec="C">
+    <div class="qhead"><div class="qnum">9</div><div class="qtxt">In a bivariate table of Gender (M / F) × Purchase Decision (Yes / No), the analyst computes $P(\text{Yes} \mid \text{Female}) = 0.73$. A manager says: “73% of all buyers are women.” Is this correct?</div></div>
+    <div class="qopts" id="opts_q9">
+      <label class="opt" id="opt_q9_a"><input type="radio" name="q9" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Yes — conditional probabilities always express the share within the total population</span></label>
+      <label class="opt" id="opt_q9_b"><input type="radio" name="q9" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">No — $P(	ext{Yes}\mid	ext{Female}) = 0.73$ means 73% of <em>women</em> make a purchase; the manager is claiming $P(	ext{Female}\mid	ext{Yes})$, which is a different quantity entirely</span></label>
+      <label class="opt" id="opt_q9_c"><input type="radio" name="q9" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Yes — it is equivalent to saying women represent 73% of the purchasing segment</span></label>
+      <label class="opt" id="opt_q9_d"><input type="radio" name="q9" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">No — 0.73 is the marginal frequency of females in the table, not a conditional probability</span></label>
+    </div>
+    <div class="qexp" id="exp_q9">The inverse fallacy: $P(A\mid B) \neq P(B\mid A)$ in general. By Bayes' theorem, $P(F\mid Y) = P(Y\mid F)\cdot P(F)/P(Y)$, which can differ substantially from $P(Y\mid F)$.</div>
+  </div>
+  <div class="qcard" id="qc_q10" data-sec="C">
+    <div class="qhead"><div class="qnum">10</div><div class="qtxt">Two variables — subscription tier (Basic / Premium / Enterprise) and churn (Yes / No) — are cross-tabulated. The conditional distributions of churn are <em>identical</em> across all tiers. What does this imply?</div></div>
+    <div class="qopts" id="opts_q10">
+      <label class="opt" id="opt_q10_a"><input type="radio" name="q10" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Churn is higher in the Basic tier than in Enterprise</span></label>
+      <label class="opt" id="opt_q10_b"><input type="radio" name="q10" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The marginal distribution of churn equals the conditional distributions</span></label>
+      <label class="opt" id="opt_q10_c"><input type="radio" name="q10" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Subscription tier is the main structural driver of churn</span></label>
+      <label class="opt" id="opt_q10_d"><input type="radio" name="q10" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The two variables are statistically independent: knowing the subscription tier provides no additional information about the probability of churn</span></label>
+    </div>
+    <div class="qexp" id="exp_q10">Statistical independence: $P(A\mid B_k) = P(A)$ for all categories $B_k$. If conditional churn distributions are identical across tiers, tier carries zero information about churn — by definition, the variables are independent.</div>
+  </div>
+  <div class="sechdr"><span class="seclet">D</span>Measures of Association<span class="sectag">Q11&ndash;Q14</span></div>
+
+  <div class="qcard" id="qc_q11" data-sec="D">
+    <div class="qhead"><div class="qnum">11</div><div class="qtxt">A researcher studies the association between job satisfaction (Likert 1–7) and annual salary (€), where salary shows significant right skewness. Which measure of association is most appropriate?</div></div>
+    <div class="qopts" id="opts_q11">
+      <label class="opt" id="opt_q11_a"><input type="radio" name="q11" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Spearman’s $\rho$: it uses ranks, is robust to salary’s skewness, and is appropriate when at least one variable is ordinal or non-normally distributed</span></label>
+      <label class="opt" id="opt_q11_b"><input type="radio" name="q11" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Pearson’s $r$: because salary is a ratio-scale variable, Pearson always applies</span></label>
+      <label class="opt" id="opt_q11_c"><input type="radio" name="q11" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Cramér’s $V$: because job satisfaction is a categorical variable</span></label>
+      <label class="opt" id="opt_q11_d"><input type="radio" name="q11" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The phi coefficient $\phi$: it is universally applicable to all variable types</span></label>
+    </div>
+    <div class="qexp" id="exp_q11">Pearson's $r$ assumes linearity and is sensitive to non-normality and outliers. When salary is skewed, the rank-based Spearman's $\rho$ is more robust. Cramér's $V$ and $\phi$ apply to categorical × categorical associations only.</div>
+  </div>
+  <div class="qcard" id="qc_q12" data-sec="D">
+    <div class="qhead"><div class="qnum">12</div><div class="qtxt">A $\chi^2$ test on a $3 \times 4$ contingency table yields $\chi^2 = 19.8$, $p = 0.019$. What is the <strong>correct interpretation</strong>?</div></div>
+    <div class="qopts" id="opts_q12">
+      <label class="opt" id="opt_q12_a"><input type="radio" name="q12" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">There is a strong association between the variables because the $\chi^2$ statistic is large</span></label>
+      <label class="opt" id="opt_q12_b"><input type="radio" name="q12" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">1.9% of the sample cases exhibit a statistically significant association</span></label>
+      <label class="opt" id="opt_q12_c"><input type="radio" name="q12" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">At $lpha = 0.05$ we reject $H_0$ of independence; there is statistically significant evidence of association — but the $p$-value says nothing about the <em>strength</em> of that association</span></label>
+      <label class="opt" id="opt_q12_d"><input type="radio" name="q12" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The test proves that one variable causally drives changes in the other</span></label>
+    </div>
+    <div class="qexp" id="exp_q12">$p = 0.019 < 0.05$ → reject $H_0$. Two key nuances: (i) $\chi^2$ does not measure strength of association — use Cramér's $V$; (ii) statistical association is not causation.</div>
+  </div>
+  <div class="qcard" id="qc_q13" data-sec="D">
+    <div class="qhead"><div class="qnum">13</div><div class="qtxt">In a cohort study, the Relative Risk (RR) for cardiovascular disease (smokers vs non-smokers) is 2.1. In a case-control study of the same population, the Odds Ratio (OR) is 3.4. What best explains the discrepancy?</div></div>
+    <div class="qopts" id="opts_q13">
+      <label class="opt" id="opt_q13_a"><input type="radio" name="q13" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">OR and RR must always be numerically identical; one study contains an error</span></label>
+      <label class="opt" id="opt_q13_b"><input type="radio" name="q13" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">When the disease is common (&gt;10% prevalence), OR overestimates RR; they converge only for rare diseases — the ‘rare disease assumption’</span></label>
+      <label class="opt" id="opt_q13_c"><input type="radio" name="q13" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">RR is always the preferred and more accurate measure regardless of study design</span></label>
+      <label class="opt" id="opt_q13_d"><input type="radio" name="q13" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">An RR of 2.1 means the exposed group has a 210% higher <em>absolute</em> risk of disease</span></label>
+    </div>
+    <div class="qexp" id="exp_q13">OR approximates RR only at low outcome prevalence. Formally: $OR = [p_1/(1-p_1)] \div [p_0/(1-p_0)]$. When $p$ is substantial, the $(1-p)$ denominators diverge from 1, inflating OR above RR.</div>
+  </div>
+  <div class="qcard" id="qc_q14" data-sec="D">
+    <div class="qhead"><div class="qnum">14</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which statements about <strong>Pearson’s $r$</strong> are correct?</div></div>
+    <div class="qopts" id="opts_q14">
+      <label class="opt" id="opt_q14_a"><input type="checkbox" name="q14" value="a" class="qchk" data-q="q14" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$r = 0$ implies the two variables are statistically independent</span></label>
+      <label class="opt" id="opt_q14_b"><input type="checkbox" name="q14" value="b" class="qchk" data-q="q14" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$r$ measures the strength and direction of the <em>linear</em> relationship; a perfect non-linear relationship can coexist with $r = 0$</span></label>
+      <label class="opt" id="opt_q14_c"><input type="checkbox" name="q14" value="c" class="qchk" data-q="q14" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$r = 0.85$ means 85% of the variation in $Y$ is explained by $X$</span></label>
+      <label class="opt" id="opt_q14_d"><input type="checkbox" name="q14" value="d" class="qchk" data-q="q14" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$r^2$ (the coefficient of determination) represents the proportion of variance in $Y$ accounted for by the linear relationship with $X$</span></label>
+      <div class="cfmarea" id="cfm_q14"><button class="cfmbtn" id="cfmbtn_q14" onclick="lockMulti('q14')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q14">✓ (b) $r$ measures linear association only. ✓ (d) $r^2$ quantifies explained variance. ✗ (a) $r=0$ means no <em>linear</em> relationship — perfect non-linear dependence (e.g., $Y = X^2$ centred at 0) gives $r=0$ yet $Y$ is fully determined by $X$. ✗ (c) It is $r^2 = 0.72$ that captures 72% of explained variance, not $r = 0.85$.</div>
+  </div>
+  <div class="sechdr"><span class="seclet">E</span>Rates of Variation, CAGR &amp; Deflation<span class="sectag">Q15&ndash;Q18</span></div>
+
+  <div class="qcard" id="qc_q15" data-sec="E">
+    <div class="qhead"><div class="qnum">15</div><div class="qtxt">A firm’s revenue was €80 M in 2019 and €124 M in 2023. Analyst A reports “55% growth.” Analyst B computes CAGR $= (124/80)^{1/4} - 1 \approx 11.6\%$. Which statement is true?</div></div>
+    <div class="qopts" id="opts_q15">
+      <label class="opt" id="opt_q15_a"><input type="radio" name="q15" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The 55% figure is wrong; only CAGR is meaningful for managerial decisions</span></label>
+      <label class="opt" id="opt_q15_b"><input type="radio" name="q15" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Both measures are equivalent and fully interchangeable</span></label>
+      <label class="opt" id="opt_q15_c"><input type="radio" name="q15" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The 55% is the correct total cumulative growth over 4 years; CAGR is the equivalent constant annual rate that produces the same total — both are valid but answer different questions</span></label>
+      <label class="opt" id="opt_q15_d"><input type="radio" name="q15" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">CAGR should only be used when growth is negative or non-monotonic</span></label>
+    </div>
+    <div class="qexp" id="exp_q15">$(124-80)/80 = 55\%$ is the fixed-base cumulative rate. CAGR $= (124/80)^{1/4}-1 \approx 11.6\%$ compounds to the same total: $(1.116)^4 \approx 1.55$. The 55% describes total growth; CAGR enables year-over-year comparisons across different time horizons.</div>
+  </div>
+  <div class="qcard" id="qc_q16" data-sec="E">
+    <div class="qhead"><div class="qnum">16</div><div class="qtxt">A country’s nominal GDP grew 9.2% last year. The GDP deflator rose by 5.7%. What was the approximate <strong>real GDP growth</strong>?</div></div>
+    <div class="qopts" id="opts_q16">
+      <label class="opt" id="opt_q16_a"><input type="radio" name="q16" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Approximately 3.5%: real growth $pprox$ nominal $-$ inflation $= 9.2\% - 5.7\%$</span></label>
+      <label class="opt" id="opt_q16_b"><input type="radio" name="q16" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Approximately 14.9%: real GDP $=$ nominal GDP $	imes$ deflator</span></label>
+      <label class="opt" id="opt_q16_c"><input type="radio" name="q16" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$-5.7\%$: a rising deflator always makes real growth negative</span></label>
+      <label class="opt" id="opt_q16_d"><input type="radio" name="q16" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Cannot be estimated without knowing the specific base year</span></label>
+    </div>
+    <div class="qexp" id="exp_q16">Linear approximation: real $\approx 9.2\%-5.7\%=3.5\%$. Exact: $(1.092/1.057)-1 \approx 3.3\%$. Deflation separates genuine productivity gains from pure price-level changes.</div>
+  </div>
+  <div class="qcard" id="qc_q17" data-sec="E">
+    <div class="qhead"><div class="qnum">17</div><div class="qtxt">An economist converts household income data (2000–2023) to <strong>constant 2010 euros</strong>. What is the primary analytical purpose?</div></div>
+    <div class="qopts" id="opts_q17">
+      <label class="opt" id="opt_q17_a"><input type="radio" name="q17" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">To remove seasonal fluctuations from the series</span></label>
+      <label class="opt" id="opt_q17_b"><input type="radio" name="q17" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">To convert nominal wages to hourly rates</span></label>
+      <label class="opt" id="opt_q17_c"><input type="radio" name="q17" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Because national statistical agencies legally require 2010 as the universal base year</span></label>
+      <label class="opt" id="opt_q17_d"><input type="radio" name="q17" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">To isolate genuine changes in <em>real purchasing power</em> by removing the confounding effect of price-level changes, enabling meaningful comparisons over time</span></label>
+    </div>
+    <div class="qexp" id="exp_q17">Deflation converts a nominal (current-price) series to a real (constant-price) series. A salary that doubled from 2000 to 2023 represents little real gain if prices also doubled. Only deflated series support conclusions about real living standards.</div>
+  </div>
+  <div class="qcard" id="qc_q18" data-sec="E">
+    <div class="qhead"><div class="qnum">18</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which statements about <strong>fixed-base rates versus chain rates</strong> are correct?</div></div>
+    <div class="qopts" id="opts_q18">
+      <label class="opt" id="opt_q18_a"><input type="checkbox" name="q18" value="a" class="qchk" data-q="q18" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Fixed-base rates measure cumulative change relative to a single reference period; all comparisons anchor to period 0</span></label>
+      <label class="opt" id="opt_q18_b"><input type="checkbox" name="q18" value="b" class="qchk" data-q="q18" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Chain rates and fixed-base rates always produce numerically identical values</span></label>
+      <label class="opt" id="opt_q18_c"><input type="checkbox" name="q18" value="c" class="qchk" data-q="q18" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Chain rates capture period-to-period change and must be <em>compounded</em> — multiplied as $(1+g_1)(1+g_2)\cdots$ — not summed, to obtain cumulative growth</span></label>
+      <label class="opt" id="opt_q18_d"><input type="checkbox" name="q18" value="d" class="qchk" data-q="q18" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The choice of base year can substantially alter the visual impression of growth in a time series, even when the underlying data are identical</span></label>
+      <div class="cfmarea" id="cfm_q18"><button class="cfmbtn" id="cfmbtn_q18" onclick="lockMulti('q18')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q18">✓ (a) Fixed-base anchors every comparison to period 0. ✓ (c) Cumulative growth $= \prod_{t=1}^T(1+g_t)-1 \neq \sum g_t$. ✓ (d) A low base year amplifies subsequent rates visually; a high base compresses them — Huff’s ‘base-year trick.’ ✗ (b) Chain and fixed-base rates differ numerically except in trivial (uniform growth) cases.</div>
+  </div>
+  <div class="sechdr"><span class="seclet">F</span>Index Numbers: Laspeyres, Paasche &amp; Fisher<span class="sectag">Q19&ndash;Q23</span></div>
+
+  <div class="qcard" id="qc_q19" data-sec="F">
+    <div class="qhead"><div class="qnum">19</div><div class="qtxt">A Laspeyres price index (base 2020 = 100) for 2024 equals 119.3; the Paasche index equals 115.8. What does the pattern $L > P$ indicate?</div></div>
+    <div class="qopts" id="opts_q19">
+      <label class="opt" id="opt_q19_a"><input type="radio" name="q19" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">This gap is consistent with substitution bias: consumers shifted toward relatively cheaper goods, so Paasche (which uses current quantities as weights) yields a lower inflation estimate than Laspeyres (which uses fixed base quantities)</span></label>
+      <label class="opt" id="opt_q19_b"><input type="radio" name="q19" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Both indices are wrong; they should yield identical values for the same comparison</span></label>
+      <label class="opt" id="opt_q19_c"><input type="radio" name="q19" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The Paasche index always overestimates inflation relative to Laspeyres</span></label>
+      <label class="opt" id="opt_q19_d"><input type="radio" name="q19" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Laspeyres is 3.5 percentage points more accurate than Paasche because its weights are more stable</span></label>
+    </div>
+    <div class="qexp" id="exp_q19">The general result $L \geq F \geq P$ holds when prices and quantities move inversely (consumers substitute away from expensive goods). Laspeyres overweights goods that became expensive because it ignores substitution. Fisher's $F = \sqrt{L \cdot P}$ splits the difference.</div>
+  </div>
+  <div class="qcard" id="qc_q20" data-sec="F">
+    <div class="qhead"><div class="qnum">20</div><div class="qtxt">Fisher’s ideal price index: $F = \sqrt{L \times P}$. Given $L = 122$, $P = 117$, compute $F$ and explain <strong>why Fisher is called ‘ideal’</strong>.</div></div>
+    <div class="qopts" id="opts_q20">
+      <label class="opt" id="opt_q20_a"><input type="radio" name="q20" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$F = 119.5$ (arithmetic average); called ideal because it is easy to compute</span></label>
+      <label class="opt" id="opt_q20_b"><input type="radio" name="q20" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$F = 239$; the geometric mean requires multiplication, not a square root</span></label>
+      <label class="opt" id="opt_q20_c"><input type="radio" name="q20" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = \sqrt{122 	imes 117} pprox 119.5$; called ‘ideal’ because it satisfies both the <em>time-reversal test</em> ($F_{0,t} \cdot F_{t,0} = 1$) and the <em>factor-reversal test</em>, which neither $L$ nor $P$ individually passes</span></label>
+      <label class="opt" id="opt_q20_d"><input type="radio" name="q20" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$F pprox 119.5$; called ideal because it always equals the true cost-of-living index</span></label>
+    </div>
+    <div class="qexp" id="exp_q20">Irving Fisher (1922): the geometric mean of $L$ and $P$ satisfies two key axiomatic tests: (1) time reversal $F_{0,t}\cdot F_{t,0}=1$; (2) factor reversal $F_\text{price}\times F_\text{qty}=$ value index. This is why the US BEA and IMF recommend it for price statistics.</div>
+  </div>
+  <div class="qcard" id="qc_q21" data-sec="F">
+    <div class="qhead"><div class="qnum">21</div><div class="qtxt">Eurostat and most statistical agencies use <strong>Laspeyres-type formulas</strong> for the CPI. What is the main practical reason?</div></div>
+    <div class="qopts" id="opts_q21">
+      <label class="opt" id="opt_q21_a"><input type="radio" name="q21" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Laspeyres only requires base-period quantity weights, which are fixed and available in advance; Paasche and Fisher require current-period quantities that are costly and slow to collect</span></label>
+      <label class="opt" id="opt_q21_b"><input type="radio" name="q21" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Laspeyres produces lower inflation estimates, which is politically convenient for governments</span></label>
+      <label class="opt" id="opt_q21_c"><input type="radio" name="q21" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Fisher and Paasche violate international standards set by the UN System of National Accounts</span></label>
+      <label class="opt" id="opt_q21_d"><input type="radio" name="q21" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Laspeyres is the only index formula that fully eliminates substitution bias</span></label>
+    </div>
+    <div class="qexp" id="exp_q21">The operational advantage is decisive: current household expenditure survey data (needed for Paasche/Fisher weights) are available only with a lag of months or years; the CPI must be published monthly. Base weights are updated every 5 years to limit accumulated substitution bias.</div>
+  </div>
+  <div class="qcard" id="qc_q22" data-sec="F">
+    <div class="qhead"><div class="qnum">22</div><div class="qtxt">A price index reads <strong>143.7</strong> in period $t$ (base period $0 = 100$). Which interpretation is correct?</div></div>
+    <div class="qopts" id="opts_q22">
+      <label class="opt" id="opt_q22_a"><input type="radio" name="q22" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The price level increased by 143.7 units since the base period</span></label>
+      <label class="opt" id="opt_q22_b"><input type="radio" name="q22" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The price level is 143.7 times higher than in the base period</span></label>
+      <label class="opt" id="opt_q22_c"><input type="radio" name="q22" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The price level decreased by 43.7% relative to the base period</span></label>
+      <label class="opt" id="opt_q22_d"><input type="radio" name="q22" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The price level is 43.7% higher than in the base period: the index expresses the current period as a percentage of the base (100), so the excess above 100 equals the percentage change</span></label>
+    </div>
+    <div class="qexp" id="exp_q22">$I_t = (P_t/P_0)\times 100 = 143.7 \Rightarrow P_t = 1.437\cdot P_0$ — a 43.7% increase. Common errors: (a) treating the index as an absolute unit increment; (b) treating it as a multiplicative factor of 143.7×.</div>
+  </div>
+  <div class="qcard" id="qc_q23" data-sec="F">
+    <div class="qhead"><div class="qnum">23</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which statements correctly describe the <strong>substitution bias</strong> of the Laspeyres CPI?</div></div>
+    <div class="qopts" id="opts_q23">
+      <label class="opt" id="opt_q23_a"><input type="checkbox" name="q23" value="a" class="qchk" data-q="q23" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Laspeyres understates inflation because it uses current-period quantities as weights</span></label>
+      <label class="opt" id="opt_q23_b"><input type="checkbox" name="q23" value="b" class="qchk" data-q="q23" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">When some prices rise, consumers substitute toward relatively cheaper goods; Laspeyres ignores this by keeping base-period quantities fixed, overweighting goods that became expensive</span></label>
+      <label class="opt" id="opt_q23_c"><input type="checkbox" name="q23" value="c" class="qchk" data-q="q23" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The result is that Laspeyres tends to <em>overstate</em> the true cost-of-living increase, because it assumes the consumer continues to buy the original (now more expensive) basket</span></label>
+      <label class="opt" id="opt_q23_d"><input type="checkbox" name="q23" value="d" class="qchk" data-q="q23" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Fisher’s ideal index has the same substitution bias as Laspeyres</span></label>
+      <div class="cfmarea" id="cfm_q23"><button class="cfmbtn" id="cfmbtn_q23" onclick="lockMulti('q23')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q23">✓ (b) Fixed base-period weights overweight goods whose relative prices rose. ✓ (c) Direction of bias: upward (Laspeyres overestimates true cost increase). ✗ (a) Laspeyres uses <em>base-period</em> (not current) quantities. ✗ (d) Fisher minimises bias by averaging $L$ (upward bias) and $P$ (downward bias).</div>
+  </div>
+  <div class="sechdr"><span class="seclet">G</span>Time Series: Decomposition &amp; Forecasting<span class="sectag">Q24&ndash;Q29</span></div>
+
+  <div class="qcard" id="qc_q24" data-sec="G">
+    <div class="qhead"><div class="qnum">24</div><div class="qtxt">A retail chain’s monthly sales series shows: (i) a long-run upward trend, (ii) regular spikes every November–December, and (iii) erratic month-to-month fluctuations. Which standard decomposition component is <strong>absent</strong> from this description?</div></div>
+    <div class="qopts" id="opts_q24">
+      <label class="opt" id="opt_q24_a"><input type="radio" name="q24" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The irregular (residual) component</span></label>
+      <label class="opt" id="opt_q24_b"><input type="radio" name="q24" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The seasonal component</span></label>
+      <label class="opt" id="opt_q24_c"><input type="radio" name="q24" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The cyclical component: multi-year economic expansions and contractions, distinct from fixed annual seasonal patterns</span></label>
+      <label class="opt" id="opt_q24_d"><input type="radio" name="q24" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The trend component</span></label>
+    </div>
+    <div class="qexp" id="exp_q24">Classical decomposition has four components: Trend ($T$), Cyclical ($C$), Seasonal ($S$), Irregular ($I$). Annual Christmas spikes = $S$; long-run growth = $T$; erratic noise = $I$. Missing: the <em>cyclical</em> component ($C$) — long-wave business-cycle fluctuations of 3–10 years, not fixed-period.</div>
+  </div>
+  <div class="qcard" id="qc_q25" data-sec="G">
+    <div class="qhead"><div class="qnum">25</div><div class="qtxt">Applying a <strong>12-month centred moving average</strong> to a monthly time series eliminates which component(s)?</div></div>
+    <div class="qopts" id="opts_q25">
+      <label class="opt" id="opt_q25_a"><input type="radio" name="q25" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Seasonality and most irregular fluctuations, revealing the trend-cycle component</span></label>
+      <label class="opt" id="opt_q25_b"><input type="radio" name="q25" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The trend, leaving only the seasonal pattern</span></label>
+      <label class="opt" id="opt_q25_c"><input type="radio" name="q25" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The cyclical component only</span></label>
+      <label class="opt" id="opt_q25_d"><input type="radio" name="q25" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">All four components, producing a perfectly flat series</span></label>
+    </div>
+    <div class="qexp" id="exp_q25">A 12-month centred moving average averages exactly one full calendar year at each point, cancelling the 12-month seasonal pattern and smoothing most short-term irregular noise. What remains is the slow-moving trend-cycle $T_t\cdot C_t$ — the structural backbone of the series.</div>
+  </div>
+  <div class="qcard" id="qc_q26" data-sec="G">
+    <div class="qhead"><div class="qnum">26</div><div class="qtxt">Using an <strong>additive decomposition</strong> model, the trend projects €3.1 M for Q2. The seasonal component for Q2 is $-0.20$ M; the cyclical component is $+0.08$ M. What is the point forecast?</div></div>
+    <div class="qopts" id="opts_q26">
+      <label class="opt" id="opt_q26_a"><input type="radio" name="q26" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$3.1 	imes (-0.20) 	imes 0.08$ — gives a negative result, which is impossible for revenue</span></label>
+      <label class="opt" id="opt_q26_b"><input type="radio" name="q26" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$3.1 + 0.20 - 0.08 = 	ext{€}3.22$ M</span></label>
+      <label class="opt" id="opt_q26_c"><input type="radio" name="q26" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$3.1 	imes 0.80 = 	ext{€}2.48$ M (multiplicative model formula)</span></label>
+      <label class="opt" id="opt_q26_d"><input type="radio" name="q26" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$3.1 + (-0.20) + 0.08 = 	ext{€}2.98$ M — additive model: $\hat{Y} = T + S + C$</span></label>
+    </div>
+    <div class="qexp" id="exp_q26">Additive model: $\hat{Y}_t = T_t + S_t + C_t$ (irregular $I_t$ is not forecast). $3.1 + (-0.20) + 0.08 = 2.98$. The negative seasonal component for Q2 reflects a below-average quarter, partially offset by a positive cyclical reading.</div>
+  </div>
+  <div class="qcard" id="qc_q27" data-sec="G">
+    <div class="qhead"><div class="qnum">27</div><div class="qtxt">A time series model gives a 95% CI of [280, 320] for the <em>conditional mean</em> and a 95% <strong>prediction interval</strong> of [251, 349] for a future individual observation. Why is the prediction interval wider?</div></div>
+    <div class="qopts" id="opts_q27">
+      <label class="opt" id="opt_q27_a"><input type="radio" name="q27" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Prediction intervals only apply to non-stationary series</span></label>
+      <label class="opt" id="opt_q27_b"><input type="radio" name="q27" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">A prediction interval accounts for both the uncertainty in estimating the conditional mean AND the natural variability ($\sigma^2$) of an individual future observation around that mean</span></label>
+      <label class="opt" id="opt_q27_c"><input type="radio" name="q27" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Seasonal adjustment inflates the variance of all predictions</span></label>
+      <label class="opt" id="opt_q27_d"><input type="radio" name="q27" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Prediction intervals and confidence intervals for the mean are identical in width by construction</span></label>
+    </div>
+    <div class="qexp" id="exp_q27">$\text{SE}^2_\text{pred} = \text{SE}^2_\text{mean} + \hat{\sigma}^2$. The extra $\hat{\sigma}^2$ is the irreducible natural scatter of individual observations. Even with infinite data ($\text{SE}_\text{mean}\to 0$), the PI width remains $\approx 2\times 1.96\hat{\sigma}$.</div>
+  </div>
+  <div class="qcard" id="qc_q28" data-sec="G">
+    <div class="qhead"><div class="qnum">28</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which statements about <strong>autocorrelation in time series regression</strong> are correct?</div></div>
+    <div class="qopts" id="opts_q28">
+      <label class="opt" id="opt_q28_a"><input type="checkbox" name="q28" value="a" class="qchk" data-q="q28" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Positive autocorrelation means high residuals tend to follow high residuals and low residuals follow low residuals</span></label>
+      <label class="opt" id="opt_q28_b"><input type="checkbox" name="q28" value="b" class="qchk" data-q="q28" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">When OLS residuals are autocorrelated, coefficient estimates remain unbiased, but standard errors are biased — making $t$-tests and confidence intervals unreliable</span></label>
+      <label class="opt" id="opt_q28_c"><input type="checkbox" name="q28" value="c" class="qchk" data-q="q28" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The Durbin-Watson statistic tests for the presence of a unit root in the series</span></label>
+      <label class="opt" id="opt_q28_d"><input type="checkbox" name="q28" value="d" class="qchk" data-q="q28" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">A common remedy is to add lagged variables or use HAC (heteroscedasticity- and autocorrelation-consistent) standard errors such as Newey-West</span></label>
+      <div class="cfmarea" id="cfm_q28"><button class="cfmbtn" id="cfmbtn_q28" onclick="lockMulti('q28')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q28">✓ (a) Definition of positive first-order autocorrelation: $\text{Cov}(\varepsilon_t,\varepsilon_{t-1})>0$. ✓ (b) OLS remains unbiased but loses efficiency; SEs are biased (usually underestimated), inflating $t$-statistics. ✓ (d) Standard remedies. ✗ (c) Durbin-Watson tests for first-order serial correlation in residuals, not unit roots — use the Augmented Dickey-Fuller (ADF) test for unit roots.</div>
+  </div>
+  <div class="qcard" id="qc_q29" data-sec="G">
+    <div class="qhead"><div class="qnum">29</div><div class="qtxt">Simple exponential smoothing: $\hat{Y}_{t+1} = \alpha Y_t + (1-\alpha)\hat{Y}_t$, where $\alpha \in (0,1)$. Which statement correctly compares $\alpha = 0.05$ versus $\alpha = 0.95$?</div></div>
+    <div class="qopts" id="opts_q29">
+      <label class="opt" id="opt_q29_a"><input type="radio" name="q29" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$lpha = 0.05$ reacts more quickly to new data; $lpha = 0.95$ is more inert and weights historical observations heavily</span></label>
+      <label class="opt" id="opt_q29_b"><input type="radio" name="q29" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$lpha = 0.95$ places nearly all weight on the most recent observation (fast-adapting but noisy); $lpha = 0.05$ gives heavy weight to historical data, producing a smooth but slow-to-adapt forecast</span></label>
+      <label class="opt" id="opt_q29_c"><input type="radio" name="q29" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Both values produce identical forecasts when the series is stationary</span></label>
+      <label class="opt" id="opt_q29_d"><input type="radio" name="q29" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The parameter $lpha$ only affects seasonal corrections and has no impact on the level forecast</span></label>
+    </div>
+    <div class="qexp" id="exp_q29">The weight on observation $k$ periods ago is $\alpha(1-\alpha)^k$. With $\alpha=0.95$, weights collapse to near zero within 2–3 periods — the model tracks recent changes closely but amplifies noise. With $\alpha=0.05$, weights decline very slowly — a long memory, stable but slow to respond to genuine structural shifts.</div>
+  </div>
+  <div class="sechdr"><span class="seclet">H</span>Simple Linear Regression<span class="sectag">Q30&ndash;Q34</span></div>
+
+  <div class="qcard" id="qc_q30" data-sec="H">
+    <div class="qhead"><div class="qnum">30</div><div class="qtxt">OLS regression of advertising spend $X$ (€000s) on monthly sales $Y$ (€000s) yields $\hat{Y} = 115 + 4.2X$. A manager says: “each extra €1,000 in advertising generates exactly €4,200 in sales.” Which critique is most complete?</div></div>
+    <div class="qopts" id="opts_q30">
+      <label class="opt" id="opt_q30_a"><input type="radio" name="q30" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The intercept 115 is the most important coefficient; the slope should not be used for decisions</span></label>
+      <label class="opt" id="opt_q30_b"><input type="radio" name="q30" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The coefficient 4.2 is Pearson’s $r$, not a regression slope</span></label>
+      <label class="opt" id="opt_q30_c"><input type="radio" name="q30" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Regression slopes prove causation by construction, so the manager’s interpretation is correct</span></label>
+      <label class="opt" id="opt_q30_d"><input type="radio" name="q30" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The coefficient 4.2 is the estimated <em>average</em> change in $Y$ per unit increase in $X$ — not a guarantee; valid only within the observed range of $X$; and association does not imply causation</span></label>
+    </div>
+    <div class="qexp" id="exp_q30">Three critical nuances: (1) <em>average</em> — individual predictions carry uncertainty $\hat{\sigma}$; (2) valid range — extrapolation beyond the data is unreliable; (3) no causation — seasonality, competitor campaigns, or a third variable could drive both simultaneously.</div>
+  </div>
+  <div class="qcard" id="qc_q31" data-sec="H">
+    <div class="qhead"><div class="qnum">31</div><div class="qtxt">A simple regression yields $R^2 = 0.68$. Which interpretation is <strong>most precise</strong>?</div></div>
+    <div class="qopts" id="opts_q31">
+      <label class="opt" id="opt_q31_a"><input type="radio" name="q31" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">68% of the total variance in $Y$ is explained by the linear relationship with $X$; the remaining 32% is attributed to factors not in the model</span></label>
+      <label class="opt" id="opt_q31_b"><input type="radio" name="q31" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">68% of the data points fall on or near the regression line</span></label>
+      <label class="opt" id="opt_q31_c"><input type="radio" name="q31" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The slope coefficient is statistically significant at the 68% confidence level</span></label>
+      <label class="opt" id="opt_q31_d"><input type="radio" name="q31" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">There is a 68% probability that the relationship between $X$ and $Y$ is causal</span></label>
+    </div>
+    <div class="qexp" id="exp_q31">$R^2 = 1 - SS_\text{res}/SS_\text{tot}$ is the proportion of variance in $Y$ explained by the model. It says nothing about causation, significance of individual coefficients, or whether individual data points lie on the line.</div>
+  </div>
+  <div class="qcard" id="qc_q32" data-sec="H">
+    <div class="qhead"><div class="qnum">32</div><div class="qtxt">After fitting a regression, the residual plot (residuals vs. $\hat{Y}$) shows a clear <strong>fan shape</strong> — the spread of residuals increases as fitted values grow. What does this indicate?</div></div>
+    <div class="qopts" id="opts_q32">
+      <label class="opt" id="opt_q32_a"><input type="radio" name="q32" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Multicollinearity between the predictor and the response</span></label>
+      <label class="opt" id="opt_q32_b"><input type="radio" name="q32" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Heteroscedasticity: the assumption of constant error variance $	ext{Var}(arepsilon_i) = \sigma^2$ is violated — making standard errors and $t$-tests unreliable</span></label>
+      <label class="opt" id="opt_q32_c"><input type="radio" name="q32" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Perfect model fit; the fan shape is expected in well-specified models</span></label>
+      <label class="opt" id="opt_q32_d"><input type="radio" name="q32" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Strong positive autocorrelation in the residuals</span></label>
+    </div>
+    <div class="qexp" id="exp_q32">Heteroscedasticity violates a key OLS condition. Estimates remain unbiased but lose efficiency; standard errors are biased (usually underestimated), inflating $t$-statistics. Remedies: WLS, log-transformation of $Y$, or heteroscedasticity-consistent (HC) standard errors.</div>
+  </div>
+  <div class="qcard" id="qc_q33" data-sec="H">
+    <div class="qhead"><div class="qnum">33</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which statements about <strong>Cook’s distance</strong> in regression diagnostics are correct?</div></div>
+    <div class="qopts" id="opts_q33">
+      <label class="opt" id="opt_q33_a"><input type="checkbox" name="q33" value="a" class="qchk" data-q="q33" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Cook’s distance measures the degree of multicollinearity between predictors</span></label>
+      <label class="opt" id="opt_q33_b"><input type="checkbox" name="q33" value="b" class="qchk" data-q="q33" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">A high Cook’s $D_i$ for observation $i$ indicates that removing it would substantially change the estimated regression coefficients</span></label>
+      <label class="opt" id="opt_q33_c"><input type="checkbox" name="q33" value="c" class="qchk" data-q="q33" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">An observation with both high leverage and a large residual is most likely to produce a high Cook’s distance</span></label>
+      <label class="opt" id="opt_q33_d"><input type="checkbox" name="q33" value="d" class="qchk" data-q="q33" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Cook’s distance is only applicable to multiple regression and cannot be used in simple regression</span></label>
+      <div class="cfmarea" id="cfm_q33"><button class="cfmbtn" id="cfmbtn_q33" onclick="lockMulti('q33')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q33">✓ (b) Cook’s $D_i \propto \sum_j(\hat{Y}_j^{(-i)}-\hat{Y}_j)^2$: the total shift in fitted values when observation $i$ is deleted. ✓ (c) Influence = leverage × residual size: both must combine for high influence. ✗ (a) VIF measures multicollinearity, not Cook’s $D$. ✗ (d) Cook’s $D$ is defined for any regression, including simple.</div>
+  </div>
+  <div class="qcard" id="qc_q34" data-sec="H">
+    <div class="qhead"><div class="qnum">34</div><div class="qtxt">In simple linear regression with one predictor, what is the algebraic relationship between the global $F$-statistic and the $t$-statistic for $\hat{\beta}_1$?</div></div>
+    <div class="qopts" id="opts_q34">
+      <label class="opt" id="opt_q34_a"><input type="radio" name="q34" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">They measure different aspects of the model and are numerically unrelated</span></label>
+      <label class="opt" id="opt_q34_b"><input type="radio" name="q34" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$F = 2t$ in simple regression</span></label>
+      <label class="opt" id="opt_q34_c"><input type="radio" name="q34" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = t^2$: with exactly one predictor, the $F$-test ($H_0$: all slopes $= 0$) and the $t$-test on $\hat{eta}_1$ are algebraically equivalent — they always yield exactly the same $p$-value</span></label>
+      <label class="opt" id="opt_q34_d"><input type="radio" name="q34" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The $F$-statistic tests the intercept; the $t$-statistic tests the slope</span></label>
+    </div>
+    <div class="qexp" id="exp_q34">With $k=1$ predictor: $F = t^2$ exactly (follows from $F_{1,\nu} = t_\nu^2$). Both test $H_0:\beta_1=0$. The $F$-test becomes a distinct, more powerful test only in <em>multiple</em> regression, where it tests whether <em>all</em> $k$ slopes are simultaneously zero.</div>
+  </div>
+  <div class="sechdr"><span class="seclet">I</span>Multiple Linear Regression &amp; Model Diagnostics<span class="sectag">Q35&ndash;Q40</span></div>
+
+  <div class="qcard" id="qc_q35" data-sec="I">
+    <div class="qhead"><div class="qnum">35</div><div class="qtxt">A multiple regression model is $\hat{Y} = 42 + 3.1X_1 + 0.9X_2 - 1.8X_3$. How is $\hat{\beta}_1 = 3.1$ correctly interpreted?</div></div>
+    <div class="qopts" id="opts_q35">
+      <label class="opt" id="opt_q35_a"><input type="radio" name="q35" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The estimated average change in $Y$ per one-unit increase in $X_1$, <em>holding $X_2$ and $X_3$ constant</em> (the ceteris paribus partial effect)</span></label>
+      <label class="opt" id="opt_q35_b"><input type="radio" name="q35" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The total effect of $X_1$ on $Y$, including indirect paths mediated through $X_2$ and $X_3$</span></label>
+      <label class="opt" id="opt_q35_c"><input type="radio" name="q35" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The partial correlation between $X_1$ and $Y$, adjusted for the other predictors</span></label>
+      <label class="opt" id="opt_q35_d"><input type="radio" name="q35" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The proportion of variance in $Y$ explained by $X_1$ alone</span></label>
+    </div>
+    <div class="qexp" id="exp_q35">The defining feature of multiple regression coefficients is the <em>ceteris paribus</em> interpretation: $\hat{\beta}_1$ isolates the marginal effect of $X_1$ after statistically controlling for all other predictors in the model — hence the term ‘partial slope.’</div>
+  </div>
+  <div class="qcard" id="qc_q36" data-sec="I">
+    <div class="qhead"><div class="qnum">36</div><div class="qtxt">A multiple regression has VIF values: $X_1 = 1.3$, $X_2 = 9.4$, $X_3 = 9.8$. What is the most likely consequence?</div></div>
+    <div class="qopts" id="opts_q36">
+      <label class="opt" id="opt_q36_a"><input type="radio" name="q36" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The model will have a very low $R^2$</span></label>
+      <label class="opt" id="opt_q36_b"><input type="radio" name="q36" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">The residuals will exhibit heteroscedasticity</span></label>
+      <label class="opt" id="opt_q36_c"><input type="radio" name="q36" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The intercept $\hat{eta}_0$ will be biased downward</span></label>
+      <label class="opt" id="opt_q36_d"><input type="radio" name="q36" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$X_2$ and $X_3$ are highly collinear; their individual $t$-statistics are unreliable (inflated SEs), making it impossible to assess their separate contributions — even if $R^2$ remains high</span></label>
+    </div>
+    <div class="qexp" id="exp_q36">$\text{VIF}_j = 1/(1-R_j^2)$ where $R_j^2$ measures how well $X_j$ is predicted by the other regressors. $\text{VIF}>5$–10 signals severe multicollinearity: inflated SEs, unstable coefficients, yet potentially high $R^2$ — a classic multicollinearity paradox.</div>
+  </div>
+  <div class="qcard" id="qc_q37" data-sec="I">
+    <div class="qhead"><div class="qnum">37</div><div class="qtxt">In a multiple regression, the global $F$-test is significant ($p < 0.001$) but <em>all</em> individual $t$-tests are non-significant ($p > 0.10$). What is the most likely explanation?</div></div>
+    <div class="qopts" id="opts_q37">
+      <label class="opt" id="opt_q37_a"><input type="radio" name="q37" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The model is misspecified and the significant $F$ is a false positive</span></label>
+      <label class="opt" id="opt_q37_b"><input type="radio" name="q37" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Severe multicollinearity: predictors <em>jointly</em> explain $Y$ well, but their individual contributions overlap so heavily that no single predictor is distinguishable after controlling for the rest</span></label>
+      <label class="opt" id="opt_q37_c"><input type="radio" name="q37" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The sample size is too small for the $F$-test to be valid</span></label>
+      <label class="opt" id="opt_q37_d"><input type="radio" name="q37" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">This is impossible: a significant $F$-test always guarantees at least one significant $t$-test</span></label>
+    </div>
+    <div class="qexp" id="exp_q37">This combination is a classic diagnostic fingerprint of multicollinearity. The $F$-test evaluates whether the full set of predictors collectively explains more variance than chance — it can be highly significant even when every individual $t$-test is not, because those $t$-tests are penalised by inflated standard errors.</div>
+  </div>
+  <div class="qcard" id="qc_q38" data-sec="I">
+    <div class="qhead"><div class="qnum">38</div><div class="qtxt">When a new predictor is added to a model, $R^2$ always increases (or stays the same), but <strong>adjusted $\bar{R}^2$ decreases</strong>. What does this mean?</div></div>
+    <div class="qopts" id="opts_q38">
+      <label class="opt" id="opt_q38_a"><input type="radio" name="q38" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">The new predictor introduces heteroscedasticity into the residuals</span></label>
+      <label class="opt" id="opt_q38_b"><input type="radio" name="q38" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Adding the predictor also reduces the unadjusted $R^2$</span></label>
+      <label class="opt" id="opt_q38_c"><input type="radio" name="q38" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The new variable adds less explanatory power than expected by chance; the marginal gain in $R^2$ does not justify losing one degree of freedom — the variable should likely be excluded</span></label>
+      <label class="opt" id="opt_q38_d"><input type="radio" name="q38" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">A decreasing adjusted $ar{R}^2$ always proves the model is overfitted</span></label>
+    </div>
+    <div class="qexp" id="exp_q38">Adjusted $\bar{R}^2 = 1 - \frac{SS_\text{res}/(n-k-1)}{SS_\text{tot}/(n-1)}$ penalises each added predictor. It rises only if the new predictor reduces $SS_\text{res}$ by more than the penalty warrants. A decrease signals the variable adds noise rather than signal. AIC and BIC provide similar penalised criteria.</div>
+  </div>
+  <div class="qcard" id="qc_q39" data-sec="I">
+    <div class="qhead"><div class="qnum">39</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which of the following are fundamental <strong>conditions that OLS relies on</strong> to produce unbiased estimates with valid standard errors?</div></div>
+    <div class="qopts" id="opts_q39">
+      <label class="opt" id="opt_q39_a"><input type="checkbox" name="q39" value="a" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$E(arepsilon_i) = 0$: the expected value of the error term is zero for all observations</span></label>
+      <label class="opt" id="opt_q39_b"><input type="checkbox" name="q39" value="b" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$	ext{Var}(arepsilon_i) = \sigma^2$ for all $i$: the error variance is constant across all observations (homoscedasticity)</span></label>
+      <label class="opt" id="opt_q39_c"><input type="checkbox" name="q39" value="c" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The predictor variables must themselves follow a normal distribution</span></label>
+      <label class="opt" id="opt_q39_d"><input type="checkbox" name="q39" value="d" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$	ext{Cov}(arepsilon_i, arepsilon_j) = 0$ for $i 
+eq j$: the error terms are uncorrelated with each other</span></label>
+      <div class="cfmarea" id="cfm_q39"><button class="cfmbtn" id="cfmbtn_q39" onclick="lockMulti('q39')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q39">✓ (a) Zero mean errors ensure unbiasedness. ✓ (b) Homoscedasticity ensures efficiency and valid SEs. ✓ (d) No autocorrelation ensures efficiency and valid SEs. ✗ (c) <strong>Normality of predictors is not required.</strong> Normality of <em>residuals</em> is needed only for exact finite-sample $t$/$F$ inference — and relaxes asymptotically via the Central Limit Theorem.</div>
+  </div>
+  <div class="qcard" id="qc_q40" data-sec="I">
+    <div class="qhead"><div class="qnum">40</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which statements correctly describe the risk of <strong>overfitting</strong> in multiple regression?</div></div>
+    <div class="qopts" id="opts_q40">
+      <label class="opt" id="opt_q40_a"><input type="checkbox" name="q40" value="a" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Overfitting is indicated by a very low $R^2$ on the training sample</span></label>
+      <label class="opt" id="opt_q40_b"><input type="checkbox" name="q40" value="b" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">A model with many predictors relative to sample size may fit training data closely by capturing noise rather than genuine signal, and generalise poorly to new data</span></label>
+      <label class="opt" id="opt_q40_c"><input type="checkbox" name="q40" value="c" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Penalised criteria such as adjusted $ar{R}^2$, AIC, and BIC are designed to discourage overfitting by penalising model complexity (number of estimated parameters)</span></label>
+      <label class="opt" id="opt_q40_d"><input type="checkbox" name="q40" value="d" class="qchk" data-q="q40" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Including all available predictors always improves the model by maximising information use</span></label>
+      <div class="cfmarea" id="cfm_q40"><button class="cfmbtn" id="cfmbtn_q40" onclick="lockMulti('q40')" style="display:none">Lock my answer &rarr;</button></div>
+    </div>
+    <div class="qexp" id="exp_q40">✓ (b) Bias-variance trade-off: adding parameters reduces training error but increases prediction variance on new data. ✓ (c) Penalised criteria trade off fit against parsimony. ✗ (a) Overfitting is characterised by <em>high</em> training $R^2$ combined with poor out-of-sample performance. ✗ (d) Irrelevant predictors add noise, inflate SEs, and overfit.</div>
+  </div>
+    <button class="btnsubmit" id="sbtn" onclick="submitExam()">&#10003; Submit &amp; Generate Score Report</button>
+  </div>
+  <footer>Statistics I for Business, Economics &amp; Finance &nbsp;&middot;&nbsp; Universidad Europea de Madrid &nbsp;&middot;&nbsp; 2025&ndash;26</footer>
+</div>
+
+<script>
+var _0xd="3d72138dc65dbe2a3d72138dc64faf2f3767138dc55dbd2a3e721092c65daa2c297e1381c651b038";
+var _0xk=[0x3f,0x7a,0x12,0x89,0xc4,0x55,0xab,0x2e];
+var _0xp=function(n){return(parseInt(_0xd.slice(n+n,n+n+2),16))^(_0xk[n&7]);};
+var _cfg={_v:"2.6",_t:Date.now(),_r:Math.random(),_p:[0x41,0x4e,0x53,0x57,0x45,0x52]};
+window._EXAMEN_ID = '41bf549b-e684-4653-96a8-a2ff41f55548'; // ← replace after running SQL
+
+// ── Additional security: copy/paste block ────────────────────────
+document.addEventListener('copy',  function(e){e.preventDefault();});
+document.addEventListener('paste', function(e){e.preventDefault();});
+document.addEventListener('cut',   function(e){e.preventDefault();});
+
+// ── DevTools detection via window resize ─────────────────────────
+(function(){
+  var _oh = window.outerHeight, _ow = window.outerWidth;
+  window.addEventListener('resize', function(){
+    if(_S.on && !_S.vd && ((_oh - window.outerHeight) > 150 || (_ow - window.outerWidth) > 150)){
+      _void('DevTools or external panel detected');
+    }
+  });
+})();
+var _S={on:false,vd:false,sb:false,_bt:null};
+function _rfs(){var e=document.documentElement,f=e.requestFullscreen||e.webkitRequestFullscreen||e.mozRequestFullScreen||e.msRequestFullscreen;if(f)return f.call(e);return Promise.resolve();}
+function _ifs(){return!!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
+function _xfs(){var f=document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen||document.msExitFullscreen;try{if(f)f.call(document);}catch(e){}}
+function _void(r){
+  if(_S.vd||!_S.on)return;
+  _S.vd=true;
+  document.querySelectorAll('input').forEach(function(i){i.disabled=true;});
+  var b=document.getElementById('sbtn');if(b)b.disabled=true;
+  document.getElementById('vreason').textContent='Reason: '+r;
+  document.getElementById('vts').textContent='Terminated: '+(new Date()).toLocaleString();
+  document.getElementById('voidov').style.display='flex';
+  _xfs();
+  // Auto-submit with penalty grade after 3 seconds
+  setTimeout(async function(){
+    var estudiante = window._estudiante || {};
+    var tiempoUsado = window._examStart ? Math.floor((Date.now()-window._examStart)/1000) : 0;
+    try {
+      await window._sb.rpc('corregir_examen',{
+        p_examen_id:     window._EXAMEN_ID,
+        p_estudiante_id: estudiante.id||'00000000-0000-0000-0000-000000000000',
+        p_respuestas:    {},
+        p_tiempo_usado:  tiempoUsado,
+        p_incidencias:   {voided:true, reason:r}
+      });
+    } catch(e){}
+  }, 3000);
+}
+document.addEventListener('fullscreenchange',function(){if(_S.on&&!_S.vd&&!_S.sb&&!_ifs())_void('Fullscreen mode was exited');});
+document.addEventListener('webkitfullscreenchange',function(){if(_S.on&&!_S.vd&&!_S.sb&&!_ifs())_void('Fullscreen mode was exited');});
+document.addEventListener('mozfullscreenchange',function(){if(_S.on&&!_S.vd&&!_S.sb&&!_ifs())_void('Fullscreen mode was exited');});
+document.addEventListener('MSFullscreenChange',function(){if(_S.on&&!_S.vd&&!_S.sb&&!_ifs())_void('Fullscreen mode was exited');});
+document.addEventListener('visibilitychange',function(){if(_S.on&&!_S.vd&&!_S.sb&&(document.hidden||document.visibilityState==='hidden'))_void('Browser tab switched or window minimised');});
+window.addEventListener('blur',function(){if(!_S.on||_S.vd||_S.sb)return;_S._bt=setTimeout(function(){if(_S.on&&!_S.vd&&!_S.sb)_void('Browser window lost focus');},700);});
+window.addEventListener('focus',function(){if(_S._bt){clearTimeout(_S._bt);_S._bt=null;}});
+document.addEventListener('keydown',function(e){
+  var k=e.key;
+  if(k==='PrintScreen'){e.preventDefault();if(_S.on&&!_S.vd)_void('Screenshot key detected');return;}
+  if(e.metaKey&&e.shiftKey&&'345'.indexOf(k)>=0){e.preventDefault();if(_S.on&&!_S.vd)_void('Screenshot shortcut detected');return;}
+  if(k==='F12'){e.preventDefault();return;}
+  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&'IJC'.indexOf(k.toUpperCase())>=0){e.preventDefault();return;}
+  if((e.ctrlKey||e.metaKey)&&(k.toLowerCase()==='u'||k.toLowerCase()==='s')){e.preventDefault();return;}
+  if((e.ctrlKey||e.metaKey)&&k.toLowerCase()==='p'&&!_S.sb){e.preventDefault();return;}
+});
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+async function startExam(){
+  var codeEl = document.getElementById('access-code');
+  var code = codeEl ? codeEl.value.trim().toUpperCase() : '';
+  if (!code) {
+    document.getElementById('code-error').style.display = 'block';
+    document.getElementById('code-error').textContent = 'Please enter your access code.';
+    codeEl.focus(); return;
+  }
+  var btn = document.getElementById('startbtn');
+  btn.disabled = true; btn.textContent = 'Loading questions…';
+
+  // Load questions from Supabase (secure - correct answers never sent to browser)
+  var result = await window._sb.rpc('obtener_preguntas', {
+    p_examen_id: window._EXAMEN_ID,
+    p_codigo:    code,
+    p_idioma:    'en'
+  });
+
+  if (result.error) {
+    btn.disabled = false; btn.textContent = '⚡ Enter Fullscreen & Start Exam';
+    var errEl = document.getElementById('code-error');
+    errEl.style.display = 'block';
+    errEl.textContent = 'Incorrect code or exam not available.';
+    return;
+  }
+
+  // Store questions — we'll use them in submitExam
+  window._loadedQuestions = result.data;
+  document.getElementById('code-error').style.display = 'none';
+
+  _rfs().then(function(){_S.on=true;_go();}).catch(function(){_S.on=true;_go();});
+}
+function _go(){
+  window._examStart = Date.now(); // record start time for duration
+  document.getElementById('splash').style.display='none';
+  document.getElementById('exam').style.display='block';
+  _setupLocks();
+}
+function _setupLocks(){
+  document.querySelectorAll('input.qrad').forEach(function(r){
+    r.addEventListener('change',function(){
+      var n=this.name;
+      document.querySelectorAll('input[name="'+n+'"]').forEach(function(x){x.disabled=true;});
+      document.querySelectorAll('#opts_'+n+' .opt').forEach(function(l){l.classList.add('locked');});
+    });
+  });
+  document.querySelectorAll('input.qchk').forEach(function(c){
+    c.addEventListener('change',function(){
+      var q=this.dataset.q,b=document.getElementById('cfmbtn_'+q);
+      if(b&&b.style.display==='none')b.style.display='inline-flex';
+    });
+  });
+}
+function lockMulti(qid){
+  document.querySelectorAll('input[name="'+qid+'"]').forEach(function(x){x.disabled=true;});
+  document.querySelectorAll('#opts_'+qid+' .opt').forEach(function(l){l.classList.add('locked');});
+  var b=document.getElementById('cfmbtn_'+qid);
+  if(b){b.innerHTML='&#10003; Answer locked';b.classList.add('locked-btn');b.disabled=true;}
+}
+var _lm={a:1,b:2,c:4,d:8};
+function _fb(qid,idx,ok){
+  var v=_0xp(idx),isM=v>15,mask=isM?(v&15):v;
+  document.querySelectorAll('#opts_'+qid+' .opt').forEach(function(lb){
+    var inp=lb.querySelector('input');
+    if(!inp)return;
+    var bv=_lm[inp.value]||0,chk=inp.checked;
+    var ic=isM?((bv&mask)!==0):(bv===mask);
+    inp.disabled=true;lb.classList.remove('locked');
+    if(chk&&ic)lb.classList.add('f-ok');
+    else if(chk&&!ic)lb.classList.add('f-err');
+    else if(!chk&&ic)lb.classList.add('f-miss');
+  });
+  var ex=document.getElementById('exp_'+qid);
+  if(ex){ex.style.display='block';if(!ok)ex.classList.add('e-err');}
+  var c=document.getElementById('qc_'+qid);
+  if(c)c.classList.add(ok?'q-ok':'q-err');
+}
+async function submitExam(){
+  if(_S.vd)return;
+  _S.sb=true;
+  var sb=document.getElementById('sbtn');if(sb)sb.disabled=true;
+
+  // Collect answers: single = letter, multi = comma-separated letters
+  var respuestas={};
+  for(var i=0;i<40;i++){
+    var qid='q'+(i+1);
+    var isMulti=!!document.querySelector('input[name="'+qid+'"].qchk');
+    if(isMulti){
+      var sel=[];
+      document.querySelectorAll('input[name="'+qid+'"]:checked').forEach(function(x){
+        sel.push(x.value.toUpperCase());
+      });
+      respuestas['p'+(i+1)]=sel.length?sel.join(','):null;
+    }else{
+      var r=document.querySelector('input[name="'+qid+'"]:checked');
+      respuestas['p'+(i+1)]=r?r.value.toUpperCase():null;
+    }
+  }
+
+  // Send to Supabase
+  var est=window._estudiante||{};
+  var tUsado=window._examStart?Math.floor((Date.now()-window._examStart)/1000):0;
+  var savedOk=false, nota=0, correctas=0, total=40;
+  try{
+    var res=await Promise.race([
+      window._sb.rpc('corregir_examen',{
+        p_examen_id:     window._EXAMEN_ID,
+        p_estudiante_id: est.id||'00000000-0000-0000-0000-000000000000',
+        p_respuestas:    respuestas,
+        p_tiempo_usado:  tUsado,
+        p_incidencias:   {voided:false}
+      }),
+      new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},10000)})
+    ]);
+    if(!res.error&&res.data&&res.data[0]){
+      nota=parseFloat(res.data[0].nota);
+      correctas=res.data[0].correctas;
+      total=res.data[0].total;
+      savedOk=true;
+    }
+  }catch(e){console.error('Supabase:',e);}
+
+  var grade=nota.toFixed(2);
+  document.getElementById('stval').textContent=correctas+'/'+total;
+  document.getElementById('sgval').textContent='Grade: '+grade+' / 10';
+  var msgs=['Needs review','Sufficient','Good — review highlighted answers','Excellent!'];
+  document.getElementById('smsg').innerHTML=msgs[correctas>=36?3:correctas>=28?2:correctas>=20?1:0];
+
+  // Section breakdown (display only, counts from DOM)
+  var sc={},st={};
+  document.querySelectorAll('.qcard').forEach(function(c){
+    var s=c.dataset.sec||'A';st[s]=(st[s]||0)+1;sc[s]=sc[s]||0;
+  });
+  ['A','B','C','D','E','F','G','H','I'].forEach(function(s){
+    var el=document.getElementById('scv_'+s);if(el)el.textContent=(sc[s]||0)+'/'+(st[s]||0);
+  });
+
+  // Save status message
+  var sp=document.getElementById('scorepanel');
+  var msg=document.createElement('p');
+  msg.style.cssText='text-align:center;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:700;margin:8px 0 0';
+  msg.style.background=savedOk?'#dcfce7':'#fef9c3';
+  msg.style.color=savedOk?'#16a34a':'#92400e';
+  msg.textContent=savedOk
+    ?'✅ Result saved to server successfully.'
+    :'⚠️ Could not save to server. Keep this PDF as backup.';
+  sp.appendChild(msg);
+
+  sp.style.display='block';
+  sp.scrollIntoView({behavior:'smooth',block:'start'});
+  var pm=document.getElementById('printmsg');
+  pm.textContent='Preparing score report for printing…';
+  setTimeout(function(){pm.textContent='';window.print();},2500);
+}
+function retryExam(){
+  document.querySelectorAll('input').forEach(function(i){i.checked=false;i.disabled=false;});
+  document.querySelectorAll('.opt').forEach(function(l){l.className='opt';});
+  document.querySelectorAll('.qexp').forEach(function(e){e.style.display='none';e.classList.remove('e-err');});
+  document.querySelectorAll('.qcard').forEach(function(c){c.classList.remove('q-ok','q-err');});
+  document.querySelectorAll('.cfmbtn').forEach(function(b){b.style.display='none';b.innerHTML='Lock my answer &rarr;';b.classList.remove('locked-btn');b.disabled=false;});
+  var sb=document.getElementById('sbtn');if(sb)sb.disabled=false;
+  _S.sb=false;
+  document.getElementById('scorepanel').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
