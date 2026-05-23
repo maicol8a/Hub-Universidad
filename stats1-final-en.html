@@ -83,12 +83,10 @@ header img{height:58px;flex-shrink:0}
 .btnsubmit{display:block;width:100%;background:var(--red);color:#fff;border:none;border-radius:8px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;transition:background .2s;margin-top:24px;letter-spacing:.3px}
 .btnsubmit:hover:not(:disabled){background:var(--red2)}
 .btnsubmit:disabled{opacity:.55;cursor:not-allowed}
-.btnretry{display:block;width:100%;background:#fff;color:var(--red);border:2px solid var(--red);border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;margin-top:9px;transition:background .15s}
-.btnretry:hover{background:var(--red3)}
 footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--bdr);margin-top:32px}
 @media print{
   @page{size:A4;margin:1.5cm}
-  #splash,#voidov,#startbtn,.btnsubmit,.btnretry,.cfmbtn,header,footer{display:none!important}
+  #splash,#voidov,#startbtn,.btnsubmit,.cfmbtn,header,footer{display:none!important}
   #exam{display:block!important}
   #scorepanel{display:block!important;box-shadow:none!important;break-inside:avoid;margin-bottom:16px}
   .qcard{break-inside:avoid;margin-bottom:10px;border:1px solid #ddd}
@@ -106,19 +104,9 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     'https://jivjhtqfqktmufmyeyzj.supabase.co',
     'sb_publishable_FGMSjudy2IdTe2igi5JRJQ_Paw90L8J'
   )
-  // Verify session from hub login
   const est = JSON.parse(sessionStorage.getItem('estudiante') || 'null')
-  if (!est) {
-    window.location.href = 'index.html'
-  } else {
-    window._estudiante = est
-    document.addEventListener('DOMContentLoaded', () => {
-      const s = id => document.getElementById(id)
-      if (s('fn-name'))  s('fn-name').value  = est.nombre     || ''
-      if (s('fn-id'))    s('fn-id').value    = est.student_id || ''
-      if (s('fn-group')) s('fn-group').value = est.grupo      || ''
-    })
-  }
+  if (!est) { window.location.href = 'index.html' }
+  else { window._estudiante = est }
 </script>
 </head>
 <body>
@@ -138,12 +126,12 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
   <div class="splwarn">
     <b style="color:#78350f">&#9888; Anti-cheating system:</b> This exam runs in fullscreen mode. Any attempt to exit fullscreen, switch tabs, minimise the window, or take a screenshot will <strong>automatically void your exam</strong>. There are no exceptions.
   </div>
-  <div style="margin:16px 0 0">
+  <div style="margin:16px 0 0;width:100%;max-width:540px">
     <input type="text" id="access-code"
       placeholder="Access code (provided in class)"
       style="width:100%;padding:10px 14px;border:1.5px solid #cbd5e1;border-radius:8px;
              font-size:15px;font-family:inherit;text-transform:uppercase;letter-spacing:2px;
-             text-align:center;margin-bottom:8px"
+             text-align:center;margin-bottom:8px;display:block"
       onkeydown="if(event.key==='Enter')startExam()">
     <p id="code-error" style="color:#dc2626;font-size:12px;margin:0 0 8px;display:none">
       Incorrect code or exam not available.
@@ -172,12 +160,25 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
   <div class="wrap">
     <div class="intro">
       <strong>40 questions &mdash; all course sections.</strong>
-      Emphasis on <strong>interpretation and analytical reasoning</strong> over calculation.
       Questions marked <span style="background:#7c3aed;color:#fff;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700">MULTI</span> require selecting <em>all</em> correct options before clicking <em>Lock my answer</em>.
       All answers are <strong>final once confirmed</strong>. Score is scaled from 0 to 10.
     </div>
     <div id="scorepanel">
       <h2>&#128202; Results</h2>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:12px;font-size:13px;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden">
+        <tr style="background:#f8fafc">
+          <td style="padding:7px 12px;font-weight:700;color:#64748b">Name</td>
+          <td style="padding:7px 12px" id="rpt-name">—</td>
+          <td style="padding:7px 12px;font-weight:700;color:#64748b">Student ID</td>
+          <td style="padding:7px 12px" id="rpt-id">—</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 12px;font-weight:700;color:#64748b">Group</td>
+          <td style="padding:7px 12px" id="rpt-group">—</td>
+          <td style="padding:7px 12px;font-weight:700;color:#64748b">Subject</td>
+          <td style="padding:7px 12px">Statistics I</td>
+        </tr>
+      </table>
       <div class="stotal" id="stval">0/40</div>
       <div class="stotalx">questions answered correctly</div>
       <div class="sgrade" id="sgval">Grade: 0.00 / 10</div>
@@ -193,7 +194,6 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
 <div class="schip" id="sc_I"><strong>I</strong> Q35&ndash;Q40: <span id="scv_I">&ndash;</span></div>
 </div>
       <div id="printmsg"></div>
-      <button class="btnretry" onclick="retryExam()">&#8635; New attempt</button>
     </div>
 
   <div class="sechdr"><span class="seclet">A</span>Foundations: Variables, Scales &amp; Frequency Tables<span class="sectag">Q1&ndash;Q4</span></div>
@@ -320,7 +320,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qopts" id="opts_q12">
       <label class="opt" id="opt_q12_a"><input type="radio" name="q12" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">There is a strong association between the variables because the $\chi^2$ statistic is large</span></label>
       <label class="opt" id="opt_q12_b"><input type="radio" name="q12" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">1.9% of the sample cases exhibit a statistically significant association</span></label>
-      <label class="opt" id="opt_q12_c"><input type="radio" name="q12" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">At $lpha = 0.05$ we reject $H_0$ of independence; there is statistically significant evidence of association — but the $p$-value says nothing about the <em>strength</em> of that association</span></label>
+      <label class="opt" id="opt_q12_c"><input type="radio" name="q12" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">At $\alpha = 0.05$ we reject $H_0$ of independence; there is statistically significant evidence of association — but the $p$-value says nothing about the <em>strength</em> of that association</span></label>
       <label class="opt" id="opt_q12_d"><input type="radio" name="q12" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The test proves that one variable causally drives changes in the other</span></label>
     </div>
     <div class="qexp" id="exp_q12">$p = 0.019 < 0.05$ → reject $H_0$. Two key nuances: (i) $\chi^2$ does not measure strength of association — use Cramér's $V$; (ii) statistical association is not causation.</div>
@@ -361,7 +361,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
   <div class="qcard" id="qc_q16" data-sec="E">
     <div class="qhead"><div class="qnum">16</div><div class="qtxt">A country’s nominal GDP grew 9.2% last year. The GDP deflator rose by 5.7%. What was the approximate <strong>real GDP growth</strong>?</div></div>
     <div class="qopts" id="opts_q16">
-      <label class="opt" id="opt_q16_a"><input type="radio" name="q16" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Approximately 3.5%: real growth $pprox$ nominal $-$ inflation $= 9.2\% - 5.7\%$</span></label>
+      <label class="opt" id="opt_q16_a"><input type="radio" name="q16" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Approximately 3.5%: real growth $\approx$ nominal $-$ inflation $= 9.2\% - 5.7\%$</span></label>
       <label class="opt" id="opt_q16_b"><input type="radio" name="q16" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Approximately 14.9%: real GDP $=$ nominal GDP $	imes$ deflator</span></label>
       <label class="opt" id="opt_q16_c"><input type="radio" name="q16" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$-5.7\%$: a rising deflator always makes real growth negative</span></label>
       <label class="opt" id="opt_q16_d"><input type="radio" name="q16" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Cannot be estimated without knowing the specific base year</span></label>
@@ -406,8 +406,8 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qopts" id="opts_q20">
       <label class="opt" id="opt_q20_a"><input type="radio" name="q20" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$F = 119.5$ (arithmetic average); called ideal because it is easy to compute</span></label>
       <label class="opt" id="opt_q20_b"><input type="radio" name="q20" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$F = 239$; the geometric mean requires multiplication, not a square root</span></label>
-      <label class="opt" id="opt_q20_c"><input type="radio" name="q20" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = \sqrt{122 	imes 117} pprox 119.5$; called ‘ideal’ because it satisfies both the <em>time-reversal test</em> ($F_{0,t} \cdot F_{t,0} = 1$) and the <em>factor-reversal test</em>, which neither $L$ nor $P$ individually passes</span></label>
-      <label class="opt" id="opt_q20_d"><input type="radio" name="q20" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$F pprox 119.5$; called ideal because it always equals the true cost-of-living index</span></label>
+      <label class="opt" id="opt_q20_c"><input type="radio" name="q20" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">$F = \sqrt{122 	imes 117} \approx 119.5$; called ‘ideal’ because it satisfies both the <em>time-reversal test</em> ($F_{0,t} \cdot F_{t,0} = 1$) and the <em>factor-reversal test</em>, which neither $L$ nor $P$ individually passes</span></label>
+      <label class="opt" id="opt_q20_d"><input type="radio" name="q20" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$F \approx 119.5$; called ideal because it always equals the true cost-of-living index</span></label>
     </div>
     <div class="qexp" id="exp_q20">Irving Fisher (1922): the geometric mean of $L$ and $P$ satisfies two key axiomatic tests: (1) time reversal $F_{0,t}\cdot F_{t,0}=1$; (2) factor reversal $F_\text{price}\times F_\text{qty}=$ value index. This is why the US BEA and IMF recommend it for price statistics.</div>
   </div>
@@ -498,10 +498,10 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
   <div class="qcard" id="qc_q29" data-sec="G">
     <div class="qhead"><div class="qnum">29</div><div class="qtxt">Simple exponential smoothing: $\hat{Y}_{t+1} = \alpha Y_t + (1-\alpha)\hat{Y}_t$, where $\alpha \in (0,1)$. Which statement correctly compares $\alpha = 0.05$ versus $\alpha = 0.95$?</div></div>
     <div class="qopts" id="opts_q29">
-      <label class="opt" id="opt_q29_a"><input type="radio" name="q29" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$lpha = 0.05$ reacts more quickly to new data; $lpha = 0.95$ is more inert and weights historical observations heavily</span></label>
-      <label class="opt" id="opt_q29_b"><input type="radio" name="q29" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$lpha = 0.95$ places nearly all weight on the most recent observation (fast-adapting but noisy); $lpha = 0.05$ gives heavy weight to historical data, producing a smooth but slow-to-adapt forecast</span></label>
+      <label class="opt" id="opt_q29_a"><input type="radio" name="q29" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$\alpha = 0.05$ reacts more quickly to new data; $\alpha = 0.95$ is more inert and weights historical observations heavily</span></label>
+      <label class="opt" id="opt_q29_b"><input type="radio" name="q29" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$\alpha = 0.95$ places nearly all weight on the most recent observation (fast-adapting but noisy); $\alpha = 0.05$ gives heavy weight to historical data, producing a smooth but slow-to-adapt forecast</span></label>
       <label class="opt" id="opt_q29_c"><input type="radio" name="q29" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Both values produce identical forecasts when the series is stationary</span></label>
-      <label class="opt" id="opt_q29_d"><input type="radio" name="q29" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The parameter $lpha$ only affects seasonal corrections and has no impact on the level forecast</span></label>
+      <label class="opt" id="opt_q29_d"><input type="radio" name="q29" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">The parameter $\alpha$ only affects seasonal corrections and has no impact on the level forecast</span></label>
     </div>
     <div class="qexp" id="exp_q29">The weight on observation $k$ periods ago is $\alpha(1-\alpha)^k$. With $\alpha=0.95$, weights collapse to near zero within 2–3 periods — the model tracks recent changes closely but amplifies noise. With $\alpha=0.05$, weights decline very slowly — a long memory, stable but slow to respond to genuine structural shifts.</div>
   </div>
@@ -531,7 +531,7 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
     <div class="qhead"><div class="qnum">32</div><div class="qtxt">After fitting a regression, the residual plot (residuals vs. $\hat{Y}$) shows a clear <strong>fan shape</strong> — the spread of residuals increases as fitted values grow. What does this indicate?</div></div>
     <div class="qopts" id="opts_q32">
       <label class="opt" id="opt_q32_a"><input type="radio" name="q32" value="a" class="qrad" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">Multicollinearity between the predictor and the response</span></label>
-      <label class="opt" id="opt_q32_b"><input type="radio" name="q32" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Heteroscedasticity: the assumption of constant error variance $	ext{Var}(arepsilon_i) = \sigma^2$ is violated — making standard errors and $t$-tests unreliable</span></label>
+      <label class="opt" id="opt_q32_b"><input type="radio" name="q32" value="b" class="qrad" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">Heteroscedasticity: the assumption of constant error variance $	ext{Var}(\varepsilon_i) = \sigma^2$ is violated — making standard errors and $t$-tests unreliable</span></label>
       <label class="opt" id="opt_q32_c"><input type="radio" name="q32" value="c" class="qrad" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">Perfect model fit; the fan shape is expected in well-specified models</span></label>
       <label class="opt" id="opt_q32_d"><input type="radio" name="q32" value="d" class="qrad" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">Strong positive autocorrelation in the residuals</span></label>
     </div>
@@ -603,10 +603,10 @@ footer{text-align:center;padding:14px;font-size:11.5px;color:var(--muted);border
   <div class="qcard" id="qc_q39" data-sec="I">
     <div class="qhead"><div class="qnum">39</div><div class="qtxt"><span class="mbadge">MULTI &mdash; select ALL correct</span> Which of the following are fundamental <strong>conditions that OLS relies on</strong> to produce unbiased estimates with valid standard errors?</div></div>
     <div class="qopts" id="opts_q39">
-      <label class="opt" id="opt_q39_a"><input type="checkbox" name="q39" value="a" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$E(arepsilon_i) = 0$: the expected value of the error term is zero for all observations</span></label>
-      <label class="opt" id="opt_q39_b"><input type="checkbox" name="q39" value="b" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$	ext{Var}(arepsilon_i) = \sigma^2$ for all $i$: the error variance is constant across all observations (homoscedasticity)</span></label>
+      <label class="opt" id="opt_q39_a"><input type="checkbox" name="q39" value="a" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">A)</span><span class="opttxt">$E(\varepsilon_i) = 0$: the expected value of the error term is zero for all observations</span></label>
+      <label class="opt" id="opt_q39_b"><input type="checkbox" name="q39" value="b" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">B)</span><span class="opttxt">$	ext{Var}(\varepsilon_i) = \sigma^2$ for all $i$: the error variance is constant across all observations (homoscedasticity)</span></label>
       <label class="opt" id="opt_q39_c"><input type="checkbox" name="q39" value="c" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">C)</span><span class="opttxt">The predictor variables must themselves follow a normal distribution</span></label>
-      <label class="opt" id="opt_q39_d"><input type="checkbox" name="q39" value="d" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$	ext{Cov}(arepsilon_i, arepsilon_j) = 0$ for $i 
+      <label class="opt" id="opt_q39_d"><input type="checkbox" name="q39" value="d" class="qchk" data-q="q39" autocomplete="off"><span class="optletter">D)</span><span class="opttxt">$	ext{Cov}(\varepsilon_i, \varepsilon_j) = 0$ for $i 
 eq j$: the error terms are uncorrelated with each other</span></label>
       <div class="cfmarea" id="cfm_q39"><button class="cfmbtn" id="cfmbtn_q39" onclick="lockMulti('q39')" style="display:none">Lock my answer &rarr;</button></div>
     </div>
@@ -633,18 +633,18 @@ var _0xd="3d72138dc65dbe2a3d72138dc64faf2f3767138dc55dbd2a3e721092c65daa2c297e13
 var _0xk=[0x3f,0x7a,0x12,0x89,0xc4,0x55,0xab,0x2e];
 var _0xp=function(n){return(parseInt(_0xd.slice(n+n,n+n+2),16))^(_0xk[n&7]);};
 var _cfg={_v:"2.6",_t:Date.now(),_r:Math.random(),_p:[0x41,0x4e,0x53,0x57,0x45,0x52]};
-window._EXAMEN_ID = '41bf549b-e684-4653-96a8-a2ff41f55548'; // ← replace after running SQL
+window._EXAMEN_ID = '41bf549b-e684-4653-96a8-a2ff41f55548';
 
-// ── Additional security: copy/paste block ────────────────────────
+// ── Copy/paste block ─────────────────────────────────────────────
 document.addEventListener('copy',  function(e){e.preventDefault();});
 document.addEventListener('paste', function(e){e.preventDefault();});
 document.addEventListener('cut',   function(e){e.preventDefault();});
 
-// ── DevTools detection via window resize ─────────────────────────
+// ── DevTools detection ────────────────────────────────────────────
 (function(){
-  var _oh = window.outerHeight, _ow = window.outerWidth;
-  window.addEventListener('resize', function(){
-    if(_S.on && !_S.vd && ((_oh - window.outerHeight) > 150 || (_ow - window.outerWidth) > 150)){
+  var _oh=window.outerHeight,_ow=window.outerWidth;
+  window.addEventListener('resize',function(){
+    if(_S.on&&!_S.vd&&((_oh-window.outerHeight)>150||(_ow-window.outerWidth)>150)){
       _void('DevTools or external panel detected');
     }
   });
@@ -662,20 +662,15 @@ function _void(r){
   document.getElementById('vts').textContent='Terminated: '+(new Date()).toLocaleString();
   document.getElementById('voidov').style.display='flex';
   _xfs();
-  // Auto-submit with penalty grade after 3 seconds
   setTimeout(async function(){
-    var estudiante = window._estudiante || {};
-    var tiempoUsado = window._examStart ? Math.floor((Date.now()-window._examStart)/1000) : 0;
-    try {
-      await window._sb.rpc('corregir_examen',{
-        p_examen_id:     window._EXAMEN_ID,
-        p_estudiante_id: estudiante.id||'00000000-0000-0000-0000-000000000000',
-        p_respuestas:    {},
-        p_tiempo_usado:  tiempoUsado,
-        p_incidencias:   {voided:true, reason:r}
-      });
-    } catch(e){}
-  }, 3000);
+    var est2=window._estudiante||{};
+    var t=window._examStart?Math.floor((Date.now()-window._examStart)/1000):0;
+    try{await window._sb.rpc('corregir_examen',{
+      p_examen_id:window._EXAMEN_ID,
+      p_estudiante_id:est2.id||'00000000-0000-0000-0000-000000000000',
+      p_respuestas:{},p_tiempo_usado:t,p_incidencias:{voided:true,reason:r}
+    });}catch(e){}
+  },3000);
 }
 document.addEventListener('fullscreenchange',function(){if(_S.on&&!_S.vd&&!_S.sb&&!_ifs())_void('Fullscreen mode was exited');});
 document.addEventListener('webkitfullscreenchange',function(){if(_S.on&&!_S.vd&&!_S.sb&&!_ifs())_void('Fullscreen mode was exited');});
@@ -695,39 +690,30 @@ document.addEventListener('keydown',function(e){
 });
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
 async function startExam(){
-  var codeEl = document.getElementById('access-code');
-  var code = codeEl ? codeEl.value.trim().toUpperCase() : '';
-  if (!code) {
-    document.getElementById('code-error').style.display = 'block';
-    document.getElementById('code-error').textContent = 'Please enter your access code.';
-    codeEl.focus(); return;
+  var codeEl=document.getElementById('access-code');
+  var code=codeEl?codeEl.value.trim().toUpperCase():'';
+  if(!code){
+    var errEl=document.getElementById('code-error');
+    errEl.style.display='block';errEl.textContent='Please enter your access code.';
+    if(codeEl)codeEl.focus();return;
   }
-  var btn = document.getElementById('startbtn');
-  btn.disabled = true; btn.textContent = 'Loading questions…';
-
-  // Load questions from Supabase (secure - correct answers never sent to browser)
-  var result = await window._sb.rpc('obtener_preguntas', {
-    p_examen_id: window._EXAMEN_ID,
-    p_codigo:    code,
-    p_idioma:    'en'
+  var btn=document.getElementById('startbtn');
+  btn.disabled=true;btn.textContent='Loading questions…';
+  var result=await window._sb.rpc('obtener_preguntas',{
+    p_examen_id:window._EXAMEN_ID,p_codigo:code,p_idioma:'en'
   });
-
-  if (result.error) {
-    btn.disabled = false; btn.textContent = '⚡ Enter Fullscreen & Start Exam';
-    var errEl = document.getElementById('code-error');
-    errEl.style.display = 'block';
-    errEl.textContent = 'Incorrect code or exam not available.';
+  if(result.error){
+    btn.disabled=false;btn.textContent='⚡ Enter Fullscreen & Start Exam';
+    var errEl=document.getElementById('code-error');
+    errEl.style.display='block';errEl.textContent='Incorrect code or exam not available.';
     return;
   }
-
-  // Store questions — we'll use them in submitExam
-  window._loadedQuestions = result.data;
-  document.getElementById('code-error').style.display = 'none';
-
+  window._loadedQuestions=result.data;
+  document.getElementById('code-error').style.display='none';
   _rfs().then(function(){_S.on=true;_go();}).catch(function(){_S.on=true;_go();});
 }
 function _go(){
-  window._examStart = Date.now(); // record start time for duration
+  window._examStart=Date.now();
   document.getElementById('splash').style.display='none';
   document.getElementById('exam').style.display='block';
   _setupLocks();
@@ -775,36 +761,30 @@ async function submitExam(){
   if(_S.vd)return;
   _S.sb=true;
   var sb=document.getElementById('sbtn');if(sb)sb.disabled=true;
-
-  // Collect answers: single = letter, multi = comma-separated letters
   var respuestas={};
   for(var i=0;i<40;i++){
     var qid='q'+(i+1);
     var isMulti=!!document.querySelector('input[name="'+qid+'"].qchk');
     if(isMulti){
       var sel=[];
-      document.querySelectorAll('input[name="'+qid+'"]:checked').forEach(function(x){
-        sel.push(x.value.toUpperCase());
-      });
+      document.querySelectorAll('input[name="'+qid+'"]:checked').forEach(function(x){sel.push(x.value.toUpperCase());});
       respuestas['p'+(i+1)]=sel.length?sel.join(','):null;
     }else{
       var r=document.querySelector('input[name="'+qid+'"]:checked');
       respuestas['p'+(i+1)]=r?r.value.toUpperCase():null;
     }
   }
-
-  // Send to Supabase
   var est=window._estudiante||{};
   var tUsado=window._examStart?Math.floor((Date.now()-window._examStart)/1000):0;
-  var savedOk=false, nota=0, correctas=0, total=40;
+  var savedOk=false,nota=0,correctas=0,total=40;
   try{
     var res=await Promise.race([
       window._sb.rpc('corregir_examen',{
-        p_examen_id:     window._EXAMEN_ID,
-        p_estudiante_id: est.id||'00000000-0000-0000-0000-000000000000',
-        p_respuestas:    respuestas,
-        p_tiempo_usado:  tUsado,
-        p_incidencias:   {voided:false}
+        p_examen_id:window._EXAMEN_ID,
+        p_estudiante_id:est.id||'00000000-0000-0000-0000-000000000000',
+        p_respuestas:respuestas,
+        p_tiempo_usado:tUsado,
+        p_incidencias:{voided:false}
       }),
       new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'))},10000)})
     ]);
@@ -816,48 +796,40 @@ async function submitExam(){
     }
   }catch(e){console.error('Supabase:',e);}
 
-  var grade=nota.toFixed(2);
+  // Show feedback using local answer keys (for student review)
+  for(var i=0;i<40;i++){_fb('q'+(i+1),i,false);}
+
+  // Populate student info
+  var elN=document.getElementById('rpt-name');
+  var elI=document.getElementById('rpt-id');
+  var elG=document.getElementById('rpt-group');
+  if(elN)elN.textContent=est.nombre||'—';
+  if(elI)elI.textContent=est.student_id||'—';
+  if(elG)elG.textContent=est.grupo||'—';
+
   document.getElementById('stval').textContent=correctas+'/'+total;
-  document.getElementById('sgval').textContent='Grade: '+grade+' / 10';
+  document.getElementById('sgval').textContent='Grade: '+nota.toFixed(2)+' / 10';
   var msgs=['Needs review','Sufficient','Good — review highlighted answers','Excellent!'];
   document.getElementById('smsg').innerHTML=msgs[correctas>=36?3:correctas>=28?2:correctas>=20?1:0];
 
-  // Section breakdown (display only, counts from DOM)
   var sc={},st={};
-  document.querySelectorAll('.qcard').forEach(function(c){
-    var s=c.dataset.sec||'A';st[s]=(st[s]||0)+1;sc[s]=sc[s]||0;
-  });
+  document.querySelectorAll('.qcard').forEach(function(c){var s=c.dataset.sec||'A';st[s]=(st[s]||0)+1;sc[s]=sc[s]||0;});
   ['A','B','C','D','E','F','G','H','I'].forEach(function(s){
     var el=document.getElementById('scv_'+s);if(el)el.textContent=(sc[s]||0)+'/'+(st[s]||0);
   });
 
-  // Save status message
   var sp=document.getElementById('scorepanel');
   var msg=document.createElement('p');
   msg.style.cssText='text-align:center;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:700;margin:8px 0 0';
   msg.style.background=savedOk?'#dcfce7':'#fef9c3';
   msg.style.color=savedOk?'#16a34a':'#92400e';
-  msg.textContent=savedOk
-    ?'✅ Result saved to server successfully.'
-    :'⚠️ Could not save to server. Keep this PDF as backup.';
+  msg.textContent=savedOk?'✅ Result saved to server.':'⚠️ Could not save. Keep PDF as backup.';
   sp.appendChild(msg);
-
   sp.style.display='block';
   sp.scrollIntoView({behavior:'smooth',block:'start'});
   var pm=document.getElementById('printmsg');
   pm.textContent='Preparing score report for printing…';
   setTimeout(function(){pm.textContent='';window.print();},2500);
-}
-function retryExam(){
-  document.querySelectorAll('input').forEach(function(i){i.checked=false;i.disabled=false;});
-  document.querySelectorAll('.opt').forEach(function(l){l.className='opt';});
-  document.querySelectorAll('.qexp').forEach(function(e){e.style.display='none';e.classList.remove('e-err');});
-  document.querySelectorAll('.qcard').forEach(function(c){c.classList.remove('q-ok','q-err');});
-  document.querySelectorAll('.cfmbtn').forEach(function(b){b.style.display='none';b.innerHTML='Lock my answer &rarr;';b.classList.remove('locked-btn');b.disabled=false;});
-  var sb=document.getElementById('sbtn');if(sb)sb.disabled=false;
-  _S.sb=false;
-  document.getElementById('scorepanel').style.display='none';
-  window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
 </body>
